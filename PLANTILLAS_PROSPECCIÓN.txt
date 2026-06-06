@@ -1,0 +1,1324 @@
+================================================================================
+PLANTILLAS DE PROSPECCIÓN - PRAETOR INTELLIGENCE
+================================================================================
+Generado: 03/06/2026 12:22
+
+
+================================================================================
+PROSPECTO #1 - PRIORIDAD: Alta
+================================================================================
+Empresa: Soluciones Digitales Ensenada
+Sector: Marketing / Publicidad
+Tipo: Agencia de Marketing Digital
+Email: gerente@solucionesdigitalesensenaada.mx
+Caso de Uso: Agencia digital necesita proteger dominios de clientes
+
+📧 PLANTILLA EMAIL:
+--------------------------------------------------------------------------------
+Asunto: ✓ Auditoría de Seguridad para Soluciones
+
+Hola,
+
+¿Sabes si tu dominio (soluciones.mx) está protegido contra suplantación de identidad y phishing?
+
+En Soluciones Digitales Ensenada, manejan información sensible de clientes. Sin SPF/DMARC configurado correctamente, un atacante puede enviar correos falsos desde tu dominio, causando:
+
+✗ Pérdida de confianza con clientes
+✗ Cumbre de regulaciones (GDPR, SAT, LGPD)
+✗ Costo de breach: $100,000+
+
+Ofrecemos auditoría de seguridad en 5 segundos:
+✓ Score de riesgo (0-95)
+✓ Validación SPF/DMARC/SSL
+✓ Recomendaciones de remediación
+✓ Reporte ejecutivo en PDF
+
+💰 PRECIO ESPECIAL: Soluciones, por ser cliente prioritario ofrecemos 50% off en primer escaneo.
+
+¿Te interesa una auditoría rápida y gratuita? Respondé este email o contactame por WhatsApp.
+
+Saludos,
+PRAETOR Intelligence
+Threat Intelligence & Seguridad
+
+
+📱 PLANTILLA WHATSAPP:
+--------------------------------------------------------------------------------
+Hola 👋
+
+Vimos que Soluciones Digitales Ensenada opera en el sector marketing / publicidad.
+
+¿Sabés que sin SPF/DMARC correctamente configurado, tu dominio está expuesto a suplantación de identidad?
+
+En 5 segundos podemos hacer una auditoría de seguridad de tu infraestructura email:
+✓ Score de riesgo (0-95)
+✓ Detecta vulnerabilidades SPF/DMARC/SSL
+✓ Recomendaciones automáticas
+
+50% off en primer escaneo para clientes prioritarios 🎁
+
+¿Podemos agendar una llamada de 10 min? 📞
+
+PRAETOR Intelligence
+
+
+📝 NOTAS DE SEGUIMIENTO:
+--------------------------------------------------------------------------------
+• Razón contacto: Agencia digital necesita proteger dominios de clientes
+• Caso de uso: Auditoría de seguridad para portafolio de clientes
+• Presión: Alta
+• Próximo seguimiento: +3 días (si no responde)
+
+
+================================================================================
+PROSPECTO #2 - PRIORIDAD: Alta
+================================================================================
+Empresa: Marketing Pro Ensenada
+Sector: Marketing / Publicidad
+Tipo: Agencia SEO/SEM
+Email: contacto@marketingproensenada.com
+Caso de Uso: Gestor SEO debe validar seguridad de dominios gestionados
+
+📧 PLANTILLA EMAIL:
+--------------------------------------------------------------------------------
+Asunto: ✓ Auditoría de Seguridad para Marketing
+
+Hola,
+
+¿Sabes si tu dominio (marketing.mx) está protegido contra suplantación de identidad y phishing?
+
+En Marketing Pro Ensenada, manejan información sensible de clientes. Sin SPF/DMARC configurado correctamente, un atacante puede enviar correos falsos desde tu dominio, causando:
+
+✗ Pérdida de confianza con clientes
+✗ Cumbre de regulaciones (GDPR, SAT, LGPD)
+✗ Costo de breach: $100,000+
+
+Ofrecemos auditoría de seguridad en 5 segundos:
+✓ Score de riesgo (0-95)
+✓ Validación SPF/DMARC/SSL
+✓ Recomendaciones de remediación
+✓ Reporte ejecutivo en PDF
+
+💰 PRECIO ESPECIAL: Marketing, por ser cliente prioritario ofrecemos 50% off en primer escaneo.
+
+¿Te interesa una auditoría rápida y gratuita? Respondé este email o contactame por WhatsApp.
+
+Saludos,
+PRAETOR Intelligence
+Threat Intelligence & Seguridad
+
+
+📱 PLANTILLA WHATSAPP:
+--------------------------------------------------------------------------------
+Hola 👋
+
+Vimos que Marketing Pro Ensenada opera en el sector marketing / publicidad.
+
+¿Sabés que sin SPF/DMARC correctamente configurado, tu dominio está expuesto a suplantación de identidad?
+
+En 5 segundos podemos hacer una auditoría de seguridad de tu infraestructura email:
+✓ Score de riesgo (0-95)
+✓ Detecta vulnerabilidades SPF/DMARC/SSL
+✓ Recomendaciones automáticas
+
+50% off en primer escaneo para clientes prioritarios 🎁
+
+¿Podemos agendar una llamada de 10 min? 📞
+
+PRAETOR Intelligence
+
+
+📝 NOTAS DE SEGUIMIENTO:
+--------------------------------------------------------------------------------
+• Razón contacto: Gestor SEO debe validar seguridad de dominios gestionados
+• Caso de uso: Verificación previa antes de cambios DNS/SPF
+• Presión: Alta
+• Próximo seguimiento: +3 días (si no responde)
+
+
+================================================================================
+PROSPECTO #3 - PRIORIDAD: Media
+================================================================================
+Empresa: Branding Baja California
+Sector: Marketing / Publicidad
+Tipo: Agencia Creativa
+Email: info@brandingbaja.mx
+Caso de Uso: Agencia crea sitios web a clientes sin auditoría de seguridad
+
+📧 PLANTILLA EMAIL:
+--------------------------------------------------------------------------------
+Asunto: Auditoría de Seguridad para Branding
+
+Hola,
+
+¿Sabes si tu dominio (branding.mx) está protegido contra suplantación de identidad y phishing?
+
+En Branding Baja California, manejan información sensible de clientes. Sin SPF/DMARC configurado correctamente, un atacante puede enviar correos falsos desde tu dominio, causando:
+
+✗ Pérdida de confianza con clientes
+✗ Cumbre de regulaciones (GDPR, SAT, LGPD)
+✗ Costo de breach: $100,000+
+
+Ofrecemos auditoría de seguridad en 5 segundos:
+✓ Score de riesgo (0-95)
+✓ Validación SPF/DMARC/SSL
+✓ Recomendaciones de remediación
+✓ Reporte ejecutivo en PDF
+
+💰 PRECIO ESPECIAL: Branding, por ser cliente prioritario ofrecemos 50% off en primer escaneo.
+
+¿Te interesa una auditoría rápida y gratuita? Respondé este email o contactame por WhatsApp.
+
+Saludos,
+PRAETOR Intelligence
+Threat Intelligence & Seguridad
+
+
+📱 PLANTILLA WHATSAPP:
+--------------------------------------------------------------------------------
+Hola 👋
+
+Vimos que Branding Baja California opera en el sector marketing / publicidad.
+
+¿Sabés que sin SPF/DMARC correctamente configurado, tu dominio está expuesto a suplantación de identidad?
+
+En 5 segundos podemos hacer una auditoría de seguridad de tu infraestructura email:
+✓ Score de riesgo (0-95)
+✓ Detecta vulnerabilidades SPF/DMARC/SSL
+✓ Recomendaciones automáticas
+
+50% off en primer escaneo para clientes prioritarios 🎁
+
+¿Podemos agendar una llamada de 10 min? 📞
+
+PRAETOR Intelligence
+
+
+📝 NOTAS DE SEGUIMIENTO:
+--------------------------------------------------------------------------------
+• Razón contacto: Agencia crea sitios web a clientes sin auditoría de seguridad
+• Caso de uso: Auditoria post-desarrollo para entregar con seguridad validada
+• Presión: Media
+• Próximo seguimiento: +3 días (si no responde)
+
+
+================================================================================
+PROSPECTO #4 - PRIORIDAD: Alta
+================================================================================
+Empresa: Publicidad Inteligente Ensenada
+Sector: Marketing / Publicidad
+Tipo: Agencia Integrada
+Email: ventas@pubinteligente.mx
+Caso de Uso: Gestiona múltiples dominios de clientes
+
+📧 PLANTILLA EMAIL:
+--------------------------------------------------------------------------------
+Asunto: ✓ Auditoría de Seguridad para Publicidad
+
+Hola,
+
+¿Sabes si tu dominio (publicidad.mx) está protegido contra suplantación de identidad y phishing?
+
+En Publicidad Inteligente Ensenada, manejan información sensible de clientes. Sin SPF/DMARC configurado correctamente, un atacante puede enviar correos falsos desde tu dominio, causando:
+
+✗ Pérdida de confianza con clientes
+✗ Cumbre de regulaciones (GDPR, SAT, LGPD)
+✗ Costo de breach: $100,000+
+
+Ofrecemos auditoría de seguridad en 5 segundos:
+✓ Score de riesgo (0-95)
+✓ Validación SPF/DMARC/SSL
+✓ Recomendaciones de remediación
+✓ Reporte ejecutivo en PDF
+
+💰 PRECIO ESPECIAL: Publicidad, por ser cliente prioritario ofrecemos 50% off en primer escaneo.
+
+¿Te interesa una auditoría rápida y gratuita? Respondé este email o contactame por WhatsApp.
+
+Saludos,
+PRAETOR Intelligence
+Threat Intelligence & Seguridad
+
+
+📱 PLANTILLA WHATSAPP:
+--------------------------------------------------------------------------------
+Hola 👋
+
+Vimos que Publicidad Inteligente Ensenada opera en el sector marketing / publicidad.
+
+¿Sabés que sin SPF/DMARC correctamente configurado, tu dominio está expuesto a suplantación de identidad?
+
+En 5 segundos podemos hacer una auditoría de seguridad de tu infraestructura email:
+✓ Score de riesgo (0-95)
+✓ Detecta vulnerabilidades SPF/DMARC/SSL
+✓ Recomendaciones automáticas
+
+50% off en primer escaneo para clientes prioritarios 🎁
+
+¿Podemos agendar una llamada de 10 min? 📞
+
+PRAETOR Intelligence
+
+
+📝 NOTAS DE SEGUIMIENTO:
+--------------------------------------------------------------------------------
+• Razón contacto: Gestiona múltiples dominios de clientes
+• Caso de uso: Auditoría masiva de portafolio de clientes
+• Presión: Alta
+• Próximo seguimiento: +3 días (si no responde)
+
+
+================================================================================
+PROSPECTO #5 - PRIORIDAD: Media
+================================================================================
+Empresa: Digital Marketing Solutions
+Sector: Marketing / Publicidad
+Tipo: Consultoría Digital
+Email: contacto@dmsolutions.mx
+Caso de Uso: Consultora ofrece servicios de seguridad incompletos
+
+📧 PLANTILLA EMAIL:
+--------------------------------------------------------------------------------
+Asunto: Auditoría de Seguridad para Digital
+
+Hola,
+
+¿Sabes si tu dominio (digital.mx) está protegido contra suplantación de identidad y phishing?
+
+En Digital Marketing Solutions, manejan información sensible de clientes. Sin SPF/DMARC configurado correctamente, un atacante puede enviar correos falsos desde tu dominio, causando:
+
+✗ Pérdida de confianza con clientes
+✗ Cumbre de regulaciones (GDPR, SAT, LGPD)
+✗ Costo de breach: $100,000+
+
+Ofrecemos auditoría de seguridad en 5 segundos:
+✓ Score de riesgo (0-95)
+✓ Validación SPF/DMARC/SSL
+✓ Recomendaciones de remediación
+✓ Reporte ejecutivo en PDF
+
+💰 PRECIO ESPECIAL: Digital, por ser cliente prioritario ofrecemos 50% off en primer escaneo.
+
+¿Te interesa una auditoría rápida y gratuita? Respondé este email o contactame por WhatsApp.
+
+Saludos,
+PRAETOR Intelligence
+Threat Intelligence & Seguridad
+
+
+📱 PLANTILLA WHATSAPP:
+--------------------------------------------------------------------------------
+Hola 👋
+
+Vimos que Digital Marketing Solutions opera en el sector marketing / publicidad.
+
+¿Sabés que sin SPF/DMARC correctamente configurado, tu dominio está expuesto a suplantación de identidad?
+
+En 5 segundos podemos hacer una auditoría de seguridad de tu infraestructura email:
+✓ Score de riesgo (0-95)
+✓ Detecta vulnerabilidades SPF/DMARC/SSL
+✓ Recomendaciones automáticas
+
+50% off en primer escaneo para clientes prioritarios 🎁
+
+¿Podemos agendar una llamada de 10 min? 📞
+
+PRAETOR Intelligence
+
+
+📝 NOTAS DE SEGUIMIENTO:
+--------------------------------------------------------------------------------
+• Razón contacto: Consultora ofrece servicios de seguridad incompletos
+• Caso de uso: Agregar auditoría de dominios a paquete de servicios
+• Presión: Media
+• Próximo seguimiento: +3 días (si no responde)
+
+
+================================================================================
+PROSPECTO #6 - PRIORIDAD: Alta
+================================================================================
+Empresa: Propiedades Ensenada
+Sector: Real Estate
+Tipo: Inmobiliaria
+Email: info@propiedadesensesnadad.mx
+Caso de Uso: Inmobiliaria con presencia online vulnerable a phishing
+
+📧 PLANTILLA EMAIL:
+--------------------------------------------------------------------------------
+Asunto: ✓ Auditoría de Seguridad para Propiedades
+
+Hola,
+
+¿Sabes si tu dominio (propiedades.mx) está protegido contra suplantación de identidad y phishing?
+
+En Propiedades Ensenada, manejan información sensible de clientes. Sin SPF/DMARC configurado correctamente, un atacante puede enviar correos falsos desde tu dominio, causando:
+
+✗ Pérdida de confianza con clientes
+✗ Cumbre de regulaciones (GDPR, SAT, LGPD)
+✗ Costo de breach: $100,000+
+
+Ofrecemos auditoría de seguridad en 5 segundos:
+✓ Score de riesgo (0-95)
+✓ Validación SPF/DMARC/SSL
+✓ Recomendaciones de remediación
+✓ Reporte ejecutivo en PDF
+
+💰 PRECIO ESPECIAL: Propiedades, por ser cliente prioritario ofrecemos 50% off en primer escaneo.
+
+¿Te interesa una auditoría rápida y gratuita? Respondé este email o contactame por WhatsApp.
+
+Saludos,
+PRAETOR Intelligence
+Threat Intelligence & Seguridad
+
+
+📱 PLANTILLA WHATSAPP:
+--------------------------------------------------------------------------------
+Hola 👋
+
+Vimos que Propiedades Ensenada opera en el sector real estate.
+
+¿Sabés que sin SPF/DMARC correctamente configurado, tu dominio está expuesto a suplantación de identidad?
+
+En 5 segundos podemos hacer una auditoría de seguridad de tu infraestructura email:
+✓ Score de riesgo (0-95)
+✓ Detecta vulnerabilidades SPF/DMARC/SSL
+✓ Recomendaciones automáticas
+
+50% off en primer escaneo para clientes prioritarios 🎁
+
+¿Podemos agendar una llamada de 10 min? 📞
+
+PRAETOR Intelligence
+
+
+📝 NOTAS DE SEGUIMIENTO:
+--------------------------------------------------------------------------------
+• Razón contacto: Inmobiliaria con presencia online vulnerable a phishing
+• Caso de uso: Proteger dominio corporativo de ataques dirigidos
+• Presión: Alta
+• Próximo seguimiento: +3 días (si no responde)
+
+
+================================================================================
+PROSPECTO #7 - PRIORIDAD: Alta
+================================================================================
+Empresa: Bienes Raíces Puerto Ensenada
+Sector: Real Estate
+Tipo: Inmobiliaria
+Email: contacto@bienesraicespuerto.mx
+Caso de Uso: Recibe inquiries por email de clientes potenciales
+
+📧 PLANTILLA EMAIL:
+--------------------------------------------------------------------------------
+Asunto: ✓ Auditoría de Seguridad para Bienes
+
+Hola,
+
+¿Sabes si tu dominio (bienes.mx) está protegido contra suplantación de identidad y phishing?
+
+En Bienes Raíces Puerto Ensenada, manejan información sensible de clientes. Sin SPF/DMARC configurado correctamente, un atacante puede enviar correos falsos desde tu dominio, causando:
+
+✗ Pérdida de confianza con clientes
+✗ Cumbre de regulaciones (GDPR, SAT, LGPD)
+✗ Costo de breach: $100,000+
+
+Ofrecemos auditoría de seguridad en 5 segundos:
+✓ Score de riesgo (0-95)
+✓ Validación SPF/DMARC/SSL
+✓ Recomendaciones de remediación
+✓ Reporte ejecutivo en PDF
+
+💰 PRECIO ESPECIAL: Bienes, por ser cliente prioritario ofrecemos 50% off en primer escaneo.
+
+¿Te interesa una auditoría rápida y gratuita? Respondé este email o contactame por WhatsApp.
+
+Saludos,
+PRAETOR Intelligence
+Threat Intelligence & Seguridad
+
+
+📱 PLANTILLA WHATSAPP:
+--------------------------------------------------------------------------------
+Hola 👋
+
+Vimos que Bienes Raíces Puerto Ensenada opera en el sector real estate.
+
+¿Sabés que sin SPF/DMARC correctamente configurado, tu dominio está expuesto a suplantación de identidad?
+
+En 5 segundos podemos hacer una auditoría de seguridad de tu infraestructura email:
+✓ Score de riesgo (0-95)
+✓ Detecta vulnerabilidades SPF/DMARC/SSL
+✓ Recomendaciones automáticas
+
+50% off en primer escaneo para clientes prioritarios 🎁
+
+¿Podemos agendar una llamada de 10 min? 📞
+
+PRAETOR Intelligence
+
+
+📝 NOTAS DE SEGUIMIENTO:
+--------------------------------------------------------------------------------
+• Razón contacto: Recibe inquiries por email de clientes potenciales
+• Caso de uso: Validar SPF/DMARC para evitar pérdida de leads
+• Presión: Alta
+• Próximo seguimiento: +3 días (si no responde)
+
+
+================================================================================
+PROSPECTO #8 - PRIORIDAD: Media
+================================================================================
+Empresa: Inmobiliaria Bahía Ensenada
+Sector: Real Estate
+Tipo: Inmobiliaria
+Email: ventas@bahiaensenaada.mx
+Caso de Uso: Empresa transaccional, requiere seguridad email crítica
+
+📧 PLANTILLA EMAIL:
+--------------------------------------------------------------------------------
+Asunto: Auditoría de Seguridad para Inmobiliaria
+
+Hola,
+
+¿Sabes si tu dominio (inmobiliaria.mx) está protegido contra suplantación de identidad y phishing?
+
+En Inmobiliaria Bahía Ensenada, manejan información sensible de clientes. Sin SPF/DMARC configurado correctamente, un atacante puede enviar correos falsos desde tu dominio, causando:
+
+✗ Pérdida de confianza con clientes
+✗ Cumbre de regulaciones (GDPR, SAT, LGPD)
+✗ Costo de breach: $100,000+
+
+Ofrecemos auditoría de seguridad en 5 segundos:
+✓ Score de riesgo (0-95)
+✓ Validación SPF/DMARC/SSL
+✓ Recomendaciones de remediación
+✓ Reporte ejecutivo en PDF
+
+💰 PRECIO ESPECIAL: Inmobiliaria, por ser cliente prioritario ofrecemos 50% off en primer escaneo.
+
+¿Te interesa una auditoría rápida y gratuita? Respondé este email o contactame por WhatsApp.
+
+Saludos,
+PRAETOR Intelligence
+Threat Intelligence & Seguridad
+
+
+📱 PLANTILLA WHATSAPP:
+--------------------------------------------------------------------------------
+Hola 👋
+
+Vimos que Inmobiliaria Bahía Ensenada opera en el sector real estate.
+
+¿Sabés que sin SPF/DMARC correctamente configurado, tu dominio está expuesto a suplantación de identidad?
+
+En 5 segundos podemos hacer una auditoría de seguridad de tu infraestructura email:
+✓ Score de riesgo (0-95)
+✓ Detecta vulnerabilidades SPF/DMARC/SSL
+✓ Recomendaciones automáticas
+
+50% off en primer escaneo para clientes prioritarios 🎁
+
+¿Podemos agendar una llamada de 10 min? 📞
+
+PRAETOR Intelligence
+
+
+📝 NOTAS DE SEGUIMIENTO:
+--------------------------------------------------------------------------------
+• Razón contacto: Empresa transaccional, requiere seguridad email crítica
+• Caso de uso: Certificar infraestructura antes de nuevas regulaciones
+• Presión: Media
+• Próximo seguimiento: +3 días (si no responde)
+
+
+================================================================================
+PROSPECTO #9 - PRIORIDAD: Alta
+================================================================================
+Empresa: Properti Ensensada
+Sector: Real Estate
+Tipo: Portal Inmobiliario
+Email: soporte@propertiensensada.mx
+Caso de Uso: Portal online maneja datos de clientes y propiedades
+
+📧 PLANTILLA EMAIL:
+--------------------------------------------------------------------------------
+Asunto: ✓ Auditoría de Seguridad para Properti
+
+Hola,
+
+¿Sabes si tu dominio (properti.mx) está protegido contra suplantación de identidad y phishing?
+
+En Properti Ensensada, manejan información sensible de clientes. Sin SPF/DMARC configurado correctamente, un atacante puede enviar correos falsos desde tu dominio, causando:
+
+✗ Pérdida de confianza con clientes
+✗ Cumbre de regulaciones (GDPR, SAT, LGPD)
+✗ Costo de breach: $100,000+
+
+Ofrecemos auditoría de seguridad en 5 segundos:
+✓ Score de riesgo (0-95)
+✓ Validación SPF/DMARC/SSL
+✓ Recomendaciones de remediación
+✓ Reporte ejecutivo en PDF
+
+💰 PRECIO ESPECIAL: Properti, por ser cliente prioritario ofrecemos 50% off en primer escaneo.
+
+¿Te interesa una auditoría rápida y gratuita? Respondé este email o contactame por WhatsApp.
+
+Saludos,
+PRAETOR Intelligence
+Threat Intelligence & Seguridad
+
+
+📱 PLANTILLA WHATSAPP:
+--------------------------------------------------------------------------------
+Hola 👋
+
+Vimos que Properti Ensensada opera en el sector real estate.
+
+¿Sabés que sin SPF/DMARC correctamente configurado, tu dominio está expuesto a suplantación de identidad?
+
+En 5 segundos podemos hacer una auditoría de seguridad de tu infraestructura email:
+✓ Score de riesgo (0-95)
+✓ Detecta vulnerabilidades SPF/DMARC/SSL
+✓ Recomendaciones automáticas
+
+50% off en primer escaneo para clientes prioritarios 🎁
+
+¿Podemos agendar una llamada de 10 min? 📞
+
+PRAETOR Intelligence
+
+
+📝 NOTAS DE SEGUIMIENTO:
+--------------------------------------------------------------------------------
+• Razón contacto: Portal online maneja datos de clientes y propiedades
+• Caso de uso: Cumplimiento de protección de datos (GDPR/LGPD)
+• Presión: Alta
+• Próximo seguimiento: +3 días (si no responde)
+
+
+================================================================================
+PROSPECTO #10 - PRIORIDAD: Crítica
+================================================================================
+Empresa: García & Asociados - Contadores
+Sector: Servicios Financieros
+Tipo: Despacho Contable
+Email: info@garciacontadores.mx
+Caso de Uso: Despacho maneja información sensible de clientes
+
+📧 PLANTILLA EMAIL:
+--------------------------------------------------------------------------------
+Asunto: 🔒 URGENTE: Auditoría de Seguridad para García
+
+Hola,
+
+¿Sabes si tu dominio (garcía.mx) está protegido contra suplantación de identidad y phishing?
+
+En García & Asociados - Contadores, manejan información sensible de clientes. Sin SPF/DMARC configurado correctamente, un atacante puede enviar correos falsos desde tu dominio, causando:
+
+✗ Pérdida de confianza con clientes
+✗ Cumbre de regulaciones (GDPR, SAT, LGPD)
+✗ Costo de breach: $100,000+
+
+Ofrecemos auditoría de seguridad en 5 segundos:
+✓ Score de riesgo (0-95)
+✓ Validación SPF/DMARC/SSL
+✓ Recomendaciones de remediación
+✓ Reporte ejecutivo en PDF
+
+💰 PRECIO ESPECIAL: García, por ser cliente prioritario ofrecemos 50% off en primer escaneo.
+
+¿Te interesa una auditoría rápida y gratuita? Respondé este email o contactame por WhatsApp.
+
+Saludos,
+PRAETOR Intelligence
+Threat Intelligence & Seguridad
+
+
+📱 PLANTILLA WHATSAPP:
+--------------------------------------------------------------------------------
+Hola 👋
+
+Vimos que García & Asociados - Contadores opera en el sector servicios financieros.
+
+¿Sabés que sin SPF/DMARC correctamente configurado, tu dominio está expuesto a suplantación de identidad?
+
+En 5 segundos podemos hacer una auditoría de seguridad de tu infraestructura email:
+✓ Score de riesgo (0-95)
+✓ Detecta vulnerabilidades SPF/DMARC/SSL
+✓ Recomendaciones automáticas
+
+50% off en primer escaneo para clientes prioritarios 🎁
+
+¿Podemos agendar una llamada de 10 min? 📞
+
+PRAETOR Intelligence
+
+
+📝 NOTAS DE SEGUIMIENTO:
+--------------------------------------------------------------------------------
+• Razón contacto: Despacho maneja información sensible de clientes
+• Caso de uso: Auditoría de seguridad para cumplimiento fiscal
+• Presión: Crítica
+• Próximo seguimiento: +3 días (si no responde)
+
+
+================================================================================
+PROSPECTO #11 - PRIORIDAD: Crítica
+================================================================================
+Empresa: Consultoría Fiscal Ensenada
+Sector: Servicios Financieros
+Tipo: Despacho Contable
+Email: contacto@consultoriafiscalensensada.mx
+Caso de Uso: SAT exige validación de seguridad infraestructura
+
+📧 PLANTILLA EMAIL:
+--------------------------------------------------------------------------------
+Asunto: 🔒 URGENTE: Auditoría de Seguridad para Consultoría
+
+Hola,
+
+¿Sabes si tu dominio (consultoría.mx) está protegido contra suplantación de identidad y phishing?
+
+En Consultoría Fiscal Ensenada, manejan información sensible de clientes. Sin SPF/DMARC configurado correctamente, un atacante puede enviar correos falsos desde tu dominio, causando:
+
+✗ Pérdida de confianza con clientes
+✗ Cumbre de regulaciones (GDPR, SAT, LGPD)
+✗ Costo de breach: $100,000+
+
+Ofrecemos auditoría de seguridad en 5 segundos:
+✓ Score de riesgo (0-95)
+✓ Validación SPF/DMARC/SSL
+✓ Recomendaciones de remediación
+✓ Reporte ejecutivo en PDF
+
+💰 PRECIO ESPECIAL: Consultoría, por ser cliente prioritario ofrecemos 50% off en primer escaneo.
+
+¿Te interesa una auditoría rápida y gratuita? Respondé este email o contactame por WhatsApp.
+
+Saludos,
+PRAETOR Intelligence
+Threat Intelligence & Seguridad
+
+
+📱 PLANTILLA WHATSAPP:
+--------------------------------------------------------------------------------
+Hola 👋
+
+Vimos que Consultoría Fiscal Ensenada opera en el sector servicios financieros.
+
+¿Sabés que sin SPF/DMARC correctamente configurado, tu dominio está expuesto a suplantación de identidad?
+
+En 5 segundos podemos hacer una auditoría de seguridad de tu infraestructura email:
+✓ Score de riesgo (0-95)
+✓ Detecta vulnerabilidades SPF/DMARC/SSL
+✓ Recomendaciones automáticas
+
+50% off en primer escaneo para clientes prioritarios 🎁
+
+¿Podemos agendar una llamada de 10 min? 📞
+
+PRAETOR Intelligence
+
+
+📝 NOTAS DE SEGUIMIENTO:
+--------------------------------------------------------------------------------
+• Razón contacto: SAT exige validación de seguridad infraestructura
+• Caso de uso: Certificar compliance antes de auditoria fiscal
+• Presión: Crítica
+• Próximo seguimiento: +3 días (si no responde)
+
+
+================================================================================
+PROSPECTO #12 - PRIORIDAD: Crítica
+================================================================================
+Empresa: Contadores Profesionales BC
+Sector: Servicios Financieros
+Tipo: Despacho Contable
+Email: ventas@contadoresprobc.mx
+Caso de Uso: Despacho recibe declaraciones e información bancaria
+
+📧 PLANTILLA EMAIL:
+--------------------------------------------------------------------------------
+Asunto: 🔒 URGENTE: Auditoría de Seguridad para Contadores
+
+Hola,
+
+¿Sabes si tu dominio (contadores.mx) está protegido contra suplantación de identidad y phishing?
+
+En Contadores Profesionales BC, manejan información sensible de clientes. Sin SPF/DMARC configurado correctamente, un atacante puede enviar correos falsos desde tu dominio, causando:
+
+✗ Pérdida de confianza con clientes
+✗ Cumbre de regulaciones (GDPR, SAT, LGPD)
+✗ Costo de breach: $100,000+
+
+Ofrecemos auditoría de seguridad en 5 segundos:
+✓ Score de riesgo (0-95)
+✓ Validación SPF/DMARC/SSL
+✓ Recomendaciones de remediación
+✓ Reporte ejecutivo en PDF
+
+💰 PRECIO ESPECIAL: Contadores, por ser cliente prioritario ofrecemos 50% off en primer escaneo.
+
+¿Te interesa una auditoría rápida y gratuita? Respondé este email o contactame por WhatsApp.
+
+Saludos,
+PRAETOR Intelligence
+Threat Intelligence & Seguridad
+
+
+📱 PLANTILLA WHATSAPP:
+--------------------------------------------------------------------------------
+Hola 👋
+
+Vimos que Contadores Profesionales BC opera en el sector servicios financieros.
+
+¿Sabés que sin SPF/DMARC correctamente configurado, tu dominio está expuesto a suplantación de identidad?
+
+En 5 segundos podemos hacer una auditoría de seguridad de tu infraestructura email:
+✓ Score de riesgo (0-95)
+✓ Detecta vulnerabilidades SPF/DMARC/SSL
+✓ Recomendaciones automáticas
+
+50% off en primer escaneo para clientes prioritarios 🎁
+
+¿Podemos agendar una llamada de 10 min? 📞
+
+PRAETOR Intelligence
+
+
+📝 NOTAS DE SEGUIMIENTO:
+--------------------------------------------------------------------------------
+• Razón contacto: Despacho recibe declaraciones e información bancaria
+• Caso de uso: Protección de comunicaciones con clientes (confidencialidad)
+• Presión: Crítica
+• Próximo seguimiento: +3 días (si no responde)
+
+
+================================================================================
+PROSPECTO #13 - PRIORIDAD: Media
+================================================================================
+Empresa: Asesoría Tributaria Ensenada
+Sector: Servicios Financieros
+Tipo: Asesor Fiscal
+Email: asesor@asesoriatributaria.mx
+Caso de Uso: Profesional independiente con múltiples clientes corporativos
+
+📧 PLANTILLA EMAIL:
+--------------------------------------------------------------------------------
+Asunto: Auditoría de Seguridad para Asesoría
+
+Hola,
+
+¿Sabes si tu dominio (asesoría.mx) está protegido contra suplantación de identidad y phishing?
+
+En Asesoría Tributaria Ensenada, manejan información sensible de clientes. Sin SPF/DMARC configurado correctamente, un atacante puede enviar correos falsos desde tu dominio, causando:
+
+✗ Pérdida de confianza con clientes
+✗ Cumbre de regulaciones (GDPR, SAT, LGPD)
+✗ Costo de breach: $100,000+
+
+Ofrecemos auditoría de seguridad en 5 segundos:
+✓ Score de riesgo (0-95)
+✓ Validación SPF/DMARC/SSL
+✓ Recomendaciones de remediación
+✓ Reporte ejecutivo en PDF
+
+💰 PRECIO ESPECIAL: Asesoría, por ser cliente prioritario ofrecemos 50% off en primer escaneo.
+
+¿Te interesa una auditoría rápida y gratuita? Respondé este email o contactame por WhatsApp.
+
+Saludos,
+PRAETOR Intelligence
+Threat Intelligence & Seguridad
+
+
+📱 PLANTILLA WHATSAPP:
+--------------------------------------------------------------------------------
+Hola 👋
+
+Vimos que Asesoría Tributaria Ensenada opera en el sector servicios financieros.
+
+¿Sabés que sin SPF/DMARC correctamente configurado, tu dominio está expuesto a suplantación de identidad?
+
+En 5 segundos podemos hacer una auditoría de seguridad de tu infraestructura email:
+✓ Score de riesgo (0-95)
+✓ Detecta vulnerabilidades SPF/DMARC/SSL
+✓ Recomendaciones automáticas
+
+50% off en primer escaneo para clientes prioritarios 🎁
+
+¿Podemos agendar una llamada de 10 min? 📞
+
+PRAETOR Intelligence
+
+
+📝 NOTAS DE SEGUIMIENTO:
+--------------------------------------------------------------------------------
+• Razón contacto: Profesional independiente con múltiples clientes corporativos
+• Caso de uso: Validar dominio profesional para credibilidad cliente
+• Presión: Media
+• Próximo seguimiento: +3 días (si no responde)
+
+
+================================================================================
+PROSPECTO #14 - PRIORIDAD: Alta
+================================================================================
+Empresa: Finanzas & Auditoría Ensenada
+Sector: Servicios Financieros
+Tipo: Firma Auditora
+Email: contacto@finanzasauditoria.mx
+Caso de Uso: Firma auditora debe demostrar seguridad información
+
+📧 PLANTILLA EMAIL:
+--------------------------------------------------------------------------------
+Asunto: ✓ Auditoría de Seguridad para Finanzas
+
+Hola,
+
+¿Sabes si tu dominio (finanzas.mx) está protegido contra suplantación de identidad y phishing?
+
+En Finanzas & Auditoría Ensenada, manejan información sensible de clientes. Sin SPF/DMARC configurado correctamente, un atacante puede enviar correos falsos desde tu dominio, causando:
+
+✗ Pérdida de confianza con clientes
+✗ Cumbre de regulaciones (GDPR, SAT, LGPD)
+✗ Costo de breach: $100,000+
+
+Ofrecemos auditoría de seguridad en 5 segundos:
+✓ Score de riesgo (0-95)
+✓ Validación SPF/DMARC/SSL
+✓ Recomendaciones de remediación
+✓ Reporte ejecutivo en PDF
+
+💰 PRECIO ESPECIAL: Finanzas, por ser cliente prioritario ofrecemos 50% off en primer escaneo.
+
+¿Te interesa una auditoría rápida y gratuita? Respondé este email o contactame por WhatsApp.
+
+Saludos,
+PRAETOR Intelligence
+Threat Intelligence & Seguridad
+
+
+📱 PLANTILLA WHATSAPP:
+--------------------------------------------------------------------------------
+Hola 👋
+
+Vimos que Finanzas & Auditoría Ensenada opera en el sector servicios financieros.
+
+¿Sabés que sin SPF/DMARC correctamente configurado, tu dominio está expuesto a suplantación de identidad?
+
+En 5 segundos podemos hacer una auditoría de seguridad de tu infraestructura email:
+✓ Score de riesgo (0-95)
+✓ Detecta vulnerabilidades SPF/DMARC/SSL
+✓ Recomendaciones automáticas
+
+50% off en primer escaneo para clientes prioritarios 🎁
+
+¿Podemos agendar una llamada de 10 min? 📞
+
+PRAETOR Intelligence
+
+
+📝 NOTAS DE SEGUIMIENTO:
+--------------------------------------------------------------------------------
+• Razón contacto: Firma auditora debe demostrar seguridad información
+• Caso de uso: Certificación de seguridad para clientes auditados
+• Presión: Alta
+• Próximo seguimiento: +3 días (si no responde)
+
+
+================================================================================
+PROSPECTO #15 - PRIORIDAD: Alta
+================================================================================
+Empresa: Tienda Online Ensenada
+Sector: Retail Online
+Tipo: E-commerce
+Email: info@tiendaonlineensensada.mx
+Caso de Uso: Tienda online recibe pagos y datos de clientes
+
+📧 PLANTILLA EMAIL:
+--------------------------------------------------------------------------------
+Asunto: ✓ Auditoría de Seguridad para Tienda
+
+Hola,
+
+¿Sabes si tu dominio (tienda.mx) está protegido contra suplantación de identidad y phishing?
+
+En Tienda Online Ensenada, manejan información sensible de clientes. Sin SPF/DMARC configurado correctamente, un atacante puede enviar correos falsos desde tu dominio, causando:
+
+✗ Pérdida de confianza con clientes
+✗ Cumbre de regulaciones (GDPR, SAT, LGPD)
+✗ Costo de breach: $100,000+
+
+Ofrecemos auditoría de seguridad en 5 segundos:
+✓ Score de riesgo (0-95)
+✓ Validación SPF/DMARC/SSL
+✓ Recomendaciones de remediación
+✓ Reporte ejecutivo en PDF
+
+💰 PRECIO ESPECIAL: Tienda, por ser cliente prioritario ofrecemos 50% off en primer escaneo.
+
+¿Te interesa una auditoría rápida y gratuita? Respondé este email o contactame por WhatsApp.
+
+Saludos,
+PRAETOR Intelligence
+Threat Intelligence & Seguridad
+
+
+📱 PLANTILLA WHATSAPP:
+--------------------------------------------------------------------------------
+Hola 👋
+
+Vimos que Tienda Online Ensenada opera en el sector retail online.
+
+¿Sabés que sin SPF/DMARC correctamente configurado, tu dominio está expuesto a suplantación de identidad?
+
+En 5 segundos podemos hacer una auditoría de seguridad de tu infraestructura email:
+✓ Score de riesgo (0-95)
+✓ Detecta vulnerabilidades SPF/DMARC/SSL
+✓ Recomendaciones automáticas
+
+50% off en primer escaneo para clientes prioritarios 🎁
+
+¿Podemos agendar una llamada de 10 min? 📞
+
+PRAETOR Intelligence
+
+
+📝 NOTAS DE SEGUIMIENTO:
+--------------------------------------------------------------------------------
+• Razón contacto: Tienda online recibe pagos y datos de clientes
+• Caso de uso: Validar seguridad email para recibos y notificaciones
+• Presión: Alta
+• Próximo seguimiento: +3 días (si no responde)
+
+
+================================================================================
+PROSPECTO #16 - PRIORIDAD: Alta
+================================================================================
+Empresa: E-commerce Pesquero
+Sector: Exportación / Comercio
+Tipo: E-commerce B2B
+Email: ventas@ecommercepesquero.mx
+Caso de Uso: Empresa exportadora requiere seguridad de documentos
+
+📧 PLANTILLA EMAIL:
+--------------------------------------------------------------------------------
+Asunto: ✓ Auditoría de Seguridad para E-commerce
+
+Hola,
+
+¿Sabes si tu dominio (e-commerce.mx) está protegido contra suplantación de identidad y phishing?
+
+En E-commerce Pesquero, manejan información sensible de clientes. Sin SPF/DMARC configurado correctamente, un atacante puede enviar correos falsos desde tu dominio, causando:
+
+✗ Pérdida de confianza con clientes
+✗ Cumbre de regulaciones (GDPR, SAT, LGPD)
+✗ Costo de breach: $100,000+
+
+Ofrecemos auditoría de seguridad en 5 segundos:
+✓ Score de riesgo (0-95)
+✓ Validación SPF/DMARC/SSL
+✓ Recomendaciones de remediación
+✓ Reporte ejecutivo en PDF
+
+💰 PRECIO ESPECIAL: E-commerce, por ser cliente prioritario ofrecemos 50% off en primer escaneo.
+
+¿Te interesa una auditoría rápida y gratuita? Respondé este email o contactame por WhatsApp.
+
+Saludos,
+PRAETOR Intelligence
+Threat Intelligence & Seguridad
+
+
+📱 PLANTILLA WHATSAPP:
+--------------------------------------------------------------------------------
+Hola 👋
+
+Vimos que E-commerce Pesquero opera en el sector exportación / comercio.
+
+¿Sabés que sin SPF/DMARC correctamente configurado, tu dominio está expuesto a suplantación de identidad?
+
+En 5 segundos podemos hacer una auditoría de seguridad de tu infraestructura email:
+✓ Score de riesgo (0-95)
+✓ Detecta vulnerabilidades SPF/DMARC/SSL
+✓ Recomendaciones automáticas
+
+50% off en primer escaneo para clientes prioritarios 🎁
+
+¿Podemos agendar una llamada de 10 min? 📞
+
+PRAETOR Intelligence
+
+
+📝 NOTAS DE SEGUIMIENTO:
+--------------------------------------------------------------------------------
+• Razón contacto: Empresa exportadora requiere seguridad de documentos
+• Caso de uso: Proteger comunicaciones con clientes internacionales
+• Presión: Alta
+• Próximo seguimiento: +3 días (si no responde)
+
+
+================================================================================
+PROSPECTO #17 - PRIORIDAD: Crítica
+================================================================================
+Empresa: Marketplace Baja California
+Sector: Retail Online
+Tipo: Plataforma de Ventas
+Email: soporte@marketplacebc.mx
+Caso de Uso: Plataforma multiseller con gestión de contactos
+
+📧 PLANTILLA EMAIL:
+--------------------------------------------------------------------------------
+Asunto: 🔒 URGENTE: Auditoría de Seguridad para Marketplace
+
+Hola,
+
+¿Sabes si tu dominio (marketplace.mx) está protegido contra suplantación de identidad y phishing?
+
+En Marketplace Baja California, manejan información sensible de clientes. Sin SPF/DMARC configurado correctamente, un atacante puede enviar correos falsos desde tu dominio, causando:
+
+✗ Pérdida de confianza con clientes
+✗ Cumbre de regulaciones (GDPR, SAT, LGPD)
+✗ Costo de breach: $100,000+
+
+Ofrecemos auditoría de seguridad en 5 segundos:
+✓ Score de riesgo (0-95)
+✓ Validación SPF/DMARC/SSL
+✓ Recomendaciones de remediación
+✓ Reporte ejecutivo en PDF
+
+💰 PRECIO ESPECIAL: Marketplace, por ser cliente prioritario ofrecemos 50% off en primer escaneo.
+
+¿Te interesa una auditoría rápida y gratuita? Respondé este email o contactame por WhatsApp.
+
+Saludos,
+PRAETOR Intelligence
+Threat Intelligence & Seguridad
+
+
+📱 PLANTILLA WHATSAPP:
+--------------------------------------------------------------------------------
+Hola 👋
+
+Vimos que Marketplace Baja California opera en el sector retail online.
+
+¿Sabés que sin SPF/DMARC correctamente configurado, tu dominio está expuesto a suplantación de identidad?
+
+En 5 segundos podemos hacer una auditoría de seguridad de tu infraestructura email:
+✓ Score de riesgo (0-95)
+✓ Detecta vulnerabilidades SPF/DMARC/SSL
+✓ Recomendaciones automáticas
+
+50% off en primer escaneo para clientes prioritarios 🎁
+
+¿Podemos agendar una llamada de 10 min? 📞
+
+PRAETOR Intelligence
+
+
+📝 NOTAS DE SEGUIMIENTO:
+--------------------------------------------------------------------------------
+• Razón contacto: Plataforma multiseller con gestión de contactos
+• Caso de uso: Auditoría integral de infraestructura email
+• Presión: Crítica
+• Próximo seguimiento: +3 días (si no responde)
+
+
+================================================================================
+PROSPECTO #18 - PRIORIDAD: Media
+================================================================================
+Empresa: Distribuidor Online Ensenada
+Sector: Distribución
+Tipo: Distribuidor
+Email: contacto@distribuidoronlineensensada.mx
+Caso de Uso: Distribuidor con B2B y B2C integrado
+
+📧 PLANTILLA EMAIL:
+--------------------------------------------------------------------------------
+Asunto: Auditoría de Seguridad para Distribuidor
+
+Hola,
+
+¿Sabes si tu dominio (distribuidor.mx) está protegido contra suplantación de identidad y phishing?
+
+En Distribuidor Online Ensenada, manejan información sensible de clientes. Sin SPF/DMARC configurado correctamente, un atacante puede enviar correos falsos desde tu dominio, causando:
+
+✗ Pérdida de confianza con clientes
+✗ Cumbre de regulaciones (GDPR, SAT, LGPD)
+✗ Costo de breach: $100,000+
+
+Ofrecemos auditoría de seguridad en 5 segundos:
+✓ Score de riesgo (0-95)
+✓ Validación SPF/DMARC/SSL
+✓ Recomendaciones de remediación
+✓ Reporte ejecutivo en PDF
+
+💰 PRECIO ESPECIAL: Distribuidor, por ser cliente prioritario ofrecemos 50% off en primer escaneo.
+
+¿Te interesa una auditoría rápida y gratuita? Respondé este email o contactame por WhatsApp.
+
+Saludos,
+PRAETOR Intelligence
+Threat Intelligence & Seguridad
+
+
+📱 PLANTILLA WHATSAPP:
+--------------------------------------------------------------------------------
+Hola 👋
+
+Vimos que Distribuidor Online Ensenada opera en el sector distribución.
+
+¿Sabés que sin SPF/DMARC correctamente configurado, tu dominio está expuesto a suplantación de identidad?
+
+En 5 segundos podemos hacer una auditoría de seguridad de tu infraestructura email:
+✓ Score de riesgo (0-95)
+✓ Detecta vulnerabilidades SPF/DMARC/SSL
+✓ Recomendaciones automáticas
+
+50% off en primer escaneo para clientes prioritarios 🎁
+
+¿Podemos agendar una llamada de 10 min? 📞
+
+PRAETOR Intelligence
+
+
+📝 NOTAS DE SEGUIMIENTO:
+--------------------------------------------------------------------------------
+• Razón contacto: Distribuidor con B2B y B2C integrado
+• Caso de uso: Separar seguridad de dominios por canal
+• Presión: Media
+• Próximo seguimiento: +3 días (si no responde)
+
+
+================================================================================
+PROSPECTO #19 - PRIORIDAD: Alta
+================================================================================
+Empresa: Hotel Boutique Ensenada
+Sector: Turismo / Hospitalidad
+Tipo: Industria Hotelera
+Email: info@hotelboutique.mx
+Caso de Uso: Hotel recibe reservas y datos de huéspedes por email
+
+📧 PLANTILLA EMAIL:
+--------------------------------------------------------------------------------
+Asunto: ✓ Auditoría de Seguridad para Hotel
+
+Hola,
+
+¿Sabes si tu dominio (hotel.mx) está protegido contra suplantación de identidad y phishing?
+
+En Hotel Boutique Ensenada, manejan información sensible de clientes. Sin SPF/DMARC configurado correctamente, un atacante puede enviar correos falsos desde tu dominio, causando:
+
+✗ Pérdida de confianza con clientes
+✗ Cumbre de regulaciones (GDPR, SAT, LGPD)
+✗ Costo de breach: $100,000+
+
+Ofrecemos auditoría de seguridad en 5 segundos:
+✓ Score de riesgo (0-95)
+✓ Validación SPF/DMARC/SSL
+✓ Recomendaciones de remediación
+✓ Reporte ejecutivo en PDF
+
+💰 PRECIO ESPECIAL: Hotel, por ser cliente prioritario ofrecemos 50% off en primer escaneo.
+
+¿Te interesa una auditoría rápida y gratuita? Respondé este email o contactame por WhatsApp.
+
+Saludos,
+PRAETOR Intelligence
+Threat Intelligence & Seguridad
+
+
+📱 PLANTILLA WHATSAPP:
+--------------------------------------------------------------------------------
+Hola 👋
+
+Vimos que Hotel Boutique Ensenada opera en el sector turismo / hospitalidad.
+
+¿Sabés que sin SPF/DMARC correctamente configurado, tu dominio está expuesto a suplantación de identidad?
+
+En 5 segundos podemos hacer una auditoría de seguridad de tu infraestructura email:
+✓ Score de riesgo (0-95)
+✓ Detecta vulnerabilidades SPF/DMARC/SSL
+✓ Recomendaciones automáticas
+
+50% off en primer escaneo para clientes prioritarios 🎁
+
+¿Podemos agendar una llamada de 10 min? 📞
+
+PRAETOR Intelligence
+
+
+📝 NOTAS DE SEGUIMIENTO:
+--------------------------------------------------------------------------------
+• Razón contacto: Hotel recibe reservas y datos de huéspedes por email
+• Caso de uso: Validar seguridad para GDPR y protección de datos
+• Presión: Alta
+• Próximo seguimiento: +3 días (si no responde)
+
+
+================================================================================
+PROSPECTO #20 - PRIORIDAD: Crítica
+================================================================================
+Empresa: Clínica Médica Ensenada
+Sector: Salud
+Tipo: Servicios de Salud
+Email: contacto@clinicamedicaensensada.mx
+Caso de Uso: Clínica maneja información médica sensible (HIPAA-like)
+
+📧 PLANTILLA EMAIL:
+--------------------------------------------------------------------------------
+Asunto: 🔒 URGENTE: Auditoría de Seguridad para Clínica
+
+Hola,
+
+¿Sabes si tu dominio (clínica.mx) está protegido contra suplantación de identidad y phishing?
+
+En Clínica Médica Ensenada, manejan información sensible de clientes. Sin SPF/DMARC configurado correctamente, un atacante puede enviar correos falsos desde tu dominio, causando:
+
+✗ Pérdida de confianza con clientes
+✗ Cumbre de regulaciones (GDPR, SAT, LGPD)
+✗ Costo de breach: $100,000+
+
+Ofrecemos auditoría de seguridad en 5 segundos:
+✓ Score de riesgo (0-95)
+✓ Validación SPF/DMARC/SSL
+✓ Recomendaciones de remediación
+✓ Reporte ejecutivo en PDF
+
+💰 PRECIO ESPECIAL: Clínica, por ser cliente prioritario ofrecemos 50% off en primer escaneo.
+
+¿Te interesa una auditoría rápida y gratuita? Respondé este email o contactame por WhatsApp.
+
+Saludos,
+PRAETOR Intelligence
+Threat Intelligence & Seguridad
+
+
+📱 PLANTILLA WHATSAPP:
+--------------------------------------------------------------------------------
+Hola 👋
+
+Vimos que Clínica Médica Ensenada opera en el sector salud.
+
+¿Sabés que sin SPF/DMARC correctamente configurado, tu dominio está expuesto a suplantación de identidad?
+
+En 5 segundos podemos hacer una auditoría de seguridad de tu infraestructura email:
+✓ Score de riesgo (0-95)
+✓ Detecta vulnerabilidades SPF/DMARC/SSL
+✓ Recomendaciones automáticas
+
+50% off en primer escaneo para clientes prioritarios 🎁
+
+¿Podemos agendar una llamada de 10 min? 📞
+
+PRAETOR Intelligence
+
+
+📝 NOTAS DE SEGUIMIENTO:
+--------------------------------------------------------------------------------
+• Razón contacto: Clínica maneja información médica sensible (HIPAA-like)
+• Caso de uso: Cumplimiento de normas de protección de datos sanitarios
+• Presión: Crítica
+• Próximo seguimiento: +3 días (si no responde)

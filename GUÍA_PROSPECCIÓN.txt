@@ -1,0 +1,258 @@
+🛡️ PRAETOR INTELLIGENCE - GUÍA DE PROSPECCIÓN COMERCIAL
+==========================================================
+
+📅 Fecha: 3 de Junio 2026
+🎯 Meta Esta Semana: Primera conversación comercial
+📍 Ubicación: Ensenada, Baja California
+
+==========================================================
+✅ MATERIALES LISTOS
+==========================================================
+
+1. 📄 PRAETOR_DEMO.pdf (7.3 KB)
+   └─ Presentación comercial de 6 páginas
+   └─ Listo para enviar por WhatsApp en < 30 segundos
+   └─ Incluye: Problema | Solución | Precios | Ventajas | Contacto
+
+2. 📋 prospectos_ensenada.json
+   └─ 20 empresas cualificadas en Ensenada
+   └─ Estructura: nombre, sector, email, caso de uso, prioridad
+
+3. 📧 PLANTILLAS_PROSPECCIÓN.txt
+   └─ 20 templates personalizados (1 por prospecto)
+   └─ Incluye: Email + WhatsApp + Notas de seguimiento
+
+4. 📊 prospectos_seguimiento.csv
+   └─ Tracker para registrar: contactado, respuesta, cierre
+   └─ Abre en Excel/Sheets para seguimiento en vivo
+
+==========================================================
+🚀 PLAN DE ACCIÓN - HORA POR HORA
+==========================================================
+
+HORA 1 (HOY - Mañana):
+─────────────────────
+[ ] 1. Verifica PRAETOR_DEMO.pdf está en carpeta raíz
+[ ] 2. Abre prospectos_seguimiento.csv en Google Sheets
+[ ] 3. Lee primeros 3 prospects de PLANTILLAS_PROSPECCIÓN.txt
+[ ] 4. Identifica los 5 de PRIORIDAD CRÍTICA (ver lista abajo)
+
+HORA 2-3 (HOY - Tarde):
+──────────────────────
+[ ] 1. Contacta 5 empresas de PRIORIDAD CRÍTICA
+      ├─ WhatsApp: Envía saludó + PRAETOR_DEMO.pdf
+      └─ Email: Copia template de PLANTILLAS_PROSPECCIÓN.txt
+
+[ ] 2. Registra en prospectos_seguimiento.csv
+      ├─ Fecha de contacto
+      ├─ Medio (WhatsApp/Email)
+      └─ Estado: "Enviado esperando respuesta"
+
+HORA 4-5 (MAÑANA):
+──────────────────
+[ ] 1. Seguimiento automático (si no responden en 2h)
+      └─ Mensaje: "¿Recibiste el PDF? Tengo 5min para explicar"
+
+[ ] 2. Próximos 5 PRIORIDAD ALTA
+      └─ Mismo proceso: WhatsApp + Email + Tracker
+
+SEMANA COMPLETA (Meta):
+───────────────────────
+[ ] Contactar los 20 prospectos
+[ ] 10-20% responda (2-4 empresas)
+[ ] 5% concreta primera llamada (1 empresa = ÉXITO)
+
+==========================================================
+⭐ PROSPECTOS PRIORIDAD CRÍTICA (CONTACTAR HOY)
+==========================================================
+
+1. García & Asociados - Contadores
+   📧 info@garciacontadores.mx
+   🎯 Caso: Despacho maneja información sensible
+
+2. Consultoría Fiscal Ensenada
+   📧 contacto@consultoriafiscalensensada.mx
+   🎯 Caso: SAT exige validación de seguridad
+
+3. Contadores Profesionales BC
+   📧 ventas@contadoresprobc.mx
+   🎯 Caso: Recibe declaraciones e información bancaria
+
+4. Marketplace Baja California
+   📧 soporte@marketplacebc.mx
+   🎯 Caso: Plataforma multiseller con gestión de contactos
+
+5. Clínica Médica Ensenada
+   📧 contacto@clinicamedicaensensada.mx
+   🎯 Caso: Maneja información médica sensible
+
+==========================================================
+📱 FLUJO WHATSAPP RECOMENDADO
+==========================================================
+
+MENSAJE 1 (Inmediato):
+──────────────────────
+"Hola 👋
+
+Vimos que [EMPRESA] opera en el sector [SECTOR].
+
+¿Sabés que sin SPF/DMARC correctamente configurado, tu dominio está expuesto a suplantación de identidad?
+
+En 5 segundos podemos hacer una auditoría de seguridad de tu infraestructura email:
+✓ Score de riesgo (0-95)
+✓ Detecta vulnerabilidades SPF/DMARC/SSL
+✓ Recomendaciones automáticas
+
+50% off en primer escaneo para clientes prioritarios 🎁
+
+Adjunto: PRAETOR_DEMO.pdf"
+
+SEGUIMIENTO (después de 2 horas):
+─────────────────────────────────
+"¿Recibiste el PDF? Tengo solo 5 minutos para explicarte cómo funciona. 
+¿Podemos hablar ahora? 📞"
+
+SEGUIMIENTO FINAL (día siguiente si no responde):
+──────────────────────────────────────────────────
+"Una última cosa: auditoría gratuita de tu dominio en 5 segundos.
+Sin compromiso. Sin costo.
+
+¿Interesado? 🤔"
+
+==========================================================
+📧 ESTRUCTURA EMAIL RECOMENDADO
+==========================================================
+
+LÍNEA DE ASUNTO (CRÍTICA):
+──────────────────────────
+"🔒 URGENTE: Auditoría de Seguridad para [EMPRESA]"
+o
+"✓ Auditoría de Seguridad en 5 segundos para [EMPRESA]"
+
+CUERPO:
+───────
+[Usar template de PLANTILLAS_PROSPECCIÓN.txt - personalizar nombre]
+
+CTA (Call To Action):
+─────────────────────
+"¿Podemos agendar 10 minutos esta semana?"
+o
+"Respondé este email o contactame por WhatsApp"
+
+==========================================================
+💡 TIPS DE PROSPECCIÓN
+==========================================================
+
+✅ HACER:
+├─ Personaliza cada mensaje (usa nombre de empresa)
+├─ Envía PDF + Seguimiento el mismo día
+├─ Registra TODO en CSV (evidencia de esfuerzo)
+├─ Contacta horario laboral (9-11am, 3-5pm)
+├─ Sé breve: máximo 3 mensajes por prospecto
+└─ Documenta cada interacción (fecha, respuesta, resultado)
+
+❌ NO HACER:
+├─ No envíes mensajes masivos sin personalizar
+├─ No esperes respuesta inmediata (24-48h es normal)
+├─ No abandones después de primer contacto
+├─ No hagas hard-sell (solo muestra valor)
+└─ No presiones: "Si no responde en 3 días, pasar al siguiente"
+
+==========================================================
+📊 MÉTRICAS DE ÉXITO
+==========================================================
+
+Contactos Totales: 20
+├─ CRÍTICA: 5
+├─ ALTA: 10
+└─ MEDIA: 5
+
+OBJETIVOS POR NIVEL:
+├─ CRÍTICA: 60% de respuesta esperada (3 de 5)
+├─ ALTA: 20% de respuesta esperada (2 de 10)
+└─ MEDIA: 10% de respuesta esperada (0-1 de 5)
+
+META ESTA SEMANA:
+├─ Contactos enviados: 20/20
+├─ Respuestas recibidas: 5-7
+└─ PRIMERA LLAMADA DE VENTA: 1 ✅ = ÉXITO
+
+==========================================================
+🔧 SETUP FINAL
+==========================================================
+
+1. CREAR CUENTA GMAIL/OUTLOOK para ventas@praetor.com
+   └─ Usar desde email profesional (no personal)
+
+2. VERIFICAR NÚMEROS WHATSAPP
+   └─ Cargar contactos en Whatsapp Business si tienes
+
+3. DESCARGAR EXCEL/SHEETS
+   └─ Abre prospectos_seguimiento.csv en Google Sheets
+   └─ Comparte con co-founder si aplica
+   └─ Setup: actualización en vivo
+
+4. IMPRIMIR O GUARDAR EN MÓVIL
+   └─ PRAETOR_DEMO.pdf en tu teléfono
+   └─ PLANTILLAS_PROSPECCIÓN.txt como copypaste rápido
+
+5. AGENDA RECORDATORIOS
+   └─ Lunes 10am: Envía crítica + alta (10 contactos)
+   └─ Martes 3pm: Seguimiento a no-respondedores
+   └─ Miércoles: Intentos finales + Próxima ola si falla
+
+==========================================================
+❓ PREGUNTAS QUE VAS A RECIBIR
+==========================================================
+
+P: "¿Cuánto cuesta?"
+R: "El escaneo básico cuesta $29 USD. Pero primero te muestro gratis 
+   cómo funciona. Luego defines qué plan necesitas."
+
+P: "¿Cuánto tiempo toma?"
+R: "El escaneo toma 5 segundos. El reporte lo recibes en 1 minuto. 
+   Podemos hablar hoy mismo si quieres verlo en vivo."
+
+P: "¿Quién eres?"
+R: "Soy de PRAETOR Intelligence. Hacemos auditorías de seguridad 
+   de dominios. Es nuestro core business. Podemos hacer una rápida 
+   para tu empresa sin costo."
+
+P: "Estoy ocupado"
+R: "Perfectamente. Son solo 5 minutos. ¿Martes a las 3pm o 
+   Miércoles a las 10am? Yo llamo."
+
+==========================================================
+🎯 SEMANA 2 (Si Primera Venta Falla)
+==========================================================
+
+├─ Expandir a otras ciudades BC (Tijuana, La Paz, Los Cabos)
+├─ Explorar otros sectores (Educación, Manufactura)
+├─ Crear versión en LinkedIn (ads)
+├─ Buscar resellers (agencias que vendan bajo su marca)
+└─ Preparar demostración en vivo (Zoom)
+
+==========================================================
+🚀 MANTRA DE ESTA SEMANA
+==========================================================
+
+"Cuando alguien te diga '¿Cuánto cuesta la auditoría?'
+PRAETOR deja de ser un proyecto y empieza a ser un negocio."
+
+No importa si es $29 o $500. Una venta = validación real.
+
+==========================================================
+📞 CONTACTO DE SOPORTE
+==========================================================
+
+Dudas sobre prospección? Abre PLANTILLAS_PROSPECCIÓN.txt
+Dudas sobre precios? Ver oferta_praetor.md
+Dudas sobre producto? Testear en http://127.0.0.1:5000/
+
+==========================================================
+
+✅ TODO LISTO PARA VENDER.
+
+Ahora es cuestión de HACER las llamadas.
+
+ÉXITO 🔥

@@ -1,0 +1,29 @@
+{
+  "domain": "google.com",
+  "scanned_at": "2026-06-03T17:06:33.092022Z",
+  "ip": "142.251.40.110",
+  "mx": [
+    {
+      "exchange": "smtp.google.com",
+      "preference": 10
+    }
+  ],
+  "txt": [
+    "docusign=1b0a6754-49b1-4db5-8540-d2c12664b289",
+    "google-site-verification=wD8N7i1JTNTkezJ49swvWW48f8_9xveREV4oB-0Hf5o",
+    "facebook-domain-verification=22rm551cu4k0ab0bxsw536tlds4h95",
+    "apple-domain-verification=30afIBcvSuDV2PLX",
+    "google-site-verification=4ibFUgB-wXLQ_S7vsXVomSTVamuOXBiVAzpR5IZ87D0",
+    "v=spf1 include:_spf.google.com ~all",
+    "cisco-ci-domain-verification=47c38bc8c4b74b7233e9053220c1bbe76bcc1cd33c7acf7acd36cd6a5332004b",
+    "onetrust-domain-verification=0d477fe608074e6f9c12bca7826035cc",
+    "docusign=05958488-4752-4ef2-95eb-aa7ba8a3bd0e",
+    "globalsign-smime-dv=CDYX+XFHUw2wml6/Gb8+59BsH31KzUr6c1l2BPvqKX8=",
+    "MS=E4A68B9AB2BB9670BCE15412F62916164C0B20BB",
+    "google-site-verification=TV9-DBe4R80X4v0M4U_bd_J9cpOJM0nikft0jAgjmsQ",
+    "onetrust-domain-verification=6d685f1d41a94696ad7ef771f68993e0"
+  ],
+  "spf": "v=spf1 include:_spf.google.com ~all",
+  "dmarc": "v=DMARC1; p=reject; rua=mailto:mailauth-reports@google.com",
+  "errors": []
+}

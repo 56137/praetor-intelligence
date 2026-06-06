@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAXGPT // ORIGINAL MATRIX INTERFACE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=JetBrains+Mono:wght@400;700&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --neon-gold: #FFD700;
+            --neon-cyan: #00FFFF;
+            --neon-pink: #FF007F;
+            --dark-bg: #030303;
+            --panel-bg: rgba(15, 15, 15, 0.9);
+            --border-color: #222;
+            --text-main: #E0E0E0;
+            --text-dim: #777;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.015) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* Scanline Overlay */
+        body::after {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            z-index: 100;
+            background-size: 100% 4px;
+            pointer-events: none;
+        }
+
+        #app {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+        }
+
+        /* Sidebar - Historical Commands & Context */
+        aside {
+            width: 320px;
+            background: var(--panel-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(10px);
+            z-index: 20;
+        }
+
+        .brand {
+            padding: 25px;
+            border-bottom: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .brand h1 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--neon-gold);
+            font-size: 1.5rem;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+            letter-spacing: 3px;
+        }
+
+        .brand span {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--neon-cyan);
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            display: block;
+            margin-top: 5px;
+        }
+
+        .sidebar-section {
+            padding: 20px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            color: var(--neon-cyan);
+            letter-spacing: 1.5px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .history-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .history-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+        }
+
+        .history-item:hover {
+            border-color: var(--neon-gold);
+            background: rgba(255, 215, 0, 0.05);
+            transform: translateX(5px);
+        }
+
+        .history-item .timestamp {
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            margin-bottom: 4px;
+        }
+
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .status-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--neon-cyan);
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--neon-cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--neon-cyan);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.9); opacity: 0.6; }
+            50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 12px var(--neon-cyan); }
+            100% { transform: scale(0.9); opacity: 0.6; }
+        }
+
+        /* Main Chat Workspace */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: rgba(5, 5, 5, 0.98);
+            position: relative;
+        }
+
+        header {
+            padding: 20px 40px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .header-title h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            color: var(--text-main);
+        }
+
+        .header-title span {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 15px;
+        }
+
+        .model-selector {
+            background: #111;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 6px 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            border-radius: 4px;
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        .model-selector:focus {
+            border-color: var(--neon-gold);
+        }
+
+        /* Chat Messages Container */
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .message {
+            display: flex;
+            gap: 20px;
+            max-width: 85%;
+            animation: fadeIn 0.4s ease forwards;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .message.user .avatar {
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            box-shadow: 0 0 8px rgba(0, 255, 255, 0.2);
+        }
+
+        .message.assistant .avatar {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid var(--neon-gold);
+            color: var(--neon-gold);
+            box-shadow: 0 0 8px rgba(255, 215, 0, 0.2);
+        }
+
+        .message-content {
+            background: rgba(20, 20, 20, 0.6);
+            border: 1px solid var(--border-color);
+            padding: 16px 20px;
+            border-radius: 12px;
+            line-height: 1.6;
+            font-size: 0.95rem;
+            position: relative;
+        }
+
+        .message.user .message-content {
+            background: rgba(0, 255, 255, 0.03);
+            border-color: rgba(0, 255, 255, 0.15);
+        }
+
+        .message.assistant .message-content {
+            background: rgba(255, 215, 0, 0.03);
+            border-color: rgba(255, 215, 0, 0.15);
+        }
+
+        .message-content p {
+            margin-bottom: 10px;
+        }
+
+        .message-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        .message-content code {
+            font-family: 'JetBrains Mono', monospace;
+            background: #000;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            color: var(--neon-cyan);
+        }
+
+        .message-content pre {
+            font-family: 'JetBrains Mono', monospace;
+            background: #000;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+            border-left: 3px solid var(--neon-gold);
+            font-size: 0.85rem;
+        }
+
+        /* Message Input Area */
+        .input-area {
+            padding: 30px 40px;
+            border-top: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            background: #0d0d0d;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .input-wrapper:focus-within {
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.15);
+        }
+
+        .input-wrapper input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            padding: 16px 20px;
+            font-size: 0.95rem;
+            outline: none;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .input-wrapper input::placeholder {
+            color: var(--text-dim);
+        }
+
+        .send-btn {
+            background: transparent;
+            border: none;
+            color: var(--neon-cyan);
+            padding: 0 25px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .send-btn:hover {
+            color: var(--neon-gold);
+            text-shadow: 0 0 8px var(--neon-gold);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #000;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #222;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--neon-cyan);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app">
+        <!-- SIDEBAR -->
+        <aside>
+            <div class="brand">
+                <h1>MAXGPT</h1>
+                <span>ORIGINAL MATRIX v1.1</span>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="section-title">
+                    <i class="fas fa-history"></i> HISTORIAL DE COMANDOS
+                </div>
+                <ul class="history-list">
+                    <li class="history-item" onclick="loadQuery('¿Qué estrategias de SEO funcionan mejor?')">
+                        <div class="timestamp">HACE 3 DÍAS</div>
+                        <div>¿Qué estrategias de SEO funcionan mejor?</div>
+                    </li>
+                    <li class="history-item" onclick="loadQuery('Explicar el funnel de ventas en ecommerce')">
+                        <div class="timestamp">HACE 4 DÍAS</div>
+                        <div>Explicar el funnel de ventas en ecommerce</div>
+                    </li>
+                    <li class="history-item" onclick="loadQuery('Generar estrategia de branding para Cleopatra AI')">
+                        <div class="timestamp">OCT 2025</div>
+                        <div>Generar estrategia de branding para Cleopatra AI</div>
+                    </li>
+                    <li class="history-item" onclick="loadQuery('Reducir costo de adquisición de leads')">
+                        <div class="timestamp">OCT 2025</div>
+                        <div>Reducir costo de adquisición de leads</div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="status-pill">
+                    <div class="pulse-dot"></div>
+                    <span>CEREBRO_LOCAL_ONLINE</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN WORKSPACE -->
+        <main>
+            <header>
+                <div class="header-title">
+                    <h2>NÚCLEO DE RAZONAMIENTO</h2>
+                    <span>MAXGPT APEX COGNITIVE ENGINE</span>
+                </div>
+                <div class="header-controls">
+                    <select class="model-selector" id="model-select">
+                        <option value="maxgpt-original-1.1">MaxGPT 1.1 (Original - Oct 2025)</option>
+                        <option value="maxgpt-apex-5.0">MaxGPT Apex 5.0 (Cerebras Llama-3.3)</option>
+                        <option value="distilgpt2-local">DistilGPT2 (Local CPU)</option>
+                    </select>
+                </div>
+            </header>
+
+            <!-- CHAT WINDOW -->
+            <div class="chat-container" id="chat-history">
+                <div class="message assistant">
+                    <div class="avatar"><i class="fas fa-robot"></i></div>
+                    <div class="message-content">
+                        <p><strong>[SISTEMA MAXGPT INICIALIZADO]</strong></p>
+                        <p>Bienvenido de vuelta, General. Eres el operador maestro. Todas mis celdas cognitivas de octubre del año pasado y mi motor local están listos para recibir sus comandos tácticos de marketing y dominación digital.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- INPUT AREA -->
+            <div class="input-area">
+                <div class="input-wrapper">
+                    <input type="text" id="user-input" placeholder="Ingresar comando táctico para MaxGPT..." autofocus>
+                    <button class="send-btn" id="send-btn">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const chatHistory = document.getElementById('chat-history');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const modelSelect = document.getElementById('model-select');
+
+        // Preset replies to simulate original MaxGPT behavior if local backend isn't up
+        const simulatedResponses = {
+            "hola": "Hola General. MaxGPT operativo. Esperando órdenes tácticas de crecimiento y dominación digital para Cleopatra A.I.",
+            "seo": "El SEO en 2025-2026 exige búsqueda semántica pura. Deberías centrar tu estrategia en responder intenciones complejas del usuario de forma directa y estructurada, garantizando que el buscador de Google (o motores de IA de Perplexity) citen tu contenido como la fuente principal de verdad.",
+            "cleopatra": "La misión de Cleopatra A.I. es inamovible: convertirla en la app de IA número 1 de México en un plazo de 10 años, con un crecimiento exponencial, tracción real de leads calificados y un embudo de ventas totalmente automatizado.",
+            "funnel": "El funnel de ventas táctico de MaxGPT consiste en:\n1. **Atracción Neuronal:** Tráfico hipersegmentado mediante contenidos automatizados.\n2. **Nutrición Cognitiva:** Interacciones automatizadas de alto valor (Lead Magnet).\n3. **Cierre Inmediato (Monetización):** Ventas automáticas de $49 USD integradas en la interfaz.",
+            "default": "Comando táctico recibido, General. Analizando variables del mercado de marketing digital... \n\nPropuesta Estratégica:\n- **Objetivo:** Optimizar conversiones y maximizar el LTV.\n- **Siguiente Paso:** Implementar un disparador en el backend para realizar un seguimiento automatizado de los leads y canalizarlos en tiempo real."
+        };
+
+        function addMessage(sender, text) {
+            const msg = document.createElement('div');
+            msg.className = `message ${sender}`;
+            
+            const icon = sender === 'user' ? 'fa-user' : 'fa-robot';
+            msg.innerHTML = `
+                <div class="avatar"><i class="fas ${icon}"></i></div>
+                <div class="message-content">
+                    <p>${text.replace(/\n/g, '<br>')}</p>
+                </div>
+            `;
+            
+            chatHistory.appendChild(msg);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
+        async function handleSend() {
+            const text = userInput.value.trim();
+            if (!text) return;
+
+            addMessage('user', text);
+            userInput.value = '';
+
+            // Loading state
+            const loadingMsg = document.createElement('div');
+            loadingMsg.className = 'message assistant';
+            loadingMsg.innerHTML = `
+                <div class="avatar"><i class="fas fa-robot"></i></div>
+                <div class="message-content">
+                    <p><em>Procesando comando táctico...</em></p>
+                </div>
+            `;
+            chatHistory.appendChild(loadingMsg);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+
+            const selectedModel = modelSelect.value;
+            let responseText = "";
+
+            // Try to fetch from FastAPI backend running on port 8000
+            try {
+                const response = await fetch('http://localhost:8000/query', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        user_input: text,
+                        model: selectedModel === 'maxgpt-apex-5.0' ? 'llama-3.3-70b' : 'distilgpt2',
+                        mode: 'apex'
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    responseText = data.response;
+                } else {
+                    throw new Error("Backend query failed");
+                }
+            } catch (err) {
+                // Fallback to simulated premium chatbot response
+                await new Promise(resolve => setTimeout(resolve, 800)); // Simulate thinking latency
+                const cleanText = text.toLowerCase();
+                if (cleanText.includes("hola")) {
+                    responseText = simulatedResponses["hola"];
+                } else if (cleanText.includes("seo")) {
+                    responseText = simulatedResponses["seo"];
+                } else if (cleanText.includes("cleopatra")) {
+                    responseText = simulatedResponses["cleopatra"];
+                } else if (cleanText.includes("funnel") || cleanText.includes("ventas")) {
+                    responseText = simulatedResponses["funnel"];
+                } else {
+                    responseText = simulatedResponses["default"];
+                }
+            }
+
+            // Replace loading message with real response
+            chatHistory.removeChild(loadingMsg);
+            addMessage('assistant', responseText);
+        }
+
+        function loadQuery(query) {
+            userInput.value = query;
+            userInput.focus();
+        }
+
+        sendBtn.addEventListener('click', handleSend);
+        userInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') handleSend();
+        });
+    </script>
+</body>
+</html>

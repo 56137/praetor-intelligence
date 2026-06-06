@@ -1,0 +1,92 @@
+[
+  {
+    "domain": "openai.com",
+    "email": "test@example.com",
+    "timestamp": "2026-06-03T17:56:29.966564",
+    "status": "new"
+  },
+  {
+    "domain": "openai.com",
+    "email": "test@example.com",
+    "timestamp": "2026-06-03T18:00:43.066721+00:00",
+    "status": "new"
+  },
+  {
+    "domain": "openai.com",
+    "email": "test@example.com",
+    "timestamp": "2026-06-03T18:03:49.437766+00:00",
+    "status": "new"
+  },
+  {
+    "domain": "microsoft.com",
+    "email": "ventas@example.com",
+    "score": 0,
+    "fecha": "2026-06-03",
+    "timestamp": "2026-06-03T18:05:01.183734+00:00",
+    "status": "new"
+  },
+  {
+    "domain": "microsoft.com",
+    "email": "ventas@example.com",
+    "score": 0,
+    "fecha": "2026-06-03",
+    "timestamp": "2026-06-03T18:06:11.178353+00:00",
+    "status": "new"
+  },
+  {
+    "domain": "github.com",
+    "email": "dev@empresa.com",
+    "score": 0,
+    "fecha": "2026-06-03",
+    "timestamp": "2026-06-03T18:13:31.440562+00:00",
+    "status": "new"
+  },
+  {
+    "domain": "example.com",
+    "email": "info@empresa.com",
+    "score": 0,
+    "fecha": "2026-06-03",
+    "timestamp": "2026-06-03T18:13:41.790010+00:00",
+    "status": "new"
+  },
+  {
+    "domain": "tesla.com",
+    "email": "luislameiro4@gmail.com",
+    "score": 40,
+    "fecha": "2026-06-03",
+    "timestamp": "2026-06-03T18:47:16.761045+00:00",
+    "status": "new"
+  },
+  {
+    "domain": "tesla.com",
+    "email": "luislameiro4@gmail.com",
+    "score": 40,
+    "fecha": "2026-06-04",
+    "timestamp": "2026-06-04T07:49:02.715612+00:00",
+    "status": "new"
+  },
+  {
+    "domain": "tesla.com",
+    "email": "maxesquerra@gmail.com",
+    "score": 40,
+    "fecha": "2026-06-04",
+    "timestamp": "2026-06-04T08:34:08.430295+00:00",
+    "status": "new"
+  },
+  {
+    "domain": "google.com",
+    "email": "test@test.com",
+    "score": 15,
+    "fecha": "2026-06-06",
+    "timestamp": "2026-06-06T01:57:44.147799+00:00",
+    "status": "new"
+  },
+  {
+    "domain": "google.com",
+    "email": "test@test.com",
+    "score": 15,
+    "fecha": "2026-06-06",
+    "timestamp": "2026-06-06T02:00:32.551404+00:00",
+    "status": "new"
+  }
+]

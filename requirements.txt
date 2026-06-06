@@ -1,0 +1,4 @@
+Flask>=3.0.0
+dnspython>=2.0.0
+python-whois>=0.9.6
+requests>=2.0.0

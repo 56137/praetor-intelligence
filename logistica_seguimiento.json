@@ -1,0 +1,44 @@
+[
+    {
+        "cliente": "Empresa_Alpha",
+        "impacto_1": "2026-05-10 02:23",
+        "impacto_2": "2026-05-13 02:23",
+        "impacto_3": "2026-05-17 02:23",
+        "estado": "cerrado"
+    },
+    {
+        "cliente": "Inmuebles_Beta",
+        "impacto_1": "2026-05-10 02:23",
+        "impacto_2": "2026-05-13 02:23",
+        "impacto_3": "2026-05-17 02:23",
+        "estado": "cerrado"
+    },
+    {
+        "cliente": "Crypto_Vault_X",
+        "impacto_1": "2026-05-10 02:23",
+        "impacto_2": "2026-05-13 02:23",
+        "impacto_3": "2026-05-17 02:23",
+        "estado": "cerrado"
+    },
+    {
+        "prospecto": "tu_correo@gmail.com",
+        "ultimo_impacto": "2026-05-10 02:50:30",
+        "contrato": "Propuesta_Base_15K",
+        "proximo_seguimiento": "2026-05-13",
+        "estado": "ENVIADO"
+    },
+    {
+        "prospecto": "otro_correo@gmail.com",
+        "ultimo_impacto": "2026-05-10 02:50:33",
+        "contrato": "Propuesta_Base_15K",
+        "proximo_seguimiento": "2026-05-13",
+        "estado": "ENVIADO"
+    },
+    {
+        "prospecto": "maxesquerra@gmail.com",
+        "ultimo_impacto": "2026-05-10 02:50:36",
+        "contrato": "Propuesta_Base_15K",
+        "proximo_seguimiento": "2026-05-13",
+        "estado": "ENVIADO"
+    }
+]

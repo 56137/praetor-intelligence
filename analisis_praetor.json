@@ -1,0 +1,20 @@
+[
+    {
+        "cliente": "Empresa_Alpha",
+        "potencial_usd": 95000,
+        "prioridad": "ALTA (CONTRATO CR\u00cdTICO)",
+        "accion": "CONTENT_FLOW"
+    },
+    {
+        "cliente": "Inmuebles_Beta",
+        "potencial_usd": 12000,
+        "prioridad": "EST\u00c1NDAR",
+        "accion": "CONTENT_FLOW"
+    },
+    {
+        "cliente": "Crypto_Vault_X",
+        "potencial_usd": 150000,
+        "prioridad": "ALTA (CONTRATO CR\u00cdTICO)",
+        "accion": "CONTENT_FLOW"
+    }
+]
