@@ -1,10 +1,19 @@
 import os
 import json
+import stripe
+
 from datetime import datetime, timezone
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, send_file
+
 from scan_target import scan_target
+from report_generator import generate_report
 
 app = Flask(__name__)
+
+# ── Stripe (una sola vez) ──────────────────────────────────────────────────────
+stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
+endpoint_secret = os.getenv("STRIPE_WEBHOOK_SECRET")
+
 LEADS_FILE = "leads.json"
 
 
@@ -38,36 +47,80 @@ def index():
 
 @app.route('/scan', methods=['POST'])
 def scan():
-    payload = request.get_json(silent=True)
-    if not payload:
-        return jsonify({'error': 'Request JSON inválido.'}), 400
-
+    payload = request.get_json()              # ✅ extrae el JSON del body
     domain = payload.get('domain', '').strip()
-    email = payload.get('contact', '').strip()
-    
+    email  = payload.get('email', '').strip()
+
     if not domain:
-        return jsonify({'error': 'Dominio requerido.'}), 400
+        return jsonify({"error": "Domain requerido"}), 400
 
     try:
-        report = scan_target(domain)
+        report  = scan_target(domain)
+        pdf_file = generate_report(report)
+        report["pdf_file"] = pdf_file
+
     except Exception as exc:
         scanned_at = datetime.now(timezone.utc).isoformat()
         save_lead(domain, email, score=None, scanned_at=scanned_at)
         return jsonify({
-            'domain': domain,
-            'scanned_at': scanned_at,
-            'risk_score': None,
-            'errors': [str(exc)],
-            'error': 'El escaneo falló. Lead guardado.'
+            "domain": domain,
+            "scanned_at": scanned_at,
+            "risk_score": None,
+            "errors": [str(exc)],
+            "error": "El escaneo falló. Lead guardado."
         }), 500
 
-    save_lead(domain, email, score=report.get('risk_score'), scanned_at=report.get('scanned_at'))
+    # ✅ Dentro de scan(), fuera del try/except
+    save_lead(
+        domain,
+        email,
+        score=report.get("risk_score"),
+        scanned_at=report.get("scanned_at")
+    )
     return jsonify(report)
 
 
-@app.route('/health')
-def health():
-    return jsonify({'status': 'ok'})
+@app.route('/success')                        # ✅ al nivel del módulo
+def success():
+    return """
+    <html>
+    <body style="font-family:Arial;text-align:center;padding-top:50px;">
+        <h1>✅ Pago recibido</h1>
+        <p>Tu reporte está listo.</p>
+        <a href="/download/REPORT_google.com.pdf">
+            <button>Descargar Reporte</button>
+        </a>
+    </body>
+    </html>
+    """
+
+
+@app.route('/stripe-webhook', methods=['POST'])
+def stripe_webhook():
+    payload    = request.data
+    sig_header = request.headers.get('Stripe-Signature')
+
+    try:
+        event = stripe.Webhook.construct_event(payload, sig_header, endpoint_secret)
+    except ValueError:
+        return jsonify({"error": "Payload inválido"}), 400
+    except stripe.error.SignatureVerificationError:
+        return jsonify({"error": "Firma inválida"}), 400
+
+    if event['type'] == 'checkout.session.completed':
+        session = event['data']['object']
+        # TODO: aquí puedes extraer session y enviar el PDF al cliente
+        pass
+
+    return jsonify({"status": "ok"}), 200
+
+
+@app.route("/download/<filename>")
+def download_report(filename):
+    file_path = os.path.join(os.getcwd(), filename)
+    if os.path.exists(file_path):
+        return send_file(file_path, as_attachment=True, download_name=filename)
+    return {"error": "Archivo no encontrado"}, 404
 
 
 if __name__ == '__main__':

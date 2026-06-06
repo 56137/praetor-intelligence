@@ -349,14 +349,12 @@
         }
 
         
-            function buyReport() {
+ function buyReport() {
     window.open(
-        'https://www.paypal.com/ncp/payment/ZEGC52BEGC3T4',
+        'https://buy.stripe.com/9B628s1ICf2p7zT8775AQ00',
         '_blank'
     );
-
-        }
-
+}
         function requestAudit() {
             if (!lastScanData) return;
             const email = document.getElementById('email').value || 'no@email.com';
@@ -403,20 +401,19 @@
             `;
             summary.style.display = 'block';
         }
+            function downloadReport() {
 
-        function downloadReport() {
-            if (!lastScanData) return;
-            const data = JSON.stringify(lastScanData, null, 2);
-            const blob = new Blob([data], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `praetor_report_${document.getElementById('company').value || 'scan'}.json`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-        }
+    const domain =
+        document.getElementById('company').value.trim();
+
+    if (!domain) {
+        alert("No hay dominio escaneado.");
+        return;
+    }
+
+    window.location.href =
+        "/download/REPORT_" + domain + ".pdf";
+}
     </script>
 </body>
 </html>
