@@ -1,0 +1,13 @@
+__pycache__/
+
+VERDUGO FILES/
+VERDUGO_FILES_EXTRAIDOS/
+*.zip
+
+*.pdf
+
+leads.json
+prospectos_ensenada.json
+prospectos_seguimiento.csv
+
+openai_report.json
