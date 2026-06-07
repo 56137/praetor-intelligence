@@ -8,7 +8,9 @@ from scan_target import scan_target
 from report_generator import generate_report
 
 app = Flask(__name__)
-
+@app.route('/health')
+def health():
+    return jsonify({"status": "ok"}), 200
 # ── Stripe (una sola vez) ──────────────────────────────────────────────────────
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 endpoint_secret = os.getenv("STRIPE_WEBHOOK_SECRET")
@@ -130,3 +132,4 @@ if __name__ == '__main__':
         print(f"ERROR: {e}", flush=True)
         import traceback
         traceback.print_exc()
+        
