@@ -168,5 +168,45 @@
     "fecha": "2026-06-06",
     "timestamp": "2026-06-06T11:56:38.731143+00:00",
     "status": "new"
+  },
+  {
+    "domain": "google.com",
+    "email": "test@test.com",
+    "score": 15,
+    "fecha": "2026-06-08",
+    "timestamp": "2026-06-08T21:55:37.405158+00:00",
+    "status": "new"
+  },
+  {
+    "domain": "google.com",
+    "email": "test@test.com",
+    "score": 15,
+    "fecha": "2026-06-08",
+    "timestamp": "2026-06-08T21:57:57.146285+00:00",
+    "status": "new"
+  },
+  {
+    "domain": "tesla.com",
+    "email": "prueba@test.com",
+    "score": 0,
+    "fecha": "2026-06-08",
+    "timestamp": "2026-06-08T22:03:12.420834+00:00",
+    "status": "new"
+  },
+  {
+    "domain": "Dominio: microsoft.com",
+    "email": "",
+    "score": null,
+    "fecha": "2026-06-08",
+    "timestamp": "2026-06-08T22:12:32.563411+00:00",
+    "status": "new"
+  },
+  {
+    "domain": "microsoft.com",
+    "email": "",
+    "score": 0,
+    "fecha": "2026-06-08",
+    "timestamp": "2026-06-08T22:14:32.245106+00:00",
+    "status": "new"
   }
 ]

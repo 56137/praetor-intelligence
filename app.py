@@ -39,30 +39,59 @@ def save_lead(domain, email, score=None, scanned_at=None):
 
     with open(LEADS_FILE, 'w') as f:
         json.dump(leads, f, indent=2)
+def health():
+    return {"status": "ok"}
 
 
 @app.route('/')
 def index():
-    return send_from_directory(os.getcwd(), 'ip_protection.html')
-
+    return send_from_directory(
+        os.getcwd(),
+        'ip_protection.html'
+    )
 
 @app.route('/scan', methods=['POST'])
 def scan():
-    payload = request.get_json()              # ✅ extrae el JSON del body
+
+    payload = request.get_json()
+
+    if not payload:
+        return jsonify({"error": "JSON requerido"}), 400
+
     domain = payload.get('domain', '').strip()
-    email  = payload.get('email', '').strip()
+    email = payload.get('email', '').strip()
 
     if not domain:
         return jsonify({"error": "Domain requerido"}), 400
 
     try:
-        report  = scan_target(domain)
+
+        report = scan_target(domain)
+
         pdf_file = generate_report(report)
+
         report["pdf_file"] = pdf_file
 
+        save_lead(
+            domain,
+            email,
+            score=report.get("risk_score"),
+            scanned_at=report.get("scanned_at")
+        )
+
+        return jsonify(report), 200
+
     except Exception as exc:
+
         scanned_at = datetime.now(timezone.utc).isoformat()
-        save_lead(domain, email, score=None, scanned_at=scanned_at)
+
+        save_lead(
+            domain,
+            email,
+            score=None,
+            scanned_at=scanned_at
+        )
+
         return jsonify({
             "domain": domain,
             "scanned_at": scanned_at,
