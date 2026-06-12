@@ -8,9 +8,13 @@ from scan_target import scan_target
 from report_generator import generate_report
 
 app = Flask(__name__)
+
+
 @app.route('/health')
 def health():
     return jsonify({"status": "ok"}), 200
+
+
 # ── Stripe (una sola vez) ──────────────────────────────────────────────────────
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 endpoint_secret = os.getenv("STRIPE_WEBHOOK_SECRET")
@@ -35,10 +39,11 @@ def save_lead(domain, email, score=None, scanned_at=None):
         "fecha": fecha,
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "status": "new"
-})
+    })
 
     with open(LEADS_FILE, 'w') as f:
         json.dump(leads, f, indent=2)
+
 
 @app.route('/')
 def index():
@@ -46,6 +51,7 @@ def index():
         os.getcwd(),
         'ip_protection.html'
     )
+
 
 @app.route('/scan', methods=['POST'])
 def scan():
@@ -97,14 +103,6 @@ def scan():
             "error": "El escaneo falló. Lead guardado."
         }), 500
 
-    # ✅ Dentro de scan(), fuera del try/except
-    save_lead(
-        domain,
-        email,
-        score=report.get("risk_score"),
-        scanned_at=report.get("scanned_at")
-    )
-    return jsonify(report)
 
 @app.route('/success')
 def success():
@@ -135,6 +133,7 @@ def success():
     </html>
     """
 
+
 @app.route('/stripe-webhook', methods=['POST'])
 def stripe_webhook():
     payload    = request.data
@@ -149,15 +148,30 @@ def stripe_webhook():
 
     if event['type'] == 'checkout.session.completed':
         session = event['data']['object']
-        # TODO: aquí puedes extraer session y enviar el PDF al cliente
-        pass
+        customer_email = session.get('customer_details', {}).get('email') or session.get('customer_email')
+
+        if customer_email and os.path.exists(LEADS_FILE):
+            with open(LEADS_FILE, 'r') as f:
+                leads = json.load(f)
+
+            matching = [l for l in leads if l.get('email') == customer_email]
+            if matching:
+                last_lead = matching[-1]
+                domain = last_lead['domain']
+                safe_name = domain.replace('.', '_').replace('/', '_')
+                pdf_filename = f'REPORT_{safe_name}.pdf'
+
+                last_lead['status'] = 'paid'
+                last_lead['pdf_file'] = pdf_filename
+                with open(LEADS_FILE, 'w') as f:
+                    json.dump(leads, f, indent=2)
 
     return jsonify({"status": "ok"}), 200
 
 
 @app.route("/download/<filename>")
 def download_report(filename):
-    file_path = os.path.join("/tmp", filename)  # Usa /tmp en Render
+    file_path = os.path.join(os.getcwd(), filename)
     if os.path.exists(file_path):
         return send_file(file_path, as_attachment=True, download_name=filename)
     return {"error": "Archivo no encontrado"}, 404
@@ -170,12 +184,4 @@ if __name__ == '__main__':
     except Exception as e:
         print(f"ERROR: {e}", flush=True)
         import traceback
-        @app.route("/contact")
-def contact():
-    @app.route("/contact")
-def contact():
-    return jsonify({
-        "message": "Solicitud recibida",
-        "email": "ventas@praetor.lat",
-        "instrucciones": "Por favor, envía un email a ventas@praetor.lat con los detalles de tu empresa"
-    }), 200
+        traceback.print_exc()
