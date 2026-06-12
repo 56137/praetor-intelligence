@@ -136,7 +136,7 @@ def success():
 
 @app.route('/stripe-webhook', methods=['POST'])
 def stripe_webhook():
-    payload    = request.data
+    payload = request.data
     sig_header = request.headers.get('Stripe-Signature')
 
     try:
@@ -148,7 +148,9 @@ def stripe_webhook():
 
     if event['type'] == 'checkout.session.completed':
         session = event['data']['object']
-        customer_email = session.get('customer_details', {}).get('email') or session.get('customer_email')
+
+        customer_details = session.get('customer_details') or {}
+        customer_email = customer_details.get('email') or session.get('customer_email')
 
         if customer_email and os.path.exists(LEADS_FILE):
             with open(LEADS_FILE, 'r') as f:
