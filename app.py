@@ -146,11 +146,12 @@ def stripe_webhook():
     except stripe.error.SignatureVerificationError:
         return jsonify({"error": "Firma inválida"}), 400
 
+    event = event.to_dict()
+
     if event['type'] == 'checkout.session.completed':
         session = event['data']['object']
 
-        customer_details = session.get('customer_details') or {}
-        customer_email = customer_details.get('email') or session.get('customer_email')
+        customer_email = session.get('customer_details', {}).get('email') or session.get('customer_email')
 
         if customer_email and os.path.exists(LEADS_FILE):
             with open(LEADS_FILE, 'r') as f:
