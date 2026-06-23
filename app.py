@@ -5,10 +5,19 @@
 
 import os
 import re
+import sys
 import json
 import uuid
 import stripe
 import logging
+
+# Windows consoles default to cp1252 and crash on emoji in print().
+# Force UTF-8 so local `python app.py` runs the same as Render.
+try:
+    sys.stdout.reconfigure(encoding='utf-8')
+    sys.stderr.reconfigure(encoding='utf-8')
+except Exception:
+    pass
 from datetime import datetime
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
