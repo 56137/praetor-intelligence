@@ -10,6 +10,7 @@ import json
 import uuid
 import stripe
 import logging
+import threading
 
 # Windows consoles default to cp1252 and crash on emoji in print().
 # Force UTF-8 so local `python app.py` runs the same as Render.
@@ -583,9 +584,8 @@ def success_page(report_id):
     # Obtener el PDF correcto
     pdf_file = get_pdf_for_report_id(report_id)
 
-    # Si no existe aún, generarlo aquí (fallback por si el webhook tardó o leads.json se borró)
+    # Si no existe aún, lanzar generación en background y responder inmediatamente
     if not pdf_file:
-        # Primero intentar desde leads.json
         leads_file = os.path.join(BASE_DIR, 'leads.json')
         try:
             with open(leads_file, 'r') as f:
@@ -594,16 +594,17 @@ def success_page(report_id):
             leads = []
         _, lead = find_lead_by_report_id(report_id, leads)
 
-        # Usar dominio de leads.json, o del query param si leads.json fue borrado
         domain = (lead.get('domain') if lead else None) or request.args.get('domain', 'unknown')
         plan = (lead.get('plan') if lead else None) or request.args.get('plan', 'express')
 
-        try:
-            result = generate_pdf_with_id(domain, report_id, depth=plan)
-            pdf_file = result['pdf_filename']
-            logger.info(f"📄 PDF generado en success: {pdf_file}")
-        except Exception as e:
-            logger.error(f"❌ Error generando PDF en success: {e}")
+        def _gen():
+            try:
+                generate_pdf_with_id(domain, report_id, depth=plan)
+                logger.info(f"📄 PDF generado en background: REPORT_{report_id}.pdf")
+            except Exception as e:
+                logger.error(f"❌ Error generando PDF en background: {e}")
+
+        threading.Thread(target=_gen, daemon=True).start()
 
     logger.info(f"📄 PDF SELECCIONADO: {pdf_file}")
     download_logger.info(f"📄 PDF para success: {pdf_file}")
