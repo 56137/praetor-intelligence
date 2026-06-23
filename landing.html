@@ -136,7 +136,7 @@
       <div class="findings" id="findings"></div>
 
       <div style="margin-top:22px">
-        <button class="btn" onclick="buyReport()">DESCARGAR REPORTE COMPLETO — $4.99 USD</button>
+        <button class="btn" onclick="buyReport()">DESCARGAR REPORTE COMPLETO — $99 MXN</button>
         <div style="height:10px"></div>
         <button class="btn btn-ghost" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">VER PLANES</button>
       </div>
@@ -189,7 +189,7 @@
       <div class="tier feat">
         <div class="tag">BETA · PRIMEROS 25</div>
         <h3>Express</h3>
-        <div class="price">$4.99 <small>USD / reporte</small></div>
+        <div class="price">$99 <small>MXN / reporte</small></div>
         <ul>
           <li>Auditoría base completa</li>
           <li>TLS, DNS, SPF/DMARC, cabeceras</li>
@@ -197,12 +197,12 @@
           <li>Recomendaciones priorizadas</li>
           <li>PDF ejecutivo + envío por correo</li>
         </ul>
-        <button class="btn" onclick="buyReport('express',499)">Comprar Express</button>
+        <button class="btn" onclick="buyReport('express',9900)">Comprar Express</button>
       </div>
       <div class="tier">
         <div class="tag">MÁS COMPLETO</div>
         <h3>Pro</h3>
-        <div class="price">$19.99 <small>USD / reporte</small></div>
+        <div class="price">$399 <small>MXN / reporte</small></div>
         <ul>
           <li>Todo lo de Express</li>
           <li>Subdominios vía Certificate Transparency</li>
@@ -210,7 +210,7 @@
           <li>CVE candidatos (con verificación manual)</li>
           <li>PDF técnico ampliado</li>
         </ul>
-        <button class="btn" onclick="buyReport('pro',1999)">Comprar Pro</button>
+        <button class="btn" onclick="buyReport('pro',39900)">Comprar Pro</button>
       </div>
       <div class="tier">
         <div class="tag">PRÓXIMAMENTE</div>
@@ -330,7 +330,7 @@ function render(d){
   $('result').scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 
-async function buyReport(plan='express', price=499){
+async function buyReport(plan='express', price=9900){
   if(!lastDomain){ alert('Primero escanea un dominio.'); return; }
   const email = prompt('¿A qué correo enviamos el reporte?');
   if(!email) return;

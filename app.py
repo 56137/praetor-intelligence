@@ -15,7 +15,6 @@ import logging
 # Force UTF-8 so local `python app.py` runs the same as Render.
 try:
     sys.stdout.reconfigure(encoding='utf-8')
-    sys.stderr.reconfigure(encoding='utf-8')
 except Exception:
     pass
 from datetime import datetime
@@ -29,9 +28,11 @@ CORS(app)
 # CONFIGURACIÓN
 # ==========================================
 
+# Secrets come ONLY from the environment (set them in Render → Environment).
+# Never hardcode live keys here — this file is in a public git repo.
 BASE_URL = os.getenv('BASE_URL', 'http://localhost:5000')
-STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', 'sk_test_...')
-STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET', 'whsec_test_123')
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', 'sk_test_placeholder')
+STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET', 'whsec_placeholder')
 
 stripe.api_key = STRIPE_SECRET_KEY
 
@@ -171,12 +172,12 @@ def send_report_email(email, pdf_path, domain, report_id):
     # Si tienes email_sender.py, importarlo y usarlo
     
     try:
-        # Ejemplo de envío (reemplazar con tu lógica real)
-        from email_sender import send_email_with_attachment
-        result = send_email_with_attachment(email, pdf_path, domain)
+        from email_sender import enviar_reporte_por_email
+        # enviar_reporte_por_email(email, dominio, pdf_filename) — accepts a full path
+        result = enviar_reporte_por_email(email, domain, pdf_path)
         email_logger.info(f"   - Resultado: {result}")
         email_logger.info(f"✅ EMAIL COMPLETADO - {email}")
-        return True
+        return result
     except Exception as e:
         email_logger.error(f"❌ Error enviando email: {str(e)}")
         return False
@@ -337,7 +338,7 @@ def create_checkout_session():
             payment_method_types=['card'],
             line_items=[{
                 'price_data': {
-                    'currency': 'usd',
+                    'currency': os.getenv('STRIPE_CURRENCY', 'mxn'),
                     'product_data': {
                         'name': f'PRAETOR Report - {domain}',
                         'description': f'Security analysis report for {domain}'
@@ -689,7 +690,13 @@ def not_found(e):
 
 @app.errorhandler(500)
 def server_error(e):
-    logger.error(f"❌ Error interno: {str(e)}")
+    import traceback
+    tb = traceback.format_exc()
+    logger.error(f"❌ Error interno: {str(e)}\n{tb}")
+    try:
+        webhook_logger.error(f"❌ Error interno (500):\n{tb}")
+    except Exception:
+        pass
     return jsonify({'error': 'Internal server error'}), 500
 
 # ==========================================
