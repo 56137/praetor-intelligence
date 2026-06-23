@@ -654,6 +654,88 @@ def success_page(report_id):
     </html>
     """
 
+@app.route('/test-payment', methods=['GET'])
+def test_payment():
+    """
+    Simula el flujo completo de pago sin cobrar nada.
+    Uso: /test-payment?domain=example.com&email=tu@email.com
+    Devuelve PASS/FAIL por cada paso.
+    """
+    domain = request.args.get('domain', 'example.com')
+    email  = request.args.get('email', 'test@praetor.lat')
+    report_id = 'TEST_' + str(uuid.uuid4())[:6]
+    results = {}
+
+    # PASO 1: Crear lead
+    try:
+        leads_file = os.path.join(BASE_DIR, 'leads.json')
+        try:
+            with open(leads_file, 'r') as f:
+                leads = json.load(f)
+        except Exception:
+            leads = []
+        leads.append({
+            'email': email, 'domain': domain,
+            'report_id': report_id, 'plan': 'express',
+            'status': 'pending', 'created_at': datetime.now().isoformat()
+        })
+        with open(leads_file, 'w') as f:
+            json.dump(leads, f, indent=2)
+        results['1_lead_creado'] = 'PASS'
+    except Exception as e:
+        results['1_lead_creado'] = f'FAIL: {e}'
+
+    # PASO 2: Generar PDF
+    pdf_path = None
+    try:
+        r = generate_pdf_with_id(domain, report_id, depth='express')
+        pdf_path = os.path.join(PDF_DIR, r['pdf_filename'])
+        results['2_pdf_generado'] = 'PASS' if os.path.exists(pdf_path) else 'FAIL: archivo no existe'
+    except Exception as e:
+        results['2_pdf_generado'] = f'FAIL: {e}'
+
+    # PASO 3: Archivo descargable (simula /download)
+    try:
+        exists = pdf_path and os.path.exists(pdf_path) and os.path.getsize(pdf_path) > 100
+        results['3_archivo_descargable'] = f'PASS ({os.path.getsize(pdf_path)} bytes)' if exists else 'FAIL: archivo vacío o inexistente'
+    except Exception as e:
+        results['3_archivo_descargable'] = f'FAIL: {e}'
+
+    # PASO 4: Simular webhook (marcar como pagado)
+    try:
+        with open(leads_file, 'r') as f:
+            leads = json.load(f)
+        for lead in leads:
+            if lead.get('report_id') == report_id:
+                lead['status'] = 'paid'
+                lead['paid_date'] = datetime.now().isoformat()
+                lead['pdf_file'] = os.path.basename(pdf_path) if pdf_path else None
+                break
+        with open(leads_file, 'w') as f:
+            json.dump(leads, f, indent=2)
+        results['4_webhook_simulado'] = 'PASS'
+    except Exception as e:
+        results['4_webhook_simulado'] = f'FAIL: {e}'
+
+    # PASO 5: Enviar email
+    try:
+        if pdf_path and os.path.exists(pdf_path):
+            ok = send_report_email(email, pdf_path, domain, report_id)
+            results['5_email'] = 'PASS' if ok else 'FAIL: send_report_email retornó False'
+        else:
+            results['5_email'] = 'SKIP: PDF no existe'
+    except Exception as e:
+        results['5_email'] = f'FAIL: {e}'
+
+    # RESUMEN
+    passed = sum(1 for v in results.values() if v.startswith('PASS'))
+    total  = len(results)
+    results['_resumen'] = f'{passed}/{total} pasos OK'
+    results['_report_id'] = report_id
+    results['_download_url'] = f'/download/{report_id}'
+
+    return jsonify(results), 200
+
 @app.route('/cron/monitor', methods=['POST', 'GET'])
 def cron_monitor():
     """
