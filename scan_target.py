@@ -17,28 +17,36 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # ── crt.sh Certificate Transparency lookup ─────────────────────────────────
 
-def enumerate_subdomains_ct(domain: str, timeout: float = 8.0) -> dict:
+def enumerate_subdomains_ct(domain: str, timeout: float = 15.0, retries: int = 2) -> dict:
     """
     Queries crt.sh for subdomains registered via Certificate Transparency logs.
     Returns {"subdomains": [...], "error": None|str}
     Only reads public certificate records — never touches the target server.
+
+    crt.sh is notoriously slow/flaky, so we retry on timeout. DNS-based
+    enumerate_subdomains() remains the always-available fallback.
     """
     result = {"subdomains": [], "error": None}
-    try:
-        url = f"https://crt.sh/?q=%.{domain}&output=json"
-        resp = requests.get(url, timeout=timeout, headers={"User-Agent": "PRAETOR-Scanner/1.0"})
-        resp.raise_for_status()
-        entries = resp.json()
-        seen = set()
-        for entry in entries:
-            name = entry.get("name_value", "")
-            for sub in name.splitlines():
-                sub = sub.strip().lower().lstrip("*.")
-                if sub and sub != domain and sub.endswith(f".{domain}") and sub not in seen:
-                    seen.add(sub)
-        result["subdomains"] = sorted(seen)
-    except Exception as exc:
-        result["error"] = str(exc)
+    url = f"https://crt.sh/?q=%.{domain}&output=json"
+    last_error = None
+    for attempt in range(retries):
+        try:
+            resp = requests.get(url, timeout=timeout, headers={"User-Agent": "PRAETOR-Scanner/1.0"})
+            resp.raise_for_status()
+            entries = resp.json()
+            seen = set()
+            for entry in entries:
+                name = entry.get("name_value", "")
+                for sub in name.splitlines():
+                    sub = sub.strip().lower().lstrip("*.")
+                    if sub and sub != domain and sub.endswith(f".{domain}") and sub not in seen:
+                        seen.add(sub)
+            result["subdomains"] = sorted(seen)
+            return result
+        except Exception as exc:
+            last_error = str(exc)
+            continue
+    result["error"] = f"crt.sh unavailable after {retries} attempts: {last_error}"
     return result
 
 
