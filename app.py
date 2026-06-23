@@ -400,134 +400,75 @@ def stripe_webhook():
         if not isinstance(metadata, dict):
             metadata = dict(metadata)
         report_id = metadata.get('report_id')
-        domain = metadata.get('domain')
-        plan = metadata.get('plan', 'express')
+        domain    = metadata.get('domain')
+        plan      = metadata.get('plan', 'express')
         session_id = sd.get('id')
-        
-        # ==========================================
-        # LOGGING DETALLADO
-        # ==========================================
-        webhook_logger.info(f"💰 WEBHOOK RECIBIDO")
-        webhook_logger.info(f"   - customer_email: {customer_email}")
-        webhook_logger.info(f"   - report_id: {report_id}")
-        webhook_logger.info(f"   - domain: {domain}")
-        webhook_logger.info(f"   - session_id: {session_id}")
-        
-        logger.info(f"📧 EMAIL STRIPE: {customer_email}")
-        logger.info(f"📋 REPORT ID: {report_id}")
-        logger.info(f"🌐 DOMAIN: {domain}")
-        
-        # Cargar leads
+
+        webhook_logger.info(f"💰 WEBHOOK: {customer_email} | {domain} | {report_id}")
+
+        # 1. Guardar status=paid en leads.json INMEDIATAMENTE
         leads_file = os.path.join(BASE_DIR, 'leads.json')
         try:
             with open(leads_file, 'r') as f:
                 leads = json.load(f)
-        except:
+        except Exception:
             leads = []
-        
-        # Buscar lead por email O por report_id
+
         idx, lead = find_lead_by_email(customer_email, leads)
         if idx is None:
             idx, lead = find_lead_by_report_id(report_id, leads)
-        
-        # ==========================================
-        # LOGGING DE MATCHING
-        # ==========================================
+
         if lead:
-            webhook_logger.info(f"🔍 LEAD ENCONTRADO")
-            webhook_logger.info(f"   - Domain: {lead.get('domain')}")
-            webhook_logger.info(f"   - Email: {lead.get('email')}")
-            webhook_logger.info(f"   - Status actual: {lead.get('status')}")
-            webhook_logger.info(f"   - PDF actual: {lead.get('pdf_file')}")
-            
-            logger.info(f"🔍 LEAD ENCONTRADO: {lead.get('domain')} - {lead.get('email')}")
-            
-            # Generar PDF si no existe
-            lead_plan = lead.get('plan', plan)
-            if not lead.get('pdf_file'):
-                pdf_result = generate_pdf_with_id(domain, report_id, depth=lead_plan)
-                pdf_file = pdf_result['pdf_filename']
-                webhook_logger.info(f"   - PDF generado: {pdf_file}")
-            else:
-                pdf_file = lead.get('pdf_file')
-                pdf_path = os.path.join(PDF_DIR, pdf_file)
-                if not os.path.exists(pdf_path):
-                    pdf_result = generate_pdf_with_id(domain, report_id, depth=lead_plan)
-                    pdf_file = pdf_result['pdf_filename']
-                    webhook_logger.info(f"   - PDF regenerado: {pdf_file}")
-                else:
-                    webhook_logger.info(f"   - PDF existente: {pdf_file}")
-            
-            # Cambiar status a paid
-            old_status = lead.get('status')
-            leads[idx]['status'] = 'paid'
-            leads[idx]['paid_date'] = datetime.now().isoformat()
+            leads[idx]['status']         = 'paid'
+            leads[idx]['paid_date']      = datetime.now().isoformat()
             leads[idx]['stripe_session'] = session_id
-            leads[idx]['pdf_file'] = pdf_file
-            leads[idx]['domain'] = domain or lead.get('domain')
-            
-            webhook_logger.info(f"   - Status cambiado: {old_status} → paid")
-            webhook_logger.info(f"   - PDF asociado: {pdf_file}")
-            
-            # Guardar leads actualizados
-            with open(leads_file, 'w') as f:
-                json.dump(leads, f, indent=2)
-            
-            webhook_logger.info(f"   - leads.json guardado")
-            webhook_logger.info(f"✅ WEBHOOK COMPLETADO - {customer_email}")
-            
-            logger.info(f"✅ STATUS ACTUALIZADO A 'paid' para {customer_email}")
-            logger.info(f"📄 PDF ASOCIADO: {pdf_file}")
-            
-            # Enviar email con el PDF
-            pdf_path = os.path.join(PDF_DIR, pdf_file)
-            send_report_email(customer_email, pdf_path, domain, report_id)
-            
-            return jsonify({
-                'status': 'success',
-                'email': customer_email,
-                'pdf_file': pdf_file,
-                'domain': domain or lead.get('domain')
-            }), 200
-            
+            leads[idx]['domain']         = domain or lead.get('domain')
+            effective_domain = leads[idx]['domain']
+            effective_plan   = leads[idx].get('plan', plan)
         else:
-            # Si no hay match, crear nuevo lead
-            webhook_logger.warning(f"⚠️ LEAD NO ENCONTRADO - {customer_email}")
-            logger.warning(f"⚠️ No se encontró lead para {customer_email}, creando nuevo...")
-            
-            # Generar PDF
-            pdf_result = generate_pdf_with_id(domain or 'unknown', report_id, depth=plan)
-            pdf_file = pdf_result['pdf_filename']
-            webhook_logger.info(f"   - PDF generado: {pdf_file}")
-            
-            new_lead = {
-                'email': customer_email,
-                'domain': domain or 'unknown',
-                'report_id': report_id,
-                'pdf_file': pdf_file,
-                'status': 'paid',
-                'paid_date': datetime.now().isoformat(),
+            effective_domain = domain or 'unknown'
+            effective_plan   = plan
+            leads.append({
+                'email': customer_email, 'domain': effective_domain,
+                'report_id': report_id, 'plan': effective_plan,
+                'status': 'paid', 'paid_date': datetime.now().isoformat(),
                 'stripe_session': session_id
-            }
-            leads.append(new_lead)
-            
-            with open(leads_file, 'w') as f:
-                json.dump(leads, f, indent=2)
-            
-            webhook_logger.info(f"✅ Nuevo lead creado: {customer_email} - {domain}")
-            logger.info(f"✅ Nuevo lead creado: {customer_email} - {domain}")
-            
-            # Enviar email con el PDF
-            pdf_path = os.path.join(PDF_DIR, pdf_file)
-            send_report_email(customer_email, pdf_path, domain, report_id)
-            
-            return jsonify({
-                'status': 'success',
-                'email': customer_email,
-                'pdf_file': pdf_file,
-                'domain': domain or 'unknown'
-            }), 200
-    
+            })
+            idx = len(leads) - 1
+
+        with open(leads_file, 'w') as f:
+            json.dump(leads, f, indent=2)
+
+        webhook_logger.info(f"✅ leads.json actualizado a 'paid' para {customer_email}")
+
+        # 2. PDF + email en background — Stripe recibe 200 ya
+        def _background_work():
+            try:
+                result   = generate_pdf_with_id(effective_domain, report_id, depth=effective_plan)
+                pdf_file = result['pdf_filename']
+                pdf_path_bg = os.path.join(PDF_DIR, pdf_file)
+                # actualizar leads con pdf_file
+                try:
+                    with open(leads_file, 'r') as f:
+                        ls = json.load(f)
+                    for l in ls:
+                        if l.get('report_id') == report_id:
+                            l['pdf_file'] = pdf_file
+                            break
+                    with open(leads_file, 'w') as f:
+                        json.dump(ls, f, indent=2)
+                except Exception:
+                    pass
+                webhook_logger.info(f"📄 PDF listo: {pdf_file}")
+                send_report_email(customer_email, pdf_path_bg, effective_domain, report_id)
+                webhook_logger.info(f"📧 Email enviado a {customer_email}")
+            except Exception as e:
+                webhook_logger.error(f"❌ Error en background_work: {e}")
+
+        threading.Thread(target=_background_work, daemon=True).start()
+
+        return jsonify({'status': 'queued', 'report_id': report_id}), 200
+
     return jsonify({'status': 'ok'}), 200
 
 @app.route('/download/<report_id>')
@@ -731,15 +672,18 @@ def test_payment():
     except Exception as e:
         results['4_webhook_sim'] = f'FAIL: {e}'
 
-    # PASO 5: Email
-    try:
-        if pdf_path and os.path.exists(pdf_path):
-            ok = send_report_email(email, pdf_path, domain, report_id)
-            results['5_email'] = 'PASS — enviado' if ok else 'FAIL: send_report_email retornó False (revisa GMAIL_USER/GMAIL_APP_PASSWORD en Render)'
-        else:
-            results['5_email'] = 'SKIP: PDF no existe'
-    except Exception as e:
-        results['5_email'] = f'FAIL: {e}'
+    # PASO 5: Email (en thread para no bloquear >30s)
+    email_result = [None]
+    def _send():
+        try:
+            ok = send_report_email(email, pdf_path, domain, report_id) if (pdf_path and os.path.exists(pdf_path)) else False
+            email_result[0] = 'PASS' if ok else 'FAIL: retornó False (revisa GMAIL_USER/GMAIL_APP_PASSWORD en Render)'
+        except Exception as e:
+            email_result[0] = f'FAIL: {e}'
+    t = threading.Thread(target=_send, daemon=True)
+    t.start()
+    t.join(timeout=15)
+    results['5_email'] = email_result[0] if email_result[0] else 'FAIL: timeout SMTP >15s'
 
     passed = sum(1 for v in results.values() if str(v).startswith('PASS'))
     results['_resumen']      = f'{passed}/5 pasos OK'
