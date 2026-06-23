@@ -28,12 +28,11 @@ CORS(app)
 # CONFIGURACIÓN
 # ==========================================
 
-# Secrets come ONLY from the environment (set them in Render → Environment).
-# Never hardcode live keys here — this file is in a public git repo.
 BASE_URL = os.getenv('BASE_URL', 'http://localhost:5000')
+GMAIL_APP_PASSWORD = os.getenv('GMAIL_APP_PASSWORD', '')
+GMAIL_USER = os.getenv('GMAIL_USER', '')
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', 'sk_test_placeholder')
 STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET', 'whsec_placeholder')
-
 stripe.api_key = STRIPE_SECRET_KEY
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -394,11 +393,18 @@ def stripe_webhook():
     # Procesar evento
     if event['type'] == 'checkout.session.completed':
         session = event['data']['object']
-        customer_email = session.get('customer_details', {}).get('email')
-        report_id = session.get('metadata', {}).get('report_id')
-        domain = session.get('metadata', {}).get('domain')
-        plan = session.get('metadata', {}).get('plan', 'express')
-        session_id = session.get('id')
+        sd = dict(session)
+        customer_details = sd.get('customer_details') or {}
+        if not isinstance(customer_details, dict):
+            customer_details = dict(customer_details)
+        customer_email = customer_details.get('email')
+        metadata = sd.get('metadata') or {}
+        if not isinstance(metadata, dict):
+            metadata = dict(metadata)
+        report_id = metadata.get('report_id')
+        domain = metadata.get('domain')
+        plan = metadata.get('plan', 'express')
+        session_id = sd.get('id')
         
         # ==========================================
         # LOGGING DETALLADO
