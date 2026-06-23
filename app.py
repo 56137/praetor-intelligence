@@ -348,6 +348,7 @@ def create_checkout_session():
                 'quantity': 1,
             }],
             mode='payment',
+            customer_creation='always',
             success_url=f'{BASE_URL}/success/{report_id}?domain={domain}&plan={plan}',
             cancel_url=f'{BASE_URL}',
             metadata={
@@ -360,6 +361,7 @@ def create_checkout_session():
         # Solo fijar el correo si es válido; si no, Stripe lo pedirá en su página
         if email:
             session_params['customer_email'] = email
+            session_params['receipt_email'] = email
         session = stripe.checkout.Session.create(**session_params)
         
         logger.info(f"💰 Sesión de Stripe creada: {session.id} para {domain} - {email}")
@@ -447,11 +449,12 @@ def stripe_webhook():
 
         webhook_logger.info(f"✅ leads.json actualizado a 'paid' para {customer_email}")
 
-        # 2. Generar PDF en background — Stripe recibe 200 ya. SIN correo.
+        # 2. Generar PDF en background — Stripe recibe 200 ya.
         def _background_work():
             try:
                 result   = generate_pdf_with_id(effective_domain, report_id, depth=effective_plan)
                 pdf_file = result['pdf_filename']
+                pdf_path = result['pdf_path']
                 # actualizar leads con pdf_file
                 try:
                     with open(leads_file, 'r') as f:
@@ -465,6 +468,13 @@ def stripe_webhook():
                 except Exception:
                     pass
                 webhook_logger.info(f"📄 PDF listo: {pdf_file}")
+                # Enviar email con el reporte adjunto
+                if customer_email:
+                    try:
+                        send_report_email(customer_email, pdf_path, effective_domain, report_id)
+                        webhook_logger.info(f"📧 Email enviado a: {customer_email}")
+                    except Exception as e:
+                        webhook_logger.error(f"❌ Error enviando email: {e}")
             except Exception as e:
                 webhook_logger.error(f"❌ Error en background_work: {e}")
 
