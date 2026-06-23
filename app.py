@@ -4,6 +4,7 @@
 # ==========================================
 
 import os
+import re
 import json
 import uuid
 import stripe
@@ -175,18 +176,74 @@ def send_report_email(email, pdf_path, domain, report_id):
 # RUTAS DE API
 # ==========================================
 
+LANDING_FILE = os.path.join(BASE_DIR, 'landing.html')
+
+
 @app.route('/')
 def home():
+    """Serve the landing page if present, else fall back to JSON status."""
+    if os.path.exists(LANDING_FILE):
+        with open(LANDING_FILE, 'r', encoding='utf-8') as f:
+            return f.read(), 200, {'Content-Type': 'text/html; charset=utf-8'}
     return jsonify({
         'name': 'PRAETOR Intelligence',
         'version': '1.0.0',
         'status': 'online',
-        'endpoints': {
-            '/download/<report_id>': 'Descargar PDF',
-            '/success/<report_id>': 'Página de éxito con descarga',
-            '/webhook/stripe': 'Webhook de Stripe',
-            '/create-checkout-session': 'Crear sesión de Stripe'
-        }
+    })
+
+
+@app.route('/api/health')
+def api_health():
+    return jsonify({'status': 'online', 'version': '1.0.0'})
+
+
+@app.route('/scan', methods=['POST'])
+def scan_preview():
+    """
+    Free express preview scan. Returns a JSON summary — NOT the full report.
+    The full PDF (with recommendations, subdomains, CVEs) is behind payment.
+    """
+    try:
+        from scan_target import scan_target, _is_valid_domain
+    except Exception as e:
+        return jsonify({'error': f'Scanner unavailable: {e}'}), 500
+
+    data = request.get_json(silent=True) or {}
+    domain = (data.get('domain') or '').strip().lower()
+    # strip scheme/path if the user pasted a URL
+    domain = re.sub(r'^https?://', '', domain).split('/')[0]
+
+    if not _is_valid_domain(domain):
+        return jsonify({'error': 'Dominio no válido. Usa un formato como: empresa.com'}), 400
+
+    scan_logger.info(f"Free preview scan: {domain}")
+    try:
+        r = scan_target(domain, depth='express')
+    except Exception as e:
+        scan_logger.error(f"Preview scan failed for {domain}: {e}")
+        return jsonify({'error': f'No se pudo escanear {domain}.'}), 502
+
+    ssl_info = r.get('ssl') or {}
+    findings = []
+    if not r.get('spf'):
+        findings.append('Sin registro SPF (riesgo de suplantación de correo)')
+    if not r.get('dmarc'):
+        findings.append('Sin política DMARC (protección anti-phishing débil)')
+    if ssl_info.get('error'):
+        findings.append('Problema con el certificado SSL/TLS')
+
+    return jsonify({
+        'domain': r.get('domain'),
+        'ip': r.get('ip'),
+        'risk_score': r.get('risk_score'),
+        'risk_level': r.get('risk_level'),
+        'spf_configured': bool(r.get('spf')),
+        'dmarc_configured': bool(r.get('dmarc')),
+        'ssl_ok': not bool(ssl_info.get('error')),
+        'ssl_issuer': ssl_info.get('issuer'),
+        'technologies': r.get('technologies') or [],
+        'key_findings': findings,
+        'scanned_at': r.get('scanned_at'),
     })
 
 @app.route('/status')
