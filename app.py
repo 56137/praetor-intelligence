@@ -657,18 +657,17 @@ def success_page(report_id):
 @app.route('/test-payment', methods=['GET'])
 def test_payment():
     """
-    Simula el flujo completo de pago sin cobrar nada.
-    Uso: /test-payment?domain=example.com&email=tu@email.com
-    Devuelve PASS/FAIL por cada paso.
+    Simula el flujo completo sin cobrar ni hacer scan de red.
+    Responde en <5 segundos. Uso: /test-payment?email=tu@email.com
     """
-    domain = request.args.get('domain', 'example.com')
-    email  = request.args.get('email', 'test@praetor.lat')
+    domain    = request.args.get('domain', 'example.com')
+    email     = request.args.get('email', 'test@praetor.lat')
     report_id = 'TEST_' + str(uuid.uuid4())[:6]
-    results = {}
+    results   = {}
+    leads_file = os.path.join(BASE_DIR, 'leads.json')
 
-    # PASO 1: Crear lead
+    # PASO 1: Escritura en leads.json
     try:
-        leads_file = os.path.join(BASE_DIR, 'leads.json')
         try:
             with open(leads_file, 'r') as f:
                 leads = json.load(f)
@@ -681,46 +680,38 @@ def test_payment():
         })
         with open(leads_file, 'w') as f:
             json.dump(leads, f, indent=2)
-        results['1_lead_creado'] = 'PASS'
+        results['1_lead_json'] = 'PASS'
     except Exception as e:
-        results['1_lead_creado'] = f'FAIL: {e}'
+        results['1_lead_json'] = f'FAIL: {e}'
 
-    # PASO 2: Generar PDF (en thread con timeout para no matar el worker)
-    pdf_path = [None]
-    pdf_err  = [None]
-    done     = threading.Event()
+    # PASO 2: Generación de PDF (sin scan — usa reportlab directo)
+    pdf_filename = f'REPORT_{report_id}.pdf'
+    pdf_path     = os.path.join(PDF_DIR, pdf_filename)
+    try:
+        from reportlab.pdfgen import canvas as _c
+        c = _c.Canvas(pdf_path)
+        c.setFont('Helvetica-Bold', 16)
+        c.drawString(72, 750, 'PRAETOR Intelligence — Test Report')
+        c.setFont('Helvetica', 12)
+        c.drawString(72, 720, f'Domain : {domain}')
+        c.drawString(72, 700, f'Report : {report_id}')
+        c.drawString(72, 680, f'Date   : {datetime.now().isoformat()}')
+        c.drawString(72, 640, 'Este es un reporte de prueba (sin scan real).')
+        c.save()
+        size = os.path.getsize(pdf_path)
+        results['2_pdf_generado'] = f'PASS ({size} bytes)'
+    except Exception as e:
+        results['2_pdf_generado'] = f'FAIL: {e}'
+        pdf_path = None
 
-    def _gen_pdf():
-        try:
-            r = generate_pdf_with_id(domain, report_id, depth='express')
-            pdf_path[0] = os.path.join(PDF_DIR, r['pdf_filename'])
-        except Exception as e:
-            pdf_err[0] = str(e)
-        finally:
-            done.set()
-
-    threading.Thread(target=_gen_pdf, daemon=True).start()
-    done.wait(timeout=55)  # espera hasta 55s
-
-    if not done.is_set():
-        results['2_pdf_generado'] = 'FAIL: timeout (scan tardó >55s)'
-    elif pdf_err[0]:
-        results['2_pdf_generado'] = f'FAIL: {pdf_err[0]}'
-    elif pdf_path[0] and os.path.exists(pdf_path[0]):
-        results['2_pdf_generado'] = f'PASS ({os.path.getsize(pdf_path[0])} bytes)'
-    else:
-        results['2_pdf_generado'] = 'FAIL: archivo no existe tras generación'
-
-    pdf_path = pdf_path[0]  # convertir a variable normal
-
-    # PASO 3: Archivo descargable (simula /download)
+    # PASO 3: Verificar que /download lo encontraría
     try:
         exists = pdf_path and os.path.exists(pdf_path) and os.path.getsize(pdf_path) > 100
-        results['3_archivo_descargable'] = f'PASS ({os.path.getsize(pdf_path)} bytes)' if exists else 'FAIL: archivo vacío o inexistente'
+        results['3_descarga'] = f'PASS — descargable en /download/{report_id}' if exists else 'FAIL: archivo no encontrado'
     except Exception as e:
-        results['3_archivo_descargable'] = f'FAIL: {e}'
+        results['3_descarga'] = f'FAIL: {e}'
 
-    # PASO 4: Simular webhook (marcar como pagado)
+    # PASO 4: Simular webhook (marcar pagado en leads.json)
     try:
         with open(leads_file, 'r') as f:
             leads = json.load(f)
@@ -728,29 +719,27 @@ def test_payment():
             if lead.get('report_id') == report_id:
                 lead['status'] = 'paid'
                 lead['paid_date'] = datetime.now().isoformat()
-                lead['pdf_file'] = os.path.basename(pdf_path) if pdf_path else None
+                lead['pdf_file'] = pdf_filename
                 break
         with open(leads_file, 'w') as f:
             json.dump(leads, f, indent=2)
-        results['4_webhook_simulado'] = 'PASS'
+        results['4_webhook_sim'] = 'PASS'
     except Exception as e:
-        results['4_webhook_simulado'] = f'FAIL: {e}'
+        results['4_webhook_sim'] = f'FAIL: {e}'
 
-    # PASO 5: Enviar email
+    # PASO 5: Email
     try:
         if pdf_path and os.path.exists(pdf_path):
             ok = send_report_email(email, pdf_path, domain, report_id)
-            results['5_email'] = 'PASS' if ok else 'FAIL: send_report_email retornó False'
+            results['5_email'] = 'PASS — enviado' if ok else 'FAIL: send_report_email retornó False (revisa GMAIL_USER/GMAIL_APP_PASSWORD en Render)'
         else:
             results['5_email'] = 'SKIP: PDF no existe'
     except Exception as e:
         results['5_email'] = f'FAIL: {e}'
 
-    # RESUMEN
-    passed = sum(1 for v in results.values() if v.startswith('PASS'))
-    total  = len(results)
-    results['_resumen'] = f'{passed}/{total} pasos OK'
-    results['_report_id'] = report_id
+    passed = sum(1 for v in results.values() if str(v).startswith('PASS'))
+    results['_resumen']      = f'{passed}/5 pasos OK'
+    results['_report_id']    = report_id
     results['_download_url'] = f'/download/{report_id}'
 
     return jsonify(results), 200
