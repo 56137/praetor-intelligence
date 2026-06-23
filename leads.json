@@ -51,11 +51,12 @@
   },
   {
     "domain": "tesla.com",
-    "email": "luislameiro4@gmail.com",
-    "score": 40,
-    "fecha": "2026-06-03",
-    "timestamp": "2026-06-03T18:47:16.761045+00:00",
-    "status": "new"
+    "email": "test@example.com",
+    "score": 0,
+    "fecha": "2026-06-19",
+    "timestamp": "2026-06-19T04:07:37.936897+00:00",
+    "status": "new",
+    "pdf_file": "REPORT_tesla_com.pdf"
   },
   {
     "domain": "tesla.com",

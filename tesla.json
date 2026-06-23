@@ -1,0 +1,109 @@
+{
+  "domain": "tesla.com",
+  "scanned_at": "2026-06-17T21:01:00.602208+00:00",
+  "ip": "23.40.100.207",
+  "mx": [
+    {
+      "exchange": "tesla-com.mail.protection.outlook.com",
+      "preference": 10
+    }
+  ],
+  "txt": [
+    "zapier-domain-verification-challenge=64e810e8-0fe1-4de0-b104-229592811c5b",
+    "SFMC-qkAv7SvlQaslp7NEALX8t68s_AZWOQB6ThKQS5l5",
+    "adobe-sign-verification=efb2da198047b7a154bd604d2721038b",
+    "55zNJIDU0xk94IfGJtL+Hh+wje5JzOS6GY+ntggZF908AUsx0LBKgr+Nln3CgZEUifxSuN09M05jYpdbd6+cpw==",
+    "jamf-site-verification=u4x3LuqSfpoLn5nJ0zMd5g",
+    "T0E0S29854",
+    "google-site-verification=Y7lbse5bSatjXaqSBOWXjsit4mOp9cQzfLDpnQUSZlg",
+    "cloudflare_dashboard_sso=5c0b681b716d2de0666f5a564a4d9c0d",
+    "atlassian-domain-verification=U31RjXDO5NBJROoOVpVEsKJ7daGpXuXPDF8HeqlmvXUKOtTao652TOMtejHrohKB",
+    "bugcrowd-verification=40bd5dd89a6e4073ca9bc76feac3a47b",
+    "logmein-domain-confirmation=9zxwVn2buGWrLtU24J88",
+    "logmein-verification-code=JFAnsPovogeJ4IeW5MXCU3r0C",
+    "_i88zzpi9e3jr0xglot953efk0ui36y5",
+    "apple-domain-verification=C9J7eOtEbm7Dqr88",
+    "dell-technologies-domain-verification=tesla.com_c363f56d-9650-430a-82d3-04ac2257c64a_1756487968",
+    "ms-domain-verification=820e4be7-563e-4f52-b73a-5c9ecdd2fda4",
+    "_w19nckjurfa4aldim48vtbrxsq1phnv",
+    "MS=ms22358213",
+    "teamviewer-sso-verification=2fc989f75b19494fab5eb0e2c22dd625",
+    "traction-guest=b4f7ad59-bf17-4b3c-8b36-9c2d28f1de32",
+    "atlassian-domain-verification=FuJL8qfcWp7BKpnaomRV1Vmay09Vt0rdhikq9Gh/CwPYjsvTIwkrhaVAX1idqUMl",
+    "ms-domain-verification=e335cec9-0ff5-4a54-b8bc-8966a8d146db",
+    "v=spf1 ip4:54.240.84.225/32 ip4:54.240.84.226/31 ip4:54.240.84.228/30 ip4:54.240.84.232/29 ip4:54.240.84.240/29 ip4:54.240.84.248/30 ip4:54.240.84.252/32 ip4:44.239.249.139 ip4:52.24.70.112 ip4:34.223.204.78 ip4:213.244.145.203 ip4:213.244.145.219 ip4:213\" \".244.145.204 ip4:213.244.145.220 ip4:8.47.24.203 ip4:8.47.24.219 ip4:8.47.24.204 ip4:8.47.24.220 ip4:8.45.124.203 ip4:8.45.124.219 ip4:8.45.124.204 ip4:8.45.124.220 ip4:8.21.14.203 ip4:8.21.14.219 ip4:8.21.14.204 ip4:8.21.14.220 ip4:8.21.14.194 ip4:8.21.1\" \"4.211 ip4:212.49.145.0/24 ip4:91.103.52.0/22 ip4:168.245.123.10 ip4:216.81.144.165 ip4:149.72.247.52 ip4:149.72.134.64 ip4:149.72.152.236 ip4:149.72.163.58 ip4:149.72.172.170 ip4:167.89.90.62 ip4:158.228.129.79 ip4:216.81.144.165 ip4:117.50.14.178 ip4:117\" \".50.35.199 ip4:54.240.42.110 ip4:54.240.42.111 ip4:199.71.239.178 ip4:67.216.183.10 ip4:8.43.178.222 ip4:64.95.144.196 ip4:199.71.239.52 include:u13494342.wl093.sendgrid.net include:spf.protection.outlook.com include:mail.zendesk.com include:_spfsn.teslam\" \"otors.com include:_spf.qualtrics.com include:_spf.ultipro.com include:_spf.psm.knowbe4.com include:spf1.sendcloud.org include:spf2.sendcloud.org -all",
+    "_f32sd18rpksw3zh1hgbhaulpv016hoh",
+    "docker-verification=74d1ec4e-a7a6-48a7-9568-9bd0faac833f",
+    "onetrust-domain-verification=480735b10e124e23916192d7e4321902",
+    "adobe-idp-site-verification=321c026a-3a8c-4206-a1fa-391a59585c54",
+    "apple-domain-verification=CHZ8RLPKu4dlRxlaNa_nR9oA2MjZ1n2fiE9s0QlbRO8",
+    "cursor-domain-verification-6kgt2s=sxbxrRmk2tNjItWtmh1swmBM0",
+    "domain-verification=0f075f7f33bd0e577c0a56c5bb071f9eedadba45f32da11304913c6afd4b99c7",
+    "onetrust-domain-verification=79a1328740f44bc48dd97ab52c0c3377",
+    "google-site-verification=Xg2DEUg2oCz1q9RMx8gh2htHK16_GG9cZXY_eyeSf6w",
+    "_quuerjb9mywulmdygnzgnt9awyzm15c"
+  ],
+  "spf": "v=spf1 ip4:54.240.84.225/32 ip4:54.240.84.226/31 ip4:54.240.84.228/30 ip4:54.240.84.232/29 ip4:54.240.84.240/29 ip4:54.240.84.248/30 ip4:54.240.84.252/32 ip4:44.239.249.139 ip4:52.24.70.112 ip4:34.223.204.78 ip4:213.244.145.203 ip4:213.244.145.219 ip4:213\" \".244.145.204 ip4:213.244.145.220 ip4:8.47.24.203 ip4:8.47.24.219 ip4:8.47.24.204 ip4:8.47.24.220 ip4:8.45.124.203 ip4:8.45.124.219 ip4:8.45.124.204 ip4:8.45.124.220 ip4:8.21.14.203 ip4:8.21.14.219 ip4:8.21.14.204 ip4:8.21.14.220 ip4:8.21.14.194 ip4:8.21.1\" \"4.211 ip4:212.49.145.0/24 ip4:91.103.52.0/22 ip4:168.245.123.10 ip4:216.81.144.165 ip4:149.72.247.52 ip4:149.72.134.64 ip4:149.72.152.236 ip4:149.72.163.58 ip4:149.72.172.170 ip4:167.89.90.62 ip4:158.228.129.79 ip4:216.81.144.165 ip4:117.50.14.178 ip4:117\" \".50.35.199 ip4:54.240.42.110 ip4:54.240.42.111 ip4:199.71.239.178 ip4:67.216.183.10 ip4:8.43.178.222 ip4:64.95.144.196 ip4:199.71.239.52 include:u13494342.wl093.sendgrid.net include:spf.protection.outlook.com include:mail.zendesk.com include:_spfsn.teslam\" \"otors.com include:_spf.qualtrics.com include:_spf.ultipro.com include:_spf.psm.knowbe4.com include:spf1.sendcloud.org include:spf2.sendcloud.org -all",
+  "dmarc": "v=DMARC1; p=reject; pct=100; rua=mailto:n2ju30bc@ag.dmarcian.com; ruf=mailto:n2ju30bc@fr.dmarcian.com; fo=1",
+  "whois": {},
+  "ssl": {
+    "subject": "tesla.com",
+    "issuer": "YR2",
+    "not_before": "Jun  5 17:00:51 2026 GMT",
+    "not_after": "Sep  3 17:00:50 2026 GMT",
+    "subject_alt_names": [
+      "tesla.com"
+    ],
+    "protocol": "TLSv1.3",
+    "cipher": "TLS_AES_256_GCM_SHA384",
+    "error": null
+  },
+  "http": {
+    "url": "https://tesla.com/",
+    "status_code": 403,
+    "headers": {
+      "Server": "AkamaiGHost",
+      "Mime-Version": "1.0",
+      "Content-Type": "text/html",
+      "Content-Length": "357",
+      "Expires": "Wed, 17 Jun 2026 21:01:03 GMT",
+      "X-Reference-Error": "18.b42d2d17.1781730063.37dc599",
+      "Date": "Wed, 17 Jun 2026 21:01:03 GMT",
+      "Connection": "close",
+      "Strict-Transport-Security": "max-age=15768000",
+      "X-AK-Cache": "Error from child",
+      "Permissions-Policy": "interest-cohort=()"
+    },
+    "server": "AkamaiGHost",
+    "x_powered_by": null,
+    "content_type": "text/html",
+    "title": "Access Denied",
+    "html": "<HTML><HEAD>\n<TITLE>Access Denied</TITLE>\n</HEAD><BODY>\n<H1>Access Denied</H1>\n \nYou don't have permission to access \"http&#58;&#47;&#47;tesla&#46;com&#47;\" on this server.<P>\nReference&#32;&#35;18&#46;b42d2d17&#46;1781730063&#46;37dc599\n<P>https&#58;&#47;&#47;errors&#46;edgesuite&#46;net&#47;18&#46;b42d2d17&#46;1781730063&#46;37dc599</P>\n</BODY>\n</HTML>\n",
+    "error": null
+  },
+  "technologies": [
+    "Unknown/Not detected"
+  ],
+  "subdomains": [
+    {
+      "subdomain": "www.tesla.com",
+      "ip": "23.63.208.66"
+    },
+    {
+      "subdomain": "shop.tesla.com",
+      "ip": "23.63.208.66"
+    }
+  ],
+  "errors": [],
+  "risk_score": 0,
+  "risk_level": "Low",
+  "risk_components": [],
+  "recommendations": [
+    {
+      "type": "Low",
+      "title": "Configuración Adecuada",
+      "description": "El dominio tiene una configuración de seguridad de correo adecuada.",
+      "action": "Continúe monitoreando la seguridad regularmente."
+    }
+  ]
+}

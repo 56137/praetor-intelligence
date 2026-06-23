@@ -15,6 +15,111 @@ from dateutil.parser import parse as parse_date
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
+# ── crt.sh Certificate Transparency lookup ─────────────────────────────────
+
+def enumerate_subdomains_ct(domain: str, timeout: float = 8.0) -> dict:
+    """
+    Queries crt.sh for subdomains registered via Certificate Transparency logs.
+    Returns {"subdomains": [...], "error": None|str}
+    Only reads public certificate records — never touches the target server.
+    """
+    result = {"subdomains": [], "error": None}
+    try:
+        url = f"https://crt.sh/?q=%.{domain}&output=json"
+        resp = requests.get(url, timeout=timeout, headers={"User-Agent": "PRAETOR-Scanner/1.0"})
+        resp.raise_for_status()
+        entries = resp.json()
+        seen = set()
+        for entry in entries:
+            name = entry.get("name_value", "")
+            for sub in name.splitlines():
+                sub = sub.strip().lower().lstrip("*.")
+                if sub and sub != domain and sub.endswith(f".{domain}") and sub not in seen:
+                    seen.add(sub)
+        result["subdomains"] = sorted(seen)
+    except Exception as exc:
+        result["error"] = str(exc)
+    return result
+
+
+# ── CVE lookup via NVD API ──────────────────────────────────────────────────
+
+_VERSION_RE = re.compile(r"(\d+\.\d+(?:\.\d+)*)")
+_SKIP_BANNERS = {"cloudflare", "github.com", "fastly", "amazonaws"}
+
+def _extract_version_from_banner(server_header: str | None, powered_header: str | None) -> dict | None:
+    """Returns {"product": ..., "version": ...} or None if no actionable banner."""
+    for header in [server_header, powered_header]:
+        if not header:
+            continue
+        lower = header.lower()
+        if any(skip in lower for skip in _SKIP_BANNERS):
+            return None
+        m = _VERSION_RE.search(header)
+        if m:
+            product = re.split(r"[/\s]", header)[0]
+            return {"product": product, "version": m.group(1)}
+    return None
+
+
+def lookup_cves(server_header: str | None, powered_header: str | None,
+                nvd_api_key: str | None = None, timeout: float = 8.0) -> dict:
+    """
+    Queries NVD for CVEs matching the detected server software version.
+    Returns {"banner": ..., "cves": [...], "note": ..., "error": None|str}
+
+    IMPORTANT: Banner-based CVE matching is indicative, not conclusive.
+    A server may expose an old version string yet have backported patches.
+    The caller MUST surface the "REQUIRES MANUAL VERIFICATION" disclaimer in reports.
+    """
+    result = {"banner": None, "cves": [], "note": None, "error": None}
+
+    info = _extract_version_from_banner(server_header, powered_header)
+    if not info:
+        result["note"] = "Server does not expose a version string — CVE matching not possible."
+        return result
+
+    result["banner"] = f"{info['product']}/{info['version']}"
+    keyword = f"{info['product']} {info['version']}"
+
+    try:
+        headers = {"User-Agent": "PRAETOR-Scanner/1.0"}
+        if nvd_api_key:
+            headers["apiKey"] = nvd_api_key
+        url = "https://services.nvd.nist.gov/rest/json/cves/2.0"
+        params = {"keywordSearch": keyword, "resultsPerPage": 10}
+        resp = requests.get(url, params=params, headers=headers, timeout=timeout)
+        resp.raise_for_status()
+        data = resp.json()
+        cves = []
+        for item in data.get("vulnerabilities", []):
+            cve = item.get("cve", {})
+            cve_id = cve.get("id", "")
+            descriptions = cve.get("descriptions", [])
+            desc = next((d["value"] for d in descriptions if d.get("lang") == "en"), "")
+            metrics = cve.get("metrics", {})
+            severity = "UNKNOWN"
+            cvss_score = None
+            for key in ["cvssMetricV31", "cvssMetricV30", "cvssMetricV2"]:
+                metric_list = metrics.get(key, [])
+                if metric_list:
+                    cvss_data = metric_list[0].get("cvssData", {})
+                    severity = cvss_data.get("baseSeverity", "UNKNOWN")
+                    cvss_score = cvss_data.get("baseScore")
+                    break
+            cves.append({"id": cve_id, "severity": severity, "score": cvss_score, "description": desc[:200]})
+        severity_order = {"CRITICAL": 0, "HIGH": 1, "MEDIUM": 2, "LOW": 3, "UNKNOWN": 4}
+        cves.sort(key=lambda c: (severity_order.get(c["severity"], 4), -(c["score"] or 0)))
+        result["cves"] = cves
+        result["note"] = (
+            "REQUIRES MANUAL VERIFICATION — version detected from HTTP banner. "
+            "Backported patches may fix these CVEs even if the version string matches."
+        )
+    except Exception as exc:
+        result["error"] = str(exc)
+
+    return result
+
 DEFAULT_SUBDOMAINS = [
     "www", "mail", "smtp", "api", "admin", "portal", "secure", "vpn",
     "webmail", "blog", "dev", "test", "beta", "m", "cdn", "ns1", "ns2",
@@ -335,14 +440,24 @@ def enumerate_subdomains(domain: str, resolver: dns.resolver.Resolver) -> list:
     return found
 
 
-def scan_target(domain: str, resolver_timeout: float = 3.0, fast_mode: bool = True) -> dict:
+def scan_target(domain: str, resolver_timeout: float = 3.0, fast_mode: bool = True,
+                depth: str = "express", nvd_api_key: str | None = None) -> dict:
+    """
+    depth values:
+      "express"   — base scan (SSL, headers, DNS/SPF/DMARC, tech detection)
+      "pro"       — express + CT subdomain enumeration + CVE lookup
+      "corporate" — pro + WHOIS + subdomain DNS brute-force
+    """
     resolver = dns.resolver.Resolver()
     resolver.timeout = resolver_timeout
     resolver.lifetime = resolver_timeout * 2
 
+    depth = depth.lower()
+
     report = {
         "domain": domain,
         "scanned_at": datetime.now(timezone.utc).isoformat(),
+        "depth": depth,
         "ip": None,
         "mx": [],
         "txt": [],
@@ -353,6 +468,8 @@ def scan_target(domain: str, resolver_timeout: float = 3.0, fast_mode: bool = Tr
         "http": {},
         "technologies": [],
         "subdomains": [],
+        "ct_subdomains": [],
+        "cves": {},
         "errors": []
     }
 
@@ -391,7 +508,8 @@ def scan_target(domain: str, resolver_timeout: float = 3.0, fast_mode: bool = Tr
     except dns.exception.DNSException:
         report["errors"].append("No DMARC record found")
 
-    if not fast_mode:
+    # WHOIS: express skips it (slow), corporate always fetches it
+    if depth == "corporate" or not fast_mode:
         report["whois"] = query_whois(domain, timeout=3.0)
         if report["whois"].get("error"):
             report["errors"].append(f"WHOIS lookup error: {report['whois']['error']}")
@@ -404,8 +522,34 @@ def scan_target(domain: str, resolver_timeout: float = 3.0, fast_mode: bool = Tr
     if report["http"].get("error"):
         report["errors"].append(report["http"]["error"])
 
-    report["technologies"] = detect_technologies(report["http"].get("headers", {}), report["http"].get("html", ""))
-    report["subdomains"] = enumerate_subdomains(domain, resolver)
+    report["technologies"] = detect_technologies(
+        report["http"].get("headers", {}), report["http"].get("html", "")
+    )
+
+    # DNS brute-force subdomains: pro and corporate
+    if depth in ("pro", "corporate"):
+        report["subdomains"] = enumerate_subdomains(domain, resolver)
+
+    # Certificate Transparency subdomains: pro and corporate
+    if depth in ("pro", "corporate"):
+        ct = enumerate_subdomains_ct(domain)
+        if ct.get("error"):
+            report["errors"].append(f"CT lookup error: {ct['error']}")
+        else:
+            report["ct_subdomains"] = ct["subdomains"]
+
+    # CVE lookup: pro and corporate
+    if depth in ("pro", "corporate"):
+        http_info = report.get("http", {})
+        cve_result = lookup_cves(
+            server_header=http_info.get("server"),
+            powered_header=http_info.get("x_powered_by"),
+            nvd_api_key=nvd_api_key,
+        )
+        if cve_result.get("error"):
+            report["errors"].append(f"CVE lookup error: {cve_result['error']}")
+        report["cves"] = cve_result
+
     report = compute_risk_score(report)
 
     return report
