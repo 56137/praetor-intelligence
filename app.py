@@ -441,12 +441,11 @@ def stripe_webhook():
 
         webhook_logger.info(f"✅ leads.json actualizado a 'paid' para {customer_email}")
 
-        # 2. PDF + email en background — Stripe recibe 200 ya
+        # 2. Generar PDF en background — Stripe recibe 200 ya. SIN correo.
         def _background_work():
             try:
                 result   = generate_pdf_with_id(effective_domain, report_id, depth=effective_plan)
                 pdf_file = result['pdf_filename']
-                pdf_path_bg = os.path.join(PDF_DIR, pdf_file)
                 # actualizar leads con pdf_file
                 try:
                     with open(leads_file, 'r') as f:
@@ -460,8 +459,6 @@ def stripe_webhook():
                 except Exception:
                     pass
                 webhook_logger.info(f"📄 PDF listo: {pdf_file}")
-                send_report_email(customer_email, pdf_path_bg, effective_domain, report_id)
-                webhook_logger.info(f"📧 Email enviado a {customer_email}")
             except Exception as e:
                 webhook_logger.error(f"❌ Error en background_work: {e}")
 
@@ -588,7 +585,7 @@ def success_page(report_id):
             <p style="color:#888;">Tu reporte está listo para descargar</p>
             <a href="/download/{report_id}" class="btn">📥 DESCARGAR REPORTE</a>
             <p class="pdf-name">📄 {pdf_file or 'REPORT_' + report_id + '.pdf'}</p>
-            <p class="info">También recibirás una copia por correo electrónico</p>
+            <p class="info">Guarda el PDF en tu dispositivo.</p>
         </div>
         <script>
             setTimeout(() => {{
