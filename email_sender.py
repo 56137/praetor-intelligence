@@ -93,7 +93,10 @@ def enviar_reporte_por_email(email_cliente, dominio, pdf_filename):
         msg.attach(MIMEText(cuerpo, 'html'))
         
         # Adjuntar PDF
-        pdf_path = os.path.join(os.getcwd(), pdf_filename)
+        if os.path.isabs(pdf_filename):
+            pdf_path = pdf_filename
+        else:
+            pdf_path = os.path.join(os.getcwd(), pdf_filename)
         print(f"📎 Buscando PDF en: {pdf_path}")
         
         if os.path.exists(pdf_path):
