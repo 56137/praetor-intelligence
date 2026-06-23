@@ -685,14 +685,33 @@ def test_payment():
     except Exception as e:
         results['1_lead_creado'] = f'FAIL: {e}'
 
-    # PASO 2: Generar PDF
-    pdf_path = None
-    try:
-        r = generate_pdf_with_id(domain, report_id, depth='express')
-        pdf_path = os.path.join(PDF_DIR, r['pdf_filename'])
-        results['2_pdf_generado'] = 'PASS' if os.path.exists(pdf_path) else 'FAIL: archivo no existe'
-    except Exception as e:
-        results['2_pdf_generado'] = f'FAIL: {e}'
+    # PASO 2: Generar PDF (en thread con timeout para no matar el worker)
+    pdf_path = [None]
+    pdf_err  = [None]
+    done     = threading.Event()
+
+    def _gen_pdf():
+        try:
+            r = generate_pdf_with_id(domain, report_id, depth='express')
+            pdf_path[0] = os.path.join(PDF_DIR, r['pdf_filename'])
+        except Exception as e:
+            pdf_err[0] = str(e)
+        finally:
+            done.set()
+
+    threading.Thread(target=_gen_pdf, daemon=True).start()
+    done.wait(timeout=55)  # espera hasta 55s
+
+    if not done.is_set():
+        results['2_pdf_generado'] = 'FAIL: timeout (scan tardó >55s)'
+    elif pdf_err[0]:
+        results['2_pdf_generado'] = f'FAIL: {pdf_err[0]}'
+    elif pdf_path[0] and os.path.exists(pdf_path[0]):
+        results['2_pdf_generado'] = f'PASS ({os.path.getsize(pdf_path[0])} bytes)'
+    else:
+        results['2_pdf_generado'] = 'FAIL: archivo no existe tras generación'
+
+    pdf_path = pdf_path[0]  # convertir a variable normal
 
     # PASO 3: Archivo descargable (simula /download)
     try:
