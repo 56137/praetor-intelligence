@@ -115,18 +115,19 @@ def enviar_reporte_por_email(email_cliente, dominio, pdf_filename):
             print(f"❌ PDF no encontrado: {pdf_path}")
             return False
         
-        # Enviar email
+        # Enviar email (timeout 20s para no colgar el worker)
         print(f"📧 Conectando a SMTP...")
-        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
+        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=20) as server:
             server.starttls()
             print(f"📧 Login con {SMTP_USER}")
             server.login(SMTP_USER, SMTP_PASSWORD)
             print(f"📧 Enviando email...")
             server.send_message(msg)
-        
+
         print(f"✅ Email enviado a {email_cliente}")
         return True
-        
+
     except Exception as e:
-        print(f"❌ Error enviando email: {e}")
-        return False
+        print(f"❌ Error enviando email: {type(e).__name__}: {e}")
+        # Re-lanzar para que el caller vea el error exacto en /test-payment
+        raise

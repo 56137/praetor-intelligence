@@ -672,13 +672,14 @@ def test_payment():
     except Exception as e:
         results['4_webhook_sim'] = f'FAIL: {e}'
 
-    # PASO 5: Email — solo si ?email_test=1 (lo lento se aísla aparte)
+    # PASO 5: Email — solo si ?email_test=1 (llama directo para ver el error real)
     if request.args.get('email_test') == '1':
         try:
-            ok = send_report_email(email, pdf_path, domain, report_id) if (pdf_path and os.path.exists(pdf_path)) else False
-            results['5_email'] = 'PASS' if ok else 'FAIL: retornó False (revisa GMAIL_USER/GMAIL_APP_PASSWORD en Render)'
+            from email_sender import enviar_reporte_por_email
+            ok = enviar_reporte_por_email(email, domain, pdf_path) if (pdf_path and os.path.exists(pdf_path)) else False
+            results['5_email'] = 'PASS' if ok else 'FAIL: retornó False'
         except Exception as e:
-            results['5_email'] = f'FAIL: {e}'
+            results['5_email'] = f'FAIL: {type(e).__name__}: {e}'
     else:
         results['5_email'] = 'SKIP (usa &email_test=1 para probar correo)'
 
