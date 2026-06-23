@@ -288,7 +288,10 @@ def create_checkout_session():
     try:
         data = request.json
         domain = data.get('domain', 'example.com')
-        email = data.get('email', 'cliente@example.com')
+        email = (data.get('email') or '').strip()
+        # Solo aceptar correo con formato válido; si no, Stripe lo pedirá en su página
+        if not re.match(r'^[^\s@]+@[^\s@]+\.[^\s@]+$', email):
+            email = ''
         price_amount = data.get('price', 100)  # cents USD
         plan = data.get('plan', 'express')  # express | pro | corporate
 
@@ -331,7 +334,7 @@ def create_checkout_session():
         scan_logger.info(f"   - Report ID: {report_id}")
         
         # Crear sesión de Stripe
-        session = stripe.checkout.Session.create(
+        session_params = dict(
             payment_method_types=['card'],
             line_items=[{
                 'price_data': {
@@ -347,7 +350,6 @@ def create_checkout_session():
             mode='payment',
             success_url=f'{BASE_URL}/success/{report_id}?domain={domain}&plan={plan}',
             cancel_url=f'{BASE_URL}',
-            customer_email=email,
             metadata={
                 'report_id': report_id,
                 'domain': domain,
@@ -355,6 +357,10 @@ def create_checkout_session():
                 'plan': plan,
             }
         )
+        # Solo fijar el correo si es válido; si no, Stripe lo pedirá en su página
+        if email:
+            session_params['customer_email'] = email
+        session = stripe.checkout.Session.create(**session_params)
         
         logger.info(f"💰 Sesión de Stripe creada: {session.id} para {domain} - {email}")
         scan_logger.info(f"💰 Sesión Stripe creada: {session.id}")

@@ -123,6 +123,10 @@
       <label for="domain">DOMINIO OBJETIVO</label>
       <input id="domain" type="text" placeholder="ej. empresa.com" autocomplete="off">
     </div>
+    <div class="field">
+      <label for="email">CORREO ELECTRÓNICO</label>
+      <input id="email" type="email" placeholder="ej. tu@correo.com" autocomplete="email">
+    </div>
     <button id="scanBtn" class="btn" onclick="runScan()">INICIAR ESCANEO</button>
     <p class="hint">Lee únicamente información pública. No requiere autorización para configuración expuesta a internet.</p>
 
@@ -264,6 +268,7 @@
 <script>
 const $ = id => document.getElementById(id);
 let lastDomain = '';
+let lastEmail = '';
 
 function cleanDomain(v){
   return (v||'').trim().toLowerCase().replace(/^https?:\/\//,'').split('/')[0];
@@ -276,6 +281,7 @@ async function runScan(){
     return;
   }
   lastDomain = domain;
+  lastEmail = ($('email').value || '').trim();
   const btn = $('scanBtn');
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> ESCANEANDO...';
@@ -332,13 +338,17 @@ function render(d){
 
 async function buyReport(plan='express', price=9900){
   if(!lastDomain){ alert('Primero escanea un dominio.'); return; }
-  const email = prompt('Tu correo (para el recibo de pago). El reporte lo descargas al instante después de pagar.');
-  if(!email) return;
+  // Validar correo (capturado en el escaneo). Si falta o es inválido, pedirlo una vez.
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(lastEmail)){
+    const e = (prompt('Escribe un correo válido para tu recibo:') || '').trim();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)){ alert('Correo inválido.'); return; }
+    lastEmail = e;
+  }
   try{
     const res = await fetch('/create-checkout-session', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({domain:lastDomain, email, plan, price})
+      body: JSON.stringify({domain:lastDomain, email:lastEmail, plan, price})
     });
     const data = await res.json();
     if(data.url){ window.location.href = data.url; }
