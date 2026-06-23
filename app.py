@@ -672,21 +672,18 @@ def test_payment():
     except Exception as e:
         results['4_webhook_sim'] = f'FAIL: {e}'
 
-    # PASO 5: Email (en thread para no bloquear >30s)
-    email_result = [None]
-    def _send():
+    # PASO 5: Email — solo si ?email_test=1 (lo lento se aísla aparte)
+    if request.args.get('email_test') == '1':
         try:
             ok = send_report_email(email, pdf_path, domain, report_id) if (pdf_path and os.path.exists(pdf_path)) else False
-            email_result[0] = 'PASS' if ok else 'FAIL: retornó False (revisa GMAIL_USER/GMAIL_APP_PASSWORD en Render)'
+            results['5_email'] = 'PASS' if ok else 'FAIL: retornó False (revisa GMAIL_USER/GMAIL_APP_PASSWORD en Render)'
         except Exception as e:
-            email_result[0] = f'FAIL: {e}'
-    t = threading.Thread(target=_send, daemon=True)
-    t.start()
-    t.join(timeout=15)
-    results['5_email'] = email_result[0] if email_result[0] else 'FAIL: timeout SMTP >15s'
+            results['5_email'] = f'FAIL: {e}'
+    else:
+        results['5_email'] = 'SKIP (usa &email_test=1 para probar correo)'
 
     passed = sum(1 for v in results.values() if str(v).startswith('PASS'))
-    results['_resumen']      = f'{passed}/5 pasos OK'
+    results['_resumen']      = f'{passed} pasos PASS'
     results['_report_id']    = report_id
     results['_download_url'] = f'/download/{report_id}'
 
@@ -773,4 +770,4 @@ if __name__ == '__main__':
     
     logger.info(f"🚀 PRAETOR Intelligence iniciado en http://localhost:{port}")
     
-    app.run(host='0.0.0.0', port=port, debug=False)
+    app.run(host='0.0.0.0', port=port, debug=False, threaded=True)
