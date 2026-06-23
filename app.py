@@ -149,13 +149,6 @@ def get_pdf_for_report_id(report_id):
         logger.info(f"✅ PDF encontrado en pdf_reports: REPORT_{report_id}.pdf")
         return f"REPORT_{report_id}.pdf"
     
-    # 3. Usar el PDF más reciente
-    pdfs = [f for f in os.listdir(PDF_DIR) if f.endswith('.pdf')]
-    if pdfs:
-        pdfs.sort(key=lambda x: os.path.getmtime(os.path.join(PDF_DIR, x)), reverse=True)
-        logger.info(f"✅ Usando PDF más reciente: {pdfs[0]}")
-        return pdfs[0]
-    
     return None
 
 def send_report_email(email, pdf_path, domain, report_id):
