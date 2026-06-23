@@ -586,13 +586,28 @@ def download_report(report_id):
 @app.route('/success/<report_id>')
 def success_page(report_id):
     """Página de éxito con descarga automática"""
-    
+
     # Obtener el PDF correcto
     pdf_file = get_pdf_for_report_id(report_id)
-    
-    # ==========================================
-    # LOGGING
-    # ==========================================
+
+    # Si no existe aún, generarlo aquí (fallback por si el webhook tardó)
+    if not pdf_file:
+        leads_file = os.path.join(BASE_DIR, 'leads.json')
+        try:
+            with open(leads_file, 'r') as f:
+                leads = json.load(f)
+        except Exception:
+            leads = []
+        _, lead = find_lead_by_report_id(report_id, leads)
+        domain = lead.get('domain', 'unknown') if lead else 'unknown'
+        plan = lead.get('plan', 'express') if lead else 'express'
+        try:
+            result = generate_pdf_with_id(domain, report_id, depth=plan)
+            pdf_file = result['pdf_filename']
+            logger.info(f"📄 PDF generado en success: {pdf_file}")
+        except Exception as e:
+            logger.error(f"❌ Error generando PDF en success: {e}")
+
     logger.info(f"📄 PDF SELECCIONADO: {pdf_file}")
     download_logger.info(f"📄 PDF para success: {pdf_file}")
     
