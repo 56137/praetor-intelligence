@@ -199,6 +199,10 @@ def home():
 def api_health():
     return jsonify({'status': 'online', 'version': '1.0.0'})
 
+@app.route('/ping')
+def ping():
+    return jsonify({'ok': True, 'deploy': 'e432c97'})
+
 
 @app.route('/scan', methods=['POST'])
 def scan_preview():
