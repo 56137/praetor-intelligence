@@ -347,7 +347,7 @@ def create_checkout_session():
                 'quantity': 1,
             }],
             mode='payment',
-            success_url=f'{BASE_URL}/success/{report_id}',
+            success_url=f'{BASE_URL}/success/{report_id}?domain={domain}&plan={plan}',
             cancel_url=f'{BASE_URL}',
             customer_email=email,
             metadata={
@@ -590,8 +590,9 @@ def success_page(report_id):
     # Obtener el PDF correcto
     pdf_file = get_pdf_for_report_id(report_id)
 
-    # Si no existe aún, generarlo aquí (fallback por si el webhook tardó)
+    # Si no existe aún, generarlo aquí (fallback por si el webhook tardó o leads.json se borró)
     if not pdf_file:
+        # Primero intentar desde leads.json
         leads_file = os.path.join(BASE_DIR, 'leads.json')
         try:
             with open(leads_file, 'r') as f:
@@ -599,8 +600,11 @@ def success_page(report_id):
         except Exception:
             leads = []
         _, lead = find_lead_by_report_id(report_id, leads)
-        domain = lead.get('domain', 'unknown') if lead else 'unknown'
-        plan = lead.get('plan', 'express') if lead else 'express'
+
+        # Usar dominio de leads.json, o del query param si leads.json fue borrado
+        domain = (lead.get('domain') if lead else None) or request.args.get('domain', 'unknown')
+        plan = (lead.get('plan') if lead else None) or request.args.get('plan', 'express')
+
         try:
             result = generate_pdf_with_id(domain, report_id, depth=plan)
             pdf_file = result['pdf_filename']
