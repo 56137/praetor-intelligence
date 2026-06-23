@@ -332,7 +332,7 @@ function render(d){
 
 async function buyReport(plan='express', price=9900){
   if(!lastDomain){ alert('Primero escanea un dominio.'); return; }
-  const email = prompt('¿A qué correo enviamos el reporte?');
+  const email = prompt('Tu correo (para el recibo de pago). El reporte lo descargas al instante después de pagar.');
   if(!email) return;
   try{
     const res = await fetch('/create-checkout-session', {
