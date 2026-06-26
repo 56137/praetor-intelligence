@@ -59,12 +59,19 @@ except ImportError:
     scan_logger = logging.getLogger('scan')
     logging.basicConfig(level=logging.INFO)
 
-# Logger general
-logging.basicConfig(
-    filename=os.path.join(LOG_DIR, 'app.log'),
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
+# Logger general — stdout first so Render captures it; also write to file when possible
+_log_handlers: list = [logging.StreamHandler()]
+try:
+    _log_handlers.append(logging.FileHandler(os.path.join(LOG_DIR, 'app.log')))
+except Exception:
+    pass
+logging.root.setLevel(logging.INFO)
+if not logging.root.handlers:
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(levelname)s - %(message)s',
+        handlers=_log_handlers,
+    )
 logger = logging.getLogger(__name__)
 
 # ==========================================
@@ -272,8 +279,16 @@ def status():
         'paid_count': paid_count
     })
 
+ADMIN_TOKEN = os.getenv('ADMIN_TOKEN', '')
+
 @app.route('/leads')
 def list_leads():
+    # Protect with ADMIN_TOKEN if set
+    if ADMIN_TOKEN:
+        auth = request.headers.get('Authorization', '')
+        token = request.args.get('token', '')
+        if auth != f'Bearer {ADMIN_TOKEN}' and token != ADMIN_TOKEN:
+            return jsonify({'error': 'Unauthorized'}), 401
     try:
         with open(os.path.join(BASE_DIR, 'leads.json'), 'r') as f:
             leads = json.load(f)
