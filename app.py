@@ -1,4 +1,4 @@
-# ==========================================
+﻿# ==========================================
 # app.py - PRAETOR Intelligence
 # Servidor Flask con Stripe, PDF y descarga
 # Storage: PostgreSQL (leads + PDF bytes)
@@ -28,7 +28,7 @@ app = Flask(__name__)
 CORS(app)
 
 # ==========================================
-# CONFIGURACIÓN
+# CONFIGURACIÃ“N
 # ==========================================
 
 BASE_URL = os.getenv('BASE_URL', 'http://localhost:5000')
@@ -48,7 +48,7 @@ for folder in [PDF_DIR, LOG_DIR]:
     os.makedirs(folder, exist_ok=True)
 
 # ==========================================
-# CONFIGURACIÓN DE LOGGING
+# CONFIGURACIÃ“N DE LOGGING
 # ==========================================
 
 try:
@@ -62,7 +62,7 @@ except ImportError:
     scan_logger = logging.getLogger('scan')
     logging.basicConfig(level=logging.INFO)
 
-# Logger general — stdout first so Render captures it; also write to file when possible
+# Logger general â€” stdout first so Render captures it; also write to file when possible
 _log_handlers: list = [logging.StreamHandler()]
 try:
     _log_handlers.append(logging.FileHandler(os.path.join(LOG_DIR, 'app.log')))
@@ -87,7 +87,7 @@ try:
     PSYCOPG2_AVAILABLE = True
 except ImportError:
     PSYCOPG2_AVAILABLE = False
-    logger.warning("psycopg2 not available — falling back to leads.json")
+    logger.warning("psycopg2 not available â€” falling back to leads.json")
 
 def _get_conn():
     """Return a new psycopg2 connection."""
@@ -122,9 +122,9 @@ def init_db():
         conn.commit()
         cur.close()
         conn.close()
-        logger.info("✅ PostgreSQL: tabla leads lista")
+        logger.info("âœ… PostgreSQL: tabla leads lista")
     except Exception as e:
-        logger.error(f"❌ init_db error: {e}")
+        logger.error(f"âŒ init_db error: {e}")
 
 # Initialize DB on startup
 init_db()
@@ -321,7 +321,7 @@ def generate_pdf_with_id(domain, report_id=None, depth="express"):
         try:
             from reportlab.pdfgen import canvas as _canvas
             c = _canvas.Canvas(pdf_path)
-            c.drawString(72, 720, f"PRAETOR Intelligence — {domain}")
+            c.drawString(72, 720, f"PRAETOR Intelligence â€” {domain}")
             c.drawString(72, 700, f"Report ID: {report_id}")
             c.drawString(72, 680, f"Generated: {datetime.now().isoformat()}")
             c.drawString(72, 640, f"Scan error: {str(e)[:200]}")
@@ -335,9 +335,9 @@ def generate_pdf_with_id(domain, report_id=None, depth="express"):
         with open(pdf_path, 'rb') as f:
             pdf_bytes = f.read()
         db_update_lead(report_id, pdf_file=pdf_filename, pdf_data=pdf_bytes)
-        logger.info(f"✅ PDF stored in DB: {pdf_filename} ({len(pdf_bytes)} bytes)")
+        logger.info(f"âœ… PDF stored in DB: {pdf_filename} ({len(pdf_bytes)} bytes)")
     except Exception as e:
-        logger.error(f"❌ Failed to store PDF in DB: {e}")
+        logger.error(f"âŒ Failed to store PDF in DB: {e}")
 
     return {
         'report_id': report_id,
@@ -347,9 +347,9 @@ def generate_pdf_with_id(domain, report_id=None, depth="express"):
 
 
 def send_report_email(email, pdf_path, domain, report_id):
-    """Envía el reporte por email con logs detallados"""
+    """EnvÃ­a el reporte por email con logs detallados"""
 
-    email_logger.info(f"📧 EMAIL ENVIADO")
+    email_logger.info(f"ðŸ“§ EMAIL ENVIADO")
     email_logger.info(f"   - Destinatario: {email}")
     email_logger.info(f"   - Archivo adjunto: {pdf_path}")
     email_logger.info(f"   - Dominio: {domain}")
@@ -359,10 +359,10 @@ def send_report_email(email, pdf_path, domain, report_id):
         from email_sender import enviar_reporte_por_email
         result = enviar_reporte_por_email(email, domain, pdf_path)
         email_logger.info(f"   - Resultado: {result}")
-        email_logger.info(f"✅ EMAIL COMPLETADO - {email}")
+        email_logger.info(f"âœ… EMAIL COMPLETADO - {email}")
         return result
     except Exception as e:
-        email_logger.error(f"❌ Error enviando email: {str(e)}")
+        email_logger.error(f"âŒ Error enviando email: {str(e)}")
         return False
 
 # ==========================================
@@ -398,7 +398,7 @@ def ping():
 @app.route('/scan', methods=['POST'])
 def scan_preview():
     """
-    Free express preview scan. Returns a JSON summary — NOT the full report.
+    Free express preview scan. Returns a JSON summary â€” NOT the full report.
     The full PDF (with recommendations, subdomains, CVEs) is behind payment.
     """
     try:
@@ -411,7 +411,7 @@ def scan_preview():
     domain = re.sub(r'^https?://', '', domain).split('/')[0]
 
     if not _is_valid_domain(domain):
-        return jsonify({'error': 'Dominio no válido. Usa un formato como: empresa.com'}), 400
+        return jsonify({'error': 'Dominio no vÃ¡lido. Usa un formato como: empresa.com'}), 400
 
     scan_logger.info(f"Free preview scan: {domain}")
     try:
@@ -423,9 +423,9 @@ def scan_preview():
     ssl_info = r.get('ssl') or {}
     findings = []
     if not r.get('spf'):
-        findings.append('Sin registro SPF (riesgo de suplantación de correo)')
+        findings.append('Sin registro SPF (riesgo de suplantaciÃ³n de correo)')
     if not r.get('dmarc'):
-        findings.append('Sin política DMARC (protección anti-phishing débil)')
+        findings.append('Sin polÃ­tica DMARC (protecciÃ³n anti-phishing dÃ©bil)')
     if ssl_info.get('error'):
         findings.append('Problema con el certificado SSL/TLS')
 
@@ -471,7 +471,7 @@ def list_leads():
 
 @app.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():
-    """Crear sesión de Stripe para pago"""
+    """Crear sesiÃ³n de Stripe para pago"""
     try:
         data = request.json
         domain = data.get('domain', 'example.com')
@@ -493,8 +493,8 @@ def create_checkout_session():
             'created_at': datetime.now().isoformat()
         })
 
-        logger.info(f"💰 Lead guardado: {email} - {domain} - {report_id}")
-        scan_logger.info(f"📡 SCAN INICIADO - Dominio: {domain}, Email: {email}, Report ID: {report_id}")
+        logger.info(f"ðŸ’° Lead guardado: {email} - {domain} - {report_id}")
+        scan_logger.info(f"ðŸ“¡ SCAN INICIADO - Dominio: {domain}, Email: {email}, Report ID: {report_id}")
 
         session_params = dict(
             payment_method_types=['card'],
@@ -522,14 +522,14 @@ def create_checkout_session():
         )
         if email:
             session_params['customer_email'] = email
-            session_params['receipt_email'] = email
+            session_params['payment_intent_data'] = {'receipt_email': email}
         session = stripe.checkout.Session.create(**session_params)
 
-        logger.info(f"💰 Sesión de Stripe creada: {session.id} para {domain} - {email}")
+        logger.info(f"ðŸ’° SesiÃ³n de Stripe creada: {session.id} para {domain} - {email}")
         return jsonify({'session_id': session.id, 'url': session.url, 'report_id': report_id})
 
     except Exception as e:
-        logger.error(f"❌ Error creando sesión de Stripe: {str(e)}")
+        logger.error(f"âŒ Error creando sesiÃ³n de Stripe: {str(e)}")
         return jsonify({'error': str(e)}), 400
 
 
@@ -542,10 +542,10 @@ def stripe_webhook():
     try:
         event = stripe.Webhook.construct_event(payload, sig_header, STRIPE_WEBHOOK_SECRET)
     except ValueError as e:
-        webhook_logger.error(f"❌ Invalid payload: {e}")
+        webhook_logger.error(f"âŒ Invalid payload: {e}")
         return jsonify({'error': 'Invalid payload'}), 400
     except stripe.error.SignatureVerificationError as e:
-        webhook_logger.error(f"❌ Invalid signature: {e}")
+        webhook_logger.error(f"âŒ Invalid signature: {e}")
         return jsonify({'error': 'Invalid signature'}), 400
 
     if event['type'] == 'checkout.session.completed':
@@ -563,7 +563,7 @@ def stripe_webhook():
         plan         = metadata.get('plan', 'express')
         session_id   = sd.get('id')
 
-        webhook_logger.info(f"💰 WEBHOOK: {customer_email} | {domain} | {report_id}")
+        webhook_logger.info(f"ðŸ’° WEBHOOK: {customer_email} | {domain} | {report_id}")
 
         # 1. Mark as paid immediately
         _, lead = db_get_lead_by_report_id(report_id)
@@ -588,22 +588,22 @@ def stripe_webhook():
             stripe_session=session_id,
             domain=effective_domain
         )
-        webhook_logger.info(f"✅ Lead marcado 'paid': {customer_email}")
+        webhook_logger.info(f"âœ… Lead marcado 'paid': {customer_email}")
 
-        # 2. Generate PDF in background — return 200 to Stripe immediately
+        # 2. Generate PDF in background â€” return 200 to Stripe immediately
         def _background_work():
             try:
                 result   = generate_pdf_with_id(effective_domain, report_id, depth=effective_plan)
                 pdf_path = result['pdf_path']
-                webhook_logger.info(f"📄 PDF listo: {result['pdf_filename']}")
+                webhook_logger.info(f"ðŸ“„ PDF listo: {result['pdf_filename']}")
                 if customer_email:
                     try:
                         send_report_email(customer_email, pdf_path, effective_domain, report_id)
-                        webhook_logger.info(f"📧 Email enviado a: {customer_email}")
+                        webhook_logger.info(f"ðŸ“§ Email enviado a: {customer_email}")
                     except Exception as e:
-                        webhook_logger.error(f"❌ Error enviando email: {e}")
+                        webhook_logger.error(f"âŒ Error enviando email: {e}")
             except Exception as e:
-                webhook_logger.error(f"❌ Error en background_work: {e}")
+                webhook_logger.error(f"âŒ Error en background_work: {e}")
 
         threading.Thread(target=_background_work, daemon=True).start()
         return jsonify({'status': 'queued', 'report_id': report_id}), 200
@@ -613,15 +613,15 @@ def stripe_webhook():
 
 @app.route('/download/<report_id>')
 def download_report(report_id):
-    """Descargar PDF por ID — sirve desde DB (persistente) o filesystem (temporal)."""
-    download_logger.info(f"📥 DESCARGA SOLICITADA - report_id: {report_id}")
+    """Descargar PDF por ID â€” sirve desde DB (persistente) o filesystem (temporal)."""
+    download_logger.info(f"ðŸ“¥ DESCARGA SOLICITADA - report_id: {report_id}")
 
     pdf_filename = f"REPORT_{report_id}.pdf"
 
     # 1. Try DB first (persistent across deploys)
     pdf_bytes = db_get_pdf_bytes(report_id)
     if pdf_bytes:
-        download_logger.info(f"✅ PDF servido desde DB: {pdf_filename} ({len(pdf_bytes)} bytes)")
+        download_logger.info(f"âœ… PDF servido desde DB: {pdf_filename} ({len(pdf_bytes)} bytes)")
         return send_file(
             io.BytesIO(pdf_bytes),
             as_attachment=True,
@@ -639,7 +639,7 @@ def download_report(report_id):
             pdf_filename = lead['pdf_file']
 
     if os.path.exists(pdf_path):
-        download_logger.info(f"✅ PDF servido desde filesystem: {pdf_filename}")
+        download_logger.info(f"âœ… PDF servido desde filesystem: {pdf_filename}")
         # Also store in DB for future requests
         try:
             with open(pdf_path, 'rb') as f:
@@ -654,8 +654,8 @@ def download_report(report_id):
             mimetype='application/pdf'
         )
 
-    # 3. Report not ready yet (still generating) — regenerate on demand
-    download_logger.warning(f"⚠️ PDF no encontrado, regenerando: {report_id}")
+    # 3. Report not ready yet (still generating) â€” regenerate on demand
+    download_logger.warning(f"âš ï¸ PDF no encontrado, regenerando: {report_id}")
     _, lead = db_get_lead_by_report_id(report_id)
     if lead and lead.get('status') == 'paid':
         domain = lead.get('domain', 'unknown')
@@ -671,15 +671,15 @@ def download_report(report_id):
                     mimetype='application/pdf'
                 )
         except Exception as e:
-            logger.error(f"❌ On-demand generation failed: {e}")
+            logger.error(f"âŒ On-demand generation failed: {e}")
 
-    download_logger.error(f"❌ PDF no encontrado: {report_id}")
+    download_logger.error(f"âŒ PDF no encontrado: {report_id}")
     return jsonify({'error': 'Report not found or still generating. Try again in a moment.'}), 404
 
 
 @app.route('/success/<report_id>')
 def success_page(report_id):
-    """Página de éxito con descarga automática"""
+    """PÃ¡gina de Ã©xito con descarga automÃ¡tica"""
     _, lead = db_get_lead_by_report_id(report_id)
     pdf_file = lead.get('pdf_file') if lead else None
 
@@ -691,13 +691,13 @@ def success_page(report_id):
         def _gen():
             try:
                 generate_pdf_with_id(domain, report_id, depth=plan)
-                logger.info(f"📄 PDF generado en background: REPORT_{report_id}.pdf")
+                logger.info(f"ðŸ“„ PDF generado en background: REPORT_{report_id}.pdf")
             except Exception as e:
-                logger.error(f"❌ Error generando PDF en background: {e}")
+                logger.error(f"âŒ Error generando PDF en background: {e}")
 
         threading.Thread(target=_gen, daemon=True).start()
 
-    logger.info(f"📄 Success page para: {report_id}")
+    logger.info(f"ðŸ“„ Success page para: {report_id}")
 
     if os.path.exists(TEMPLATE_FILE):
         with open(TEMPLATE_FILE, 'r', encoding='utf-8') as f:
@@ -723,9 +723,9 @@ def success_page(report_id):
     </head>
     <body>
         <div class="box">
-            <h1>✅ ¡PAGO CONFIRMADO!</h1>
-            <p style="color:#888;">Tu reporte está listo para descargar</p>
-            <a href="/download/{report_id}" class="btn">📥 DESCARGAR REPORTE</a>
+            <h1>âœ… Â¡PAGO CONFIRMADO!</h1>
+            <p style="color:#888;">Tu reporte estÃ¡ listo para descargar</p>
+            <a href="/download/{report_id}" class="btn">ðŸ“¥ DESCARGAR REPORTE</a>
             <p class="info">Guarda el PDF en tu dispositivo.</p>
         </div>
         <script>
@@ -757,14 +757,14 @@ def test_payment():
     except Exception as e:
         results['1_lead_db'] = f'FAIL: {e}'
 
-    # PASO 2: Generación de PDF
+    # PASO 2: GeneraciÃ³n de PDF
     pdf_filename = f'REPORT_{report_id}.pdf'
     pdf_path     = os.path.join(PDF_DIR, pdf_filename)
     try:
         from reportlab.pdfgen import canvas as _c
         c = _c.Canvas(pdf_path)
         c.setFont('Helvetica-Bold', 16)
-        c.drawString(72, 750, 'PRAETOR Intelligence — Test Report')
+        c.drawString(72, 750, 'PRAETOR Intelligence â€” Test Report')
         c.setFont('Helvetica', 12)
         c.drawString(72, 720, f'Domain : {domain}')
         c.drawString(72, 700, f'Report : {report_id}')
@@ -790,13 +790,13 @@ def test_payment():
     except Exception as e:
         results['3_pdf_en_db'] = f'FAIL: {e}'
 
-    # PASO 4: Verificar que /download lo encontraría desde DB
+    # PASO 4: Verificar que /download lo encontrarÃ­a desde DB
     try:
         retrieved = db_get_pdf_bytes(report_id)
         if retrieved and len(retrieved) > 100:
-            results['4_descarga_db'] = f'PASS — /download/{report_id} sirve desde DB'
+            results['4_descarga_db'] = f'PASS â€” /download/{report_id} sirve desde DB'
         elif pdf_path and os.path.exists(pdf_path):
-            results['4_descarga_db'] = f'PASS — /download/{report_id} sirve desde filesystem'
+            results['4_descarga_db'] = f'PASS â€” /download/{report_id} sirve desde filesystem'
         else:
             results['4_descarga_db'] = 'FAIL: PDF no encontrado'
     except Exception as e:
@@ -807,7 +807,7 @@ def test_payment():
         try:
             from email_sender import enviar_reporte_por_email
             ok = enviar_reporte_por_email(email, domain, pdf_path) if (pdf_path and os.path.exists(pdf_path)) else False
-            results['5_email'] = 'PASS' if ok else 'FAIL: retornó False'
+            results['5_email'] = 'PASS' if ok else 'FAIL: retornÃ³ False'
         except Exception as e:
             results['5_email'] = f'FAIL: {type(e).__name__}: {e}'
     else:
@@ -871,9 +871,9 @@ def not_found(e):
 def server_error(e):
     import traceback
     tb = traceback.format_exc()
-    logger.error(f"❌ Error interno: {str(e)}\n{tb}")
+    logger.error(f"âŒ Error interno: {str(e)}\n{tb}")
     try:
-        webhook_logger.error(f"❌ Error interno (500):\n{tb}")
+        webhook_logger.error(f"âŒ Error interno (500):\n{tb}")
     except Exception:
         pass
     return jsonify({'error': 'Internal server error'}), 500
@@ -886,14 +886,15 @@ if __name__ == '__main__':
     port = int(os.getenv('PORT', 5000))
 
     print(f"\n{'='*50}")
-    print(f"🚀 PRAETOR Intelligence")
-    print(f"📍 http://localhost:{port}")
-    print(f"🗄️  Storage: {'PostgreSQL' if _use_db() else 'File (leads.json)'}")
-    print(f"📄 http://localhost:{port}/success/TEST123")
-    print(f"📊 http://localhost:{port}/status")
-    print(f"📋 http://localhost:{port}/leads")
+    print(f"ðŸš€ PRAETOR Intelligence")
+    print(f"ðŸ“ http://localhost:{port}")
+    print(f"ðŸ—„ï¸  Storage: {'PostgreSQL' if _use_db() else 'File (leads.json)'}")
+    print(f"ðŸ“„ http://localhost:{port}/success/TEST123")
+    print(f"ðŸ“Š http://localhost:{port}/status")
+    print(f"ðŸ“‹ http://localhost:{port}/leads")
     print(f"{'='*50}\n")
 
-    logger.info(f"🚀 PRAETOR Intelligence iniciado en http://localhost:{port}")
+    logger.info(f"ðŸš€ PRAETOR Intelligence iniciado en http://localhost:{port}")
 
     app.run(host='0.0.0.0', port=port, debug=False, threaded=True)
+
