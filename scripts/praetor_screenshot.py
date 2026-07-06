@@ -1,106 +1,42 @@
-﻿#!/usr/bin/env python3
-import os
-import csv
-import re
-import sys
-from datetime import datetime
-from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
+﻿# scripts/praetor_screenshot.py (robusto: retries + ignore_https_errors + timeouts)
+import sys, os, time
+from playwright.sync_api import sync_playwright
 
-# Configuración de rutas
-DOMAINS_FILE = "results/checked_domains.csv"
-STATUS_FILE = "results/screenshots_status.csv"
-OUTPUT_DIR = "captures"
-os.makedirs(OUTPUT_DIR, exist_ok=True)
-os.makedirs("results", exist_ok=True)
-
-DOMAIN_REGEX = re.compile(
-    r'^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.'
-    r'([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])+$'
-)
-
-def validate_domain(domain):
-    domain = (domain or "").strip().lower()
-    if not domain or "@" in domain or "/" in domain:
-        return None
-    domain = re.sub(r'^https?://', '', domain)
-    if DOMAIN_REGEX.match(domain):
-        return domain
-    return None
-
-def main():
-    # Leer dominios
-    domains = []
-    if os.path.exists(DOMAINS_FILE):
-        with open(DOMAINS_FILE, mode="r", encoding="utf-8") as f:
-            sample = f.read(1024)
-            f.seek(0)
-            if "," in sample:
-                reader = csv.reader(f)
-                for row in reader:
-                    if row:
-                        domains.append(row[0].strip())
-            else:
-                domains = [line.strip() for line in f if line.strip()]
+def capture_site(domain, retries=3, timeout=60000):
+    # Normalize URL and domain
+    if not domain.startswith('http'):
+        url = f"https://{domain}"
     else:
-        print(f"[-] No se encontró {DOMAINS_FILE}. Creando lista de prueba.")
-        domains = ["google.com", "github.com"]
+        url = domain
+        domain = domain.replace('https://','').replace('http://','').split('/')[0]
 
-    # Inicializar CSV de estado
-    with open(STATUS_FILE, mode="w", encoding="utf-8", newline="") as f:
-        writer = csv.writer(f)
-        writer.writerow(["dominio", "status", "reason", "screenshot_path", "checked_at"])
+    output_dir = "captures"
+    os.makedirs(output_dir, exist_ok=True)
+    output_path = os.path.join(output_dir, f"{domain}.png")
 
-    print(f"[+] Iniciando capturas para {len(domains)} dominios...")
-
+    print(f"[+] Iniciando captura para: {url}")
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True, args=["--ignore-certificate-errors", "--disable-gpu"])
-        context = browser.new_context(viewport={"width": 1280, "height": 720}, ignore_https_errors=True)
+        browser = p.chromium.launch(headless=True)
+        context = browser.new_context(ignore_https_errors=True)
         page = context.new_page()
-        page.set_default_timeout(25000)
-
-        for raw_domain in domains:
-            domain = validate_domain(raw_domain)
-            checked_at = datetime.utcnow().isoformat() + "Z"
-
-            if not domain:
-                print(f"[-] Dominio inválido: {raw_domain}")
-                with open(STATUS_FILE, mode="a", encoding="utf-8", newline="") as f:
-                    writer = csv.writer(f)
-                    writer.writerow([raw_domain, "SKIPPED", "Invalid domain", "", checked_at])
-                continue
-
-            filename = f"screenshot_{domain}.png"
-            filepath = os.path.join(OUTPUT_DIR, filename)
-            url = f"http://{domain}"
-
-            success = False
-            error_reason = ""
-
-            for attempt in range(1, 3):
-                try:
-                    print(f"[+] [{attempt}/2] Capturando {url}...")
-                    page.goto(url, wait_until="load")
-                    page.wait_for_timeout(1000)
-                    page.screenshot(path=filepath, full_page=False)
-                    success = True
-                    break
-                except PlaywrightTimeoutError:
-                    error_reason = "TimeoutError"
-                except Exception as e:
-                    error_reason = type(e).__name__
-                    url = f"https://{domain}"
-
-            if success:
-                print(f"[+] Completado: {domain}")
-                status, reason, path = "SUCCESS", "OK", filepath
-            else:
-                print(f"[-] Falló: {domain} ({error_reason})")
-                status, reason, path = "FAILED", error_reason, ""
-
-            with open(STATUS_FILE, mode="a", encoding="utf-8", newline="") as f:
-                writer = csv.writer(f)
-                writer.writerow([domain, status, reason, path, checked_at])
-
+        # Set robust timeouts
+        page.set_default_navigation_timeout(timeout)
+        page.set_default_timeout(timeout)
+        attempt = 0
+        while attempt <= retries:
+            try:
+                page.set_viewport_size({"width":1280,"height":800})
+                page.goto(url, wait_until="domcontentloaded", timeout=timeout)
+                page.screenshot(path=output_path, full_page=True)
+                print(f"[✔] Captura guardada con éxito en: {output_path}")
+                break
+            except Exception as e:
+                attempt += 1
+                print(f"[✘] Error al capturar {url} (intento {attempt}/{retries}): {e}")
+                if attempt > retries:
+                    print(f"[✘] Saltando {url} tras {retries} reintentos.")
+                else:
+                    time.sleep(2)
         try:
             context.close()
             browser.close()
@@ -108,4 +44,7 @@ def main():
             pass
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) < 2:
+        print("Uso: python praetor_screenshot.py <dominio.com>")
+        sys.exit(1)
+    capture_site(sys.argv[1])
