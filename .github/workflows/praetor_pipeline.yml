@@ -1,4 +1,4 @@
-name: Praetor Intelligence Core Pipeline
+﻿name: Praetor Intelligence Core Pipeline
 
 on:
   workflow_dispatch:
@@ -34,22 +34,38 @@ jobs:
           python scripts/check_dns_batch.py campaigns/PIPELINE_ENSENADA.csv campaigns/PIPELINE_ENSENADA_checked.csv
         else
           echo "scripts/check_dns_batch.py no encontrado, omitiendo paso."
+          python - <<'PY'
+import pandas as pd
+pd.DataFrame([], columns=['dominio','DMARC','MX','SPF','checked_at']).to_csv('campaigns/PIPELINE_ENSENADA_checked.csv', index=False)
+PY
         fi
 
     - name: Procesar Capturas de Pantalla Automatizadas
       run: |
         mkdir -p captures
-        tail -n +2 campaigns/PIPELINE_ENSENADA.csv | while IFS=',' read -r empresa giro dominio resto; do
-          dom=$(echo "$dominio" | tr -d '\r' | xargs)
-          if [ ! -z "$dom" ]; then
-            python scripts/praetor_screenshot.py "$dom" || true
-          fi
-        done
+        if [ -f "campaigns/PIPELINE_ENSENADA.csv" ]; then
+          tail -n +2 campaigns/PIPELINE_ENSENADA.csv | while IFS=',' read -r empresa giro dominio resto; do
+            dom=$(echo "$dominio" | tr -d '\r' | xargs)
+            if [ ! -z "$dom" ]; then
+              python scripts/praetor_screenshot.py "$dom" || true
+            fi
+          done
+        else
+          echo "campaigns/PIPELINE_ENSENADA.csv not found, skipping screenshots."
+        fi
 
-    - name: Confirmar y Guardar Cambios en el Repositorio
+    - name: Debug - listar resultados
       run: |
-        git config --local user.email "actions@github.com"
-        git config --local user.name "GitHub Actions Bot"
-        git add campaigns/PIPELINE_ENSENADA_checked.csv captures/
-        git diff --quiet && git diff --staged --quiet || git commit -m "Automated update: DNS validation & captures [skip ci]"
-        git push origin main
+        echo "PWD: $(pwd)"
+        echo "Campaigns dir:"
+        ls -la campaigns || true
+        echo "Captures dir:"
+        ls -la captures || true
+
+    - name: Upload results as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: praetor-results
+        path: |
+          campaigns/PIPELINE_ENSENADA_checked.csv
+          captures/
