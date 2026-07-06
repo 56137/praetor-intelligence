@@ -58,32 +58,58 @@
     <div class="box">
         <h1>✅ ¡PAGO CONFIRMADO!</h1>
         <p style="color:#888;">Tu reporte está listo para descargar</p>
-        
-        <div id="downloadSection">
+
+        <div id="waitingSection">
+            <p><span class="loading"></span> Preparando tu reporte...</p>
+            <p class="info">Esto puede tomar hasta 30 segundos</p>
+        </div>
+
+        <div id="downloadSection" style="display:none;">
             <button class="btn" onclick="startDownload()">
                 📥 DESCARGAR REPORTE
             </button>
-            <p class="info">También recibirás una copia por correo electrónico</p>
+            <p class="info">Guarda el PDF en tu dispositivo. Puedes volver a esta página para descargarlo de nuevo.</p>
         </div>
 
         <div id="loadingSection" style="display:none;">
-            <p><span class="loading"></span> Preparando descarga...</p>
+            <p><span class="loading"></span> Descargando...</p>
         </div>
     </div>
 
     <script>
+        const reportId = '{{ report_id }}';
+
         function startDownload() {
-            const reportId = '{{ report_id }}';
             document.getElementById('downloadSection').style.display = 'none';
             document.getElementById('loadingSection').style.display = 'block';
-            
-            setTimeout(() => {
-                window.location.href = '/download/' + reportId;
-            }, 500);
+            window.location.href = '/download/' + reportId;
         }
 
-        // Descarga automática al cargar
-        setTimeout(startDownload, 1000);
+        function checkReady(attempts) {
+            fetch('/download/' + reportId, {method: 'HEAD'})
+                .then(r => {
+                    if (r.ok) {
+                        document.getElementById('waitingSection').style.display = 'none';
+                        document.getElementById('downloadSection').style.display = 'block';
+                    } else if (attempts > 1) {
+                        setTimeout(() => checkReady(attempts - 1), 3000);
+                    } else {
+                        // Mostrar botón de todos modos después de timeout
+                        document.getElementById('waitingSection').style.display = 'none';
+                        document.getElementById('downloadSection').style.display = 'block';
+                    }
+                })
+                .catch(() => {
+                    if (attempts > 1) setTimeout(() => checkReady(attempts - 1), 3000);
+                    else {
+                        document.getElementById('waitingSection').style.display = 'none';
+                        document.getElementById('downloadSection').style.display = 'block';
+                    }
+                });
+        }
+
+        // Esperar 3 segundos y luego empezar a verificar (hasta 10 intentos = ~30 seg)
+        setTimeout(() => checkReady(10), 3000);
     </script>
 </body>
 </html>

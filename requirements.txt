@@ -1,6 +1,13 @@
-﻿flask
+flask
 flask-cors
 stripe
 reportlab
 python-dotenv
 Werkzeug
+gunicorn
+requests
+dnspython
+python-whois
+python-dateutil
+urllib3
+psycopg2-binary
