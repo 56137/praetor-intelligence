@@ -1,19 +1,20 @@
-﻿import os
+﻿#!/usr/bin/env python3
+import os
 import csv
 import re
+import sys
 from datetime import datetime
 from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
 
-# Configuración de rutas e inputs
-DOMAINS_FILE = os.path.join("results", "checked_domains.csv") # asegúrate de que tu paso previo genere este archivo
-STATUS_FILE = os.path.join("results", "screenshots_status.csv")
+# Configuración de rutas
+DOMAINS_FILE = "results/checked_domains.csv"
+STATUS_FILE = "results/screenshots_status.csv"
 OUTPUT_DIR = "captures"
-
 os.makedirs(OUTPUT_DIR, exist_ok=True)
-os.makedirs(os.path.dirname(STATUS_FILE) or "results", exist_ok=True)
+os.makedirs("results", exist_ok=True)
 
 DOMAIN_REGEX = re.compile(
-    r'^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.' 
+    r'^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.'
     r'([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])+$'
 )
 
@@ -27,32 +28,33 @@ def validate_domain(domain):
     return None
 
 def main():
+    # Leer dominios
     domains = []
     if os.path.exists(DOMAINS_FILE):
         with open(DOMAINS_FILE, mode="r", encoding="utf-8") as f:
             sample = f.read(1024)
             f.seek(0)
             if "," in sample:
-                import csv
                 reader = csv.reader(f)
                 for row in reader:
                     if row:
-                        domains.append(row[0])
+                        domains.append(row[0].strip())
             else:
                 domains = [line.strip() for line in f if line.strip()]
     else:
-        print(f"[-] No se encontró {DOMAINS_FILE}. Creando lista de prueba corta.")
+        print(f"[-] No se encontró {DOMAINS_FILE}. Creando lista de prueba.")
         domains = ["google.com", "github.com"]
 
+    # Inicializar CSV de estado
     with open(STATUS_FILE, mode="w", encoding="utf-8", newline="") as f:
         writer = csv.writer(f)
-        writer.writerow(["dominio","status","reason","screenshot_path","checked_at"])
+        writer.writerow(["dominio", "status", "reason", "screenshot_path", "checked_at"])
 
-    print(f"[+] Iniciando capturas para {len(domains)} dominios candidatos...")
+    print(f"[+] Iniciando capturas para {len(domains)} dominios...")
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True, args=["--ignore-certificate-errors", "--disable-gpu"])
-        context = browser.new_context(viewport={"width":1280,"height":720}, ignore_https_errors=True)
+        context = browser.new_context(viewport={"width": 1280, "height": 720}, ignore_https_errors=True)
         page = context.new_page()
         page.set_default_timeout(25000)
 
@@ -61,9 +63,10 @@ def main():
             checked_at = datetime.utcnow().isoformat() + "Z"
 
             if not domain:
-                print(f"[-] Dominio inválido o filtrado: {raw_domain}")
+                print(f"[-] Dominio inválido: {raw_domain}")
                 with open(STATUS_FILE, mode="a", encoding="utf-8", newline="") as f:
-                    csv.writer(f).writerow([raw_domain, "SKIPPED", "Invalid domain format", "", checked_at])
+                    writer = csv.writer(f)
+                    writer.writerow([raw_domain, "SKIPPED", "Invalid domain", "", checked_at])
                 continue
 
             filename = f"screenshot_{domain}.png"
@@ -91,11 +94,12 @@ def main():
                 print(f"[+] Completado: {domain}")
                 status, reason, path = "SUCCESS", "OK", filepath
             else:
-                print(f"[-] Falló: {domain} debido a {error_reason}")
+                print(f"[-] Falló: {domain} ({error_reason})")
                 status, reason, path = "FAILED", error_reason, ""
 
             with open(STATUS_FILE, mode="a", encoding="utf-8", newline="") as f:
-                csv.writer(f).writerow([domain, status, reason, path, checked_at])
+                writer = csv.writer(f)
+                writer.writerow([domain, status, reason, path, checked_at])
 
         try:
             context.close()
