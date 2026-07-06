@@ -1,0 +1,55 @@
+name: Praetor Intelligence Core Pipeline
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+    env:
+      STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+      STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+      SMTP_USER: ${{ secrets.SMTP_USER }}
+      SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+    steps:
+    - name: Checkout Código Fuente
+      uses: actions/checkout@v4
+
+    - name: Configurar Entorno Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Instalar Dependencias del Sistema y Python
+      run: |
+        python -m pip install --upgrade pip
+        pip install playwright dnspython pandas
+        python -m playwright install chromium
+
+    - name: Ejecutar Verificación DNS en Lote
+      run: |
+        if [ -f "scripts/check_dns_batch.py" ]; then
+          python scripts/check_dns_batch.py campaigns/PIPELINE_ENSENADA.csv campaigns/PIPELINE_ENSENADA_checked.csv
+        else
+          echo "scripts/check_dns_batch.py no encontrado, omitiendo paso."
+        fi
+
+    - name: Procesar Capturas de Pantalla Automatizadas
+      run: |
+        mkdir -p captures
+        tail -n +2 campaigns/PIPELINE_ENSENADA.csv | while IFS=',' read -r empresa giro dominio resto; do
+          dom=$(echo "$dominio" | tr -d '\r' | xargs)
+          if [ ! -z "$dom" ]; then
+            python scripts/praetor_screenshot.py "$dom" || true
+          fi
+        done
+
+    - name: Confirmar y Guardar Cambios en el Repositorio
+      run: |
+        git config --local user.email "actions@github.com"
+        git config --local user.name "GitHub Actions Bot"
+        git add campaigns/PIPELINE_ENSENADA_checked.csv captures/
+        git diff --quiet && git diff --staged --quiet || git commit -m "Automated update: DNS validation & captures [skip ci]"
+        git push origin main
