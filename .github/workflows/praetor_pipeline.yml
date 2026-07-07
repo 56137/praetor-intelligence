@@ -1,7 +1,9 @@
-name: Praetor Intelligence Core Pipeline
+﻿name: Praetor Intelligence Core Pipeline
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
 
 jobs:
   run-pipeline:
@@ -10,40 +12,67 @@ jobs:
     steps:
     - name: Checkout Código Fuente
       uses: actions/checkout@v4
-      with:
-        ref: praetor/fix-workflow
 
     - name: Configurar Entorno Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.11'
+        python-version: "3.11"
 
-    - name: Instalar Dependencias del Sistema y Playwright
+    - name: Instalar dependencias del sistema (Playwright deps)
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 \
+          libxcomposite1 libxrandr2 libxdamage1 libxss1 \
+          libgtk-3-0 libgbm1 libasound2 fonts-liberation
+
+    - name: Instalar Dependencias de Python y Playwright
       run: |
         python -m pip install --upgrade pip
-        pip install playwright
+        pip install playwright dnspython pandas
         python -m playwright install chromium
-        python -m playwright install-deps chromium
+        playwright install-deps chromium
 
-    - name: Run Core Verification (ensure CSV exists)
+    - name: Ejecutar Verificación DNS en Lote
       run: |
-        echo "[+] Asegurando results/checked_domains.csv"
-        mkdir -p results
-        if [ ! -f results/checked_domains.csv ]; then
-          echo "google.com" > results/checked_domains.csv
-          echo "github.com" >> results/checked_domains.csv
+        if [ -f "scripts/check_dns_batch.py" ]; then
+          python scripts/check_dns_batch.py campaigns/PIPELINE_ENSENADA.csv campaigns/PIPELINE_ENSENADA_checked.csv
+        else
+          echo "scripts/check_dns_batch.py no encontrado, omitiendo paso."
+          python - <<'PY'
+import pandas as pd
+pd.DataFrame([], columns=['dominio','DMARC','MX','SPF','checked_at']).to_csv('campaigns/PIPELINE_ENSENADA_checked.csv', index=False)
+PY
         fi
 
-    - name: Execute Screenshot Automation Step
+    - name: Procesar Capturas de Pantalla Automatizadas
       run: |
-        python scripts/praetor_screenshot.py
+        mkdir -p captures
+        if [ -f "campaigns/PIPELINE_ENSENADA.csv" ]; then
+          tail -n +2 campaigns/PIPELINE_ENSENADA.csv | while IFS=',' read -r empresa giro dominio resto; do
+            dom=$(echo "$dominio" | tr -d '\r' | xargs)
+            if [ ! -z "$dom" ]; then
+              python scripts/praetor_screenshot.py "$dom" || true
+            fi
+          done
+        else
+          echo "campaigns/PIPELINE_ENSENADA.csv not found, skipping screenshots."
+        fi
 
-    - name: Upload Praetor Operational Artifacts
+    - name: Debug - listar resultados
+      run: |
+        echo "PWD: $(pwd)"
+        echo "Campaigns dir:"
+        ls -la campaigns || true
+        echo "Captures dir:"
+        ls -la captures || true
+
+    - name: Upload results as artifact
       uses: actions/upload-artifact@v4
       with:
         name: praetor-results
         path: |
-          results/
+          campaigns/PIPELINE_ENSENADA_checked.csv
           captures/
         if-no-files-found: warn
         retention-days: 7

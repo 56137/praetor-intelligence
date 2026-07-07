@@ -1,13 +1,14 @@
-import sys
-import os
+﻿# scripts/praetor_screenshot.py (robusto: retries + ignore_https_errors + timeouts)
+import sys, os, time
 from playwright.sync_api import sync_playwright
 
-def capture_site(domain):
+def capture_site(domain, retries=3, timeout=60000):
+    # Normalize URL and domain
     if not domain.startswith('http'):
         url = f"https://{domain}"
     else:
         url = domain
-        domain = domain.replace('https://', '').replace('http://', '').split('/')[0]
+        domain = domain.replace('https://','').replace('http://','').split('/')[0]
 
     output_dir = "captures"
     os.makedirs(output_dir, exist_ok=True)
@@ -15,19 +16,32 @@ def capture_site(domain):
 
     print(f"[+] Iniciando captura para: {url}")
     with sync_playwright() as p:
-        # Lanzamiento del navegador en modo headless
         browser = p.chromium.launch(headless=True)
-        page = browser.new_page()
+        context = browser.new_context(ignore_https_errors=True)
+        page = context.new_page()
+        # Set robust timeouts
+        page.set_default_navigation_timeout(timeout)
+        page.set_default_timeout(timeout)
+        attempt = 0
+        while attempt <= retries:
+            try:
+                page.set_viewport_size({"width":1280,"height":800})
+                page.goto(url, wait_until="domcontentloaded", timeout=timeout)
+                page.screenshot(path=output_path, full_page=True)
+                print(f"[✔] Captura guardada con éxito en: {output_path}")
+                break
+            except Exception as e:
+                attempt += 1
+                print(f"[✘] Error al capturar {url} (intento {attempt}/{retries}): {e}")
+                if attempt > retries:
+                    print(f"[✘] Saltando {url} tras {retries} reintentos.")
+                else:
+                    time.sleep(2)
         try:
-            page.set_viewport_size({"width": 1280, "height": 800})
-            # Espera hasta 30 segundos a que la red esté inactiva
-            page.goto(url, wait_until="networkidle", timeout=30000)
-            page.screenshot(path=output_path, full_page=True)
-            print(f"[✔] Captura guardada con éxito en: {output_path}")
-        except Exception as e:
-            print(f"[✘] Error al capturar {url}: {str(e)}")
-        finally:
+            context.close()
             browser.close()
+        except Exception:
+            pass
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
