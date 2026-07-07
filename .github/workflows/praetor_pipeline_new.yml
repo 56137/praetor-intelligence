@@ -40,8 +40,9 @@ jobs:
         else
           echo "scripts/check_dns_batch.py no encontrado, omitiendo paso."
           python - <<'PY'
-import pandas as pd
-pd.DataFrame([], columns=['dominio', 'DMARC', 'MX', 'SPF', 'checked_at']).to_csv('campaigns/PIPELINE_ENSENADA_checked.csv', index=False)
+        import pandas as pd
+        pd.DataFrame([], columns=['dominio','DMARC','MX','SPF','checked_at']).to_csv('campaigns/PIPELINE_ENSENADA_checked.csv', index=False)
+        PY
         fi
 
     - name: Procesar Capturas de Pantalla Automatizadas
@@ -75,3 +76,4 @@ pd.DataFrame([], columns=['dominio', 'DMARC', 'MX', 'SPF', 'checked_at']).to_csv
           captures/
         if-no-files-found: warn
         retention-days: 7
+        
