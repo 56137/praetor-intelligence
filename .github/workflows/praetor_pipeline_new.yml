@@ -1,4 +1,4 @@
-﻿name: Praetor Pipeline
+name: Praetor Pipeline Final
 
 on:
   workflow_dispatch:
