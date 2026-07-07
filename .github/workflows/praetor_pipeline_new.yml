@@ -1,4 +1,4 @@
-﻿name: Praetor Intelligence Core Pipeline
+﻿name: Praetor Pipeline
 
 on:
   workflow_dispatch:
@@ -10,15 +10,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Código Fuente
+    - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Configurar Entorno Python
+    - name: Configurar Python
       uses: actions/setup-python@v5
       with:
         python-version: "3.11"
 
-    - name: Instalar dependencias del sistema (Playwright deps)
+    - name: Instalar dependencias del sistema
       run: |
         sudo apt-get update
         sudo apt-get install -y \
@@ -26,7 +26,7 @@ jobs:
           libxcomposite1 libxrandr2 libxdamage1 libxss1 \
           libgtk-3-0 libgbm1 libasound2 fonts-liberation
 
-    - name: Instalar Dependencias de Python y Playwright
+    - name: Instalar dependencias de Python y Playwright
       run: |
         python -m pip install --upgrade pip
         pip install playwright dnspython pandas
