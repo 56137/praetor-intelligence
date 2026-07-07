@@ -75,4 +75,4 @@ PY
           campaigns/PIPELINE_ENSENADA_checked.csv
           captures/
         if-no-files-found: warn
-        retention-days: 7#
+        retention-days: 7
