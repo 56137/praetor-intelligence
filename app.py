@@ -478,8 +478,20 @@ def create_checkout_session():
         email = (data.get('email') or '').strip()
         if not re.match(r'^[^\s@]+@[^\s@]+\.[^\s@]+$', email):
             email = ''
-        price_amount = data.get('price', 100)
-        plan = data.get('plan', 'express')
+        # SEGURIDAD: los precios se definen en el servidor y NUNCA se aceptan
+        # del cliente. Antes se leia data.get('price'), lo que permitia a
+        # cualquiera comprar el plan Pro por $1 manipulando el payload desde
+        # la consola del navegador. Ver RFC de manipulacion de precio en cliente.
+        PRECIOS_MXN = {
+            'express':    190000,   # $1,900.00 MXN
+            'pro':        690000,   # $6,900.00 MXN
+            'corporate': 2490000,   # $24,900.00 MXN
+        }
+        plan = (data.get('plan') or 'express').strip().lower()
+        if plan not in PRECIOS_MXN:
+            logger.warning(f"Plan invalido recibido: {plan!r} para {domain}")
+            return jsonify({'error': 'plan invalido'}), 400
+        price_amount = PRECIOS_MXN[plan]
 
         report_id = str(uuid.uuid4())[:8]
 
