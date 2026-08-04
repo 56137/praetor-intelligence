@@ -140,11 +140,11 @@
       <div class="findings" id="findings"></div>
 
       <div style="margin-top:22px">
-        <button class="btn" onclick="buyReport()">DESCARGAR REPORTE COMPLETO — $99 MXN</button>
+        <button class="btn" onclick="buyReport()">DESCARGAR REPORTE COMPLETO — $1,900 MXN</button>
         <div style="height:10px"></div>
         <button class="btn btn-ghost" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">VER PLANES</button>
       </div>
-      <p class="hint">Precio Beta de lanzamiento · El reporte completo incluye todos los hallazgos y recomendaciones priorizadas, disponible para descarga inmediata tras el pago.</p>
+      <p class="hint">El reporte completo incluye todos los hallazgos y recomendaciones priorizadas, disponible para descarga inmediata tras el pago.</p>
     </div>
   </div>
 
@@ -191,9 +191,9 @@
     <p class="sub">Cada plan corresponde a comprobaciones reales que el sistema ejecuta.</p>
     <div class="tiers">
       <div class="tier feat">
-        <div class="tag">BETA · PRIMEROS 25</div>
+        <div class="tag">DIAGNÓSTICO</div>
         <h3>Express</h3>
-        <div class="price">$99 <small>MXN / reporte</small></div>
+        <div class="price">$1,900 <small>MXN / reporte</small></div>
         <ul>
           <li>Auditoría base completa</li>
           <li>TLS, DNS, SPF/DMARC, cabeceras</li>
@@ -201,12 +201,12 @@
           <li>Recomendaciones priorizadas</li>
           <li>PDF ejecutivo descargable al instante</li>
         </ul>
-        <button class="btn" onclick="buyReport('express',9900)">Comprar Express</button>
+        <button class="btn" onclick="buyReport('express',190000)">Comprar Express</button>
       </div>
       <div class="tier">
         <div class="tag">MÁS COMPLETO</div>
         <h3>Pro</h3>
-        <div class="price">$399 <small>MXN / reporte</small></div>
+        <div class="price">$6,900 <small>MXN / reporte</small></div>
         <ul>
           <li>Todo lo de Express</li>
           <li>Subdominios vía Certificate Transparency</li>
@@ -214,18 +214,31 @@
           <li>CVE candidatos (con verificación manual)</li>
           <li>PDF técnico ampliado</li>
         </ul>
-        <button class="btn" onclick="buyReport('pro',39900)">Comprar Pro</button>
+        <button class="btn" onclick="buyReport('pro',690000)">Comprar Pro</button>
       </div>
       <div class="tier">
-        <div class="tag">PRÓXIMAMENTE</div>
+        <div class="tag">MULTI-DOMINIO</div>
         <h3>Corporate</h3>
-        <div class="price">A medida</div>
+        <div class="price">$24,900 <small>MXN / desde</small></div>
         <ul>
           <li>Todo lo de Pro</li>
           <li>Re-escaneo programado</li>
           <li>Detección de cambios entre escaneos</li>
           <li>Alertas de nuevos subdominios y CVEs</li>
           <li>WHOIS y seguimiento histórico</li>
+        </ul>
+        <button class="btn btn-ghost" onclick="contactSales()">Solicitar info</button>
+      </div>
+      <div class="tier">
+        <div class="tag">RECURRENTE</div>
+        <h3>Vigilancia</h3>
+        <div class="price">$3,900 <small>MXN / mes</small></div>
+        <ul>
+          <li>Reescaneo mensual automático</li>
+          <li>Alerta ante cambios de configuración</li>
+          <li>Nuevos subdominios y CVEs detectados</li>
+          <li>Informe comparativo mes a mes</li>
+          <li>Prioridad en soporte</li>
         </ul>
         <button class="btn btn-ghost" onclick="contactSales()">Solicitar info</button>
       </div>
@@ -336,7 +349,7 @@ function render(d){
   $('result').scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 
-async function buyReport(plan='express', price=9900){
+async function buyReport(plan='express', price=190000){
   if(!lastDomain){ alert('Primero escanea un dominio.'); return; }
   // Validar correo (capturado en el escaneo). Si falta o es inválido, pedirlo una vez.
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(lastEmail)){
