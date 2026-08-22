@@ -71,3 +71,7 @@ _app_module._use_db = _use_db
 _app_module.find_lead_by_email = find_lead_by_email
 _app_module.find_lead_by_report_id = find_lead_by_report_id
 _app_module.get_pdf_for_report_id = get_pdf_for_report_id
+
+# Register the landing page's /scan endpoint after the app and compatibility
+# helpers are ready.
+import scan_routes  # noqa: F401,E402
