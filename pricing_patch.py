@@ -19,66 +19,52 @@ def patch_landing(path: Path) -> bool:
     text = path.read_text(encoding='utf-8', errors='ignore')
     original = text
 
-    # Normalize visible prices from any of the older versions.
-    for old, new in {
+    # Normalize visible legacy prices without touching already-correct values.
+    replacements = {
         '$99': '$2,999',
         '$1,900': '$2,999',
-        '$2,999': '$2,999',
-        '$399': '$6,999',
         '$6,900': '$6,999',
-        '$6,999': '$6,999',
         '$24,900': '$10,999',
-        '$10,999': '$10,999',
         '$3,900': '$3,999',
-        '$3,999': '$3,999',
-    }.items():
+    }
+    for old, new in replacements.items():
         text = text.replace(old, new)
 
-    # Normalize checkout amounts in the existing landing JS.
-    for old, new in {
-        '9900)': '299900)',
-        '190000)': '299900)',
-        '299900)': '299900)',
-        '39900)': '699900)',
-        '690000)': '699900)',
-        '699900)': '699900)',
-        '24900)': '1099900)',
-        '2490000)': '1099900)',
-        '1099900)': '1099900)',
-        '3900)': '399900)',
-        '390000)': '399900)',
-        '399900)': '399900)',
-    }.items():
-        text = text.replace(old, new)
+    # Normalize checkout amounts only inside buyReport(...) calls.
+    text = re.sub(
+        r"buyReport\(\s*['\"]express['\"]\s*,\s*\d+\s*\)",
+        "buyReport('express',299900)", text,
+    )
+    text = re.sub(
+        r"buyReport\(\s*['\"]pro['\"]\s*,\s*\d+\s*\)",
+        "buyReport('pro',699900)", text,
+    )
+    text = re.sub(
+        r"buyReport\(\s*['\"]corporate['\"]\s*,\s*\d+\s*\)",
+        "buyReport('corporate',1099900)", text,
+    )
+    text = re.sub(
+        r"buyReport\(\s*['\"]monitoring['\"]\s*,\s*\d+\s*\)",
+        "buyReport('monitoring',399900)", text,
+    )
 
-    # Keep explicit plan cards aligned even if a prior patch changed wording.
+    # Keep the four visible cards authoritative even if an older runtime patch changed them.
     text = re.sub(
         r'(<h3>Express</h3>\s*<div class="price">)\$[\d,]+',
-        r'\1$2,999', text, count=1
+        r'\1$2,999', text, count=1,
     )
     text = re.sub(
         r'(<h3>Pro</h3>\s*<div class="price">)\$[\d,]+',
-        r'\1$6,999', text, count=1
+        r'\1$6,999', text, count=1,
     )
     text = re.sub(
-        r'(<h3>Corporate</h3>\s*<div class="price">)\$[\d,]+|(<h3>Corporate</h3>\s*<div class="price">)A medida',
-        lambda m: (m.group(1) or m.group(2)) + '$10,999', text, count=1
+        r'(<h3>Corporate</h3>\s*<div class="price">)(?:\$[\d,]+|A medida)',
+        r'\1$10,999', text, count=1,
     )
     text = re.sub(
         r'(<h3>Vigilancia</h3>\s*<div class="price">)\$[\d,]+',
-        r'\1$3,999', text, count=1
+        r'\1$3,999', text, count=1,
     )
-
-    text = re.sub(r'buyReport\([\'\"]express[\'\"],\s*\d+\)', "buyReport('express',299900)", text)
-    text = re.sub(r'buyReport\([\'\"]pro[\'\"],\s*\d+\)', "buyReport('pro',699900)", text)
-    text = re.sub(r'buyReport\([\'\"]corporate[\'\"],\s*\d+\)', "buyReport('corporate',1099900)", text)
-    text = re.sub(r'buyReport\([\'\"]monitoring[\'\"],\s*\d+\)', "buyReport('monitoring',399900)", text)
-
-    if 'startMonitoring()' not in text:
-        text = text.replace(
-            '<button class="btn btn-ghost" onclick="startMonitoring()">Activar monitoreo</button>',
-            '<button class="btn btn-ghost" onclick="startMonitoring()">Activar monitoreo</button>'
-        )
 
     if text != original:
         path.write_text(text, encoding='utf-8')
@@ -93,23 +79,30 @@ def patch_backend(path: Path) -> bool:
     text = path.read_text(encoding='utf-8-sig', errors='ignore')
     original = text
 
-    old = "        price_amount = data.get('price', 100)\n        plan = data.get('plan', 'express')"
-    new = (
-        "        plan = str(data.get('plan', 'express')).lower()\n"
+    # Replace the old client-controlled pricing with authoritative server-side prices.
+    text = re.sub(
+        r"\s*price_amount\s*=\s*data\.get\('price',\s*100\)\s*\n\s*plan\s*=\s*data\.get\('plan',\s*'express'\)",
+        "\n        plan = str(data.get('plan', 'express')).lower()\n"
         "        plan_prices = {'express': 299900, 'pro': 699900, 'corporate': 1099900, 'monitoring': 399900}\n"
         "        if plan not in plan_prices:\n"
         "            return jsonify({'error': 'Plan no válido'}), 400\n"
-        "        price_amount = plan_prices[plan]"
+        "        price_amount = plan_prices[plan]",
+        text, count=1,
     )
-    if old in text:
-        text = text.replace(old, new, 1)
 
-    text = text.replace(
-        "                'unit_amount': price_amount,\n                },",
-        "                'unit_amount': price_amount,\n                **({'recurring': {'interval': 'month'}} if plan == 'monitoring' else {}),\n                },",
-        1,
+    # Monitoring is the only recurring product.
+    text = re.sub(
+        r"\s*'unit_amount':\s*price_amount,\s*\n\s*},",
+        "                'unit_amount': price_amount,\n"
+        "                **({'recurring': {'interval': 'month'}} if plan == 'monitoring' else {}),\n"
+        "                },",
+        text, count=1,
     )
-    text = text.replace("            mode='payment',", "            mode=('subscription' if plan == 'monitoring' else 'payment'),", 1)
+    text = re.sub(
+        r"\s*mode='payment',",
+        "            mode=('subscription' if plan == 'monitoring' else 'payment'),",
+        text, count=1,
+    )
 
     if text != original:
         path.write_text(text, encoding='utf-8')
