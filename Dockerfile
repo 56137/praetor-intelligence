@@ -1,33 +1,28 @@
-# 1. Imagen Base Ligera: Reduce la superficie de ataque y el tiempo de despliegue
+# Imagen base ligera y compatible con Flask/Gunicorn
 FROM python:3.11-slim
 
-# 2. Variables de Entorno: Evita la creación de archivos .pyc y asegura logs en tiempo real
+# Logs en tiempo real y sin archivos .pyc
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
-# 3. Directorio de Trabajo
 WORKDIR /app
 
-# 4. Aislamiento de Seguridad: Creación del usuario y grupo non-root
+# Usuario sin privilegios para ejecutar PRAETOR
 RUN addgroup --system praetorgroup && adduser --system --group praetoruser
 
-# 5. Caché de Dependencias: Copiar solo requirements primero para optimizar los tiempos de build (CI/CD)
+# Instalar dependencias antes de copiar el código para aprovechar la caché
 COPY requirements.txt .
-
-# 6. Instalación de Dependencias
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 7. Copiar el Código Fuente de la Misión
+# Copiar aplicación
 COPY . .
 
-# 8. Permisos: Transferir la propiedad de los archivos al usuario sin privilegios
+# Permisos para el usuario no-root
 RUN chown -R praetoruser:praetorgroup /app
-
-# 9. Cambio de Contexto: Activar el usuario non-root (Punto crítico de seguridad)
 USER praetoruser
 
-# 10. Exponer el puerto estándar de Cloud Run
+# Cloud Run proporciona PORT; 8080 es el valor habitual
 EXPOSE 8080
 
-# 11. Ejecución: Comando de arranque con Uvicorn
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
+# PRAETOR es Flask: app.py expone app
+CMD ["sh", "-c", "gunicorn app:app --workers 1 --threads 4 --timeout 120 --bind 0.0.0.0:${PORT:-8080}"]
