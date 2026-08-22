@@ -11,3 +11,4 @@ python-whois
 python-dateutil
 urllib3
 psycopg2-binary
+openai
