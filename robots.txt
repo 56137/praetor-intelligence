@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://praetor.lat/sitemap.xml
+Sitemap: https://www.praetor.lat/sitemap.xml
