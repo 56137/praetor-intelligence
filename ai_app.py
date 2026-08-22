@@ -5,6 +5,7 @@ from flask import jsonify, request
 
 from app import app
 from openai_service_v2 import analyze_security_report
+import seo_routes  # noqa: F401  # registers /en/, sitemap.xml, robots.txt and hreflang
 
 
 @app.route('/ai/analyze', methods=['POST'])
