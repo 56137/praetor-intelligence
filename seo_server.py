@@ -1,25 +1,27 @@
 import os
 import re
 
+from pathlib import Path
+
 # Production entrypoint: register all runtime patches and routes here.
 from pricing_patch import patch_landing, patch_backend
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-patch_landing(os.path.join(BASE_DIR, "landing.html"))
-patch_landing(os.path.join(BASE_DIR, "en", "index.html"))
-patch_backend(os.path.join(BASE_DIR, "app.py"))
+BASE_DIR = Path(__file__).resolve().parent
+patch_landing(BASE_DIR / "landing.html")
+patch_landing(BASE_DIR / "en" / "index.html")
+patch_backend(BASE_DIR / "app.py")
 
 from flask import Response, redirect, send_file, jsonify, request
 from app import app
 from scan_target import scan_target
 
 CANONICAL_HOST = "https://www.praetor.lat"
-RUNTIME_VERSION = "2026-08-22-scan-v3"
+RUNTIME_VERSION = "2026-08-22-scan-v4"
 
 
 def seo_home():
-    path = os.path.join(BASE_DIR, "landing.html")
-    with open(path, "r", encoding="utf-8") as f:
+    path = BASE_DIR / "landing.html"
+    with path.open("r", encoding="utf-8") as f:
         html = f.read()
     tags = f'''\n<link rel="canonical" href="{CANONICAL_HOST}/">\n<link rel="alternate" hreflang="es-MX" href="{CANONICAL_HOST}/">\n<link rel="alternate" hreflang="en" href="{CANONICAL_HOST}/en/">\n<link rel="alternate" hreflang="x-default" href="{CANONICAL_HOST}/">\n<meta property="og:locale" content="es_MX">\n<meta property="og:locale:alternate" content="en_US">\n<meta name="praetor-runtime" content="{RUNTIME_VERSION}">\n'''
     html = html.replace("</head>", tags + "</head>", 1)
@@ -87,14 +89,14 @@ def english_redirect():
 
 @app.route("/en/")
 def english_home():
-    return send_file(os.path.join(BASE_DIR, "en", "index.html"), mimetype="text/html")
+    return send_file(str(BASE_DIR / "en" / "index.html"), mimetype="text/html")
 
 
 @app.route("/robots.txt")
 def robots():
-    return send_file(os.path.join(BASE_DIR, "robots.txt"), mimetype="text/plain")
+    return send_file(str(BASE_DIR / "robots.txt"), mimetype="text/plain")
 
 
 @app.route("/sitemap.xml")
 def sitemap():
-    return send_file(os.path.join(BASE_DIR, "sitemap.xml"), mimetype="application/xml")
+    return send_file(str(BASE_DIR / "sitemap.xml"), mimetype="application/xml")
