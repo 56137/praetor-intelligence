@@ -23,5 +23,5 @@ USER praetoruser
 
 EXPOSE 8080
 
-# Startup wrapper instala las funciones de compatibilidad antes de servir Flask.
-CMD ["sh", "-c", "gunicorn startup:app --workers 1 --threads 4 --timeout 120 --bind 0.0.0.0:${PORT:-8080}"]
+# Sincroniza precios autoritativos antes de servir Flask.
+CMD ["sh", "-c", "python pricing_patch.py && gunicorn startup:app --workers 1 --threads 4 --timeout 120 --bind 0.0.0.0:${PORT:-8080}"]
