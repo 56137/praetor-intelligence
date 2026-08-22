@@ -3,71 +3,82 @@ import re
 
 ROOT = Path(__file__).resolve().parent
 
-# Authoritative public pricing, matching the active Stripe prices shown in the dashboard.
+# Authoritative public pricing. Amounts are MXN cents.
 PRICES = {
-    'express': 190000,      # MXN 1,900 one-time
-    'pro': 690000,          # MXN 6,900 one-time
-    'corporate': 2490000,   # MXN 24,900 one-time
-    'monitoring': 390000,   # MXN 3,900/month
+    'express': 299900,      # MXN 2,999 one-time
+    'pro': 699900,          # MXN 6,999 one-time
+    'corporate': 1099900,   # MXN 10,999 one-time
+    'monitoring': 399900,   # MXN 3,999/month
 }
 
 
 def patch_landing(path: Path) -> bool:
+    path = Path(path)
     if not path.exists():
         return False
     text = path.read_text(encoding='utf-8', errors='ignore')
     original = text
 
-    replacements = {
-        '$99': '$1,900',
-        '$1,900': '$1,900',
-        '$2,999': '$1,900',
-        '$399': '$6,900',
-        '$6,900': '$6,900',
-        '$6,999': '$6,900',
-        '$24,900': '$24,900',
-        '$10,999': '$24,900',
-        '$3,900': '$3,900',
-        '$3,999': '$3,900',
-        '9900)': '190000)',
-        '299900)': '190000)',
-        '39900)': '690000)',
-        '699900)': '690000)',
-        '24900)': '2490000)',
-        '1099900)': '2490000)',
-        '3900)': '390000)',
-        '399900)': '390000)',
-    }
-    for old, new in replacements.items():
+    # Normalize visible prices from any of the older versions.
+    for old, new in {
+        '$99': '$2,999',
+        '$1,900': '$2,999',
+        '$2,999': '$2,999',
+        '$399': '$6,999',
+        '$6,900': '$6,999',
+        '$6,999': '$6,999',
+        '$24,900': '$10,999',
+        '$10,999': '$10,999',
+        '$3,900': '$3,999',
+        '$3,999': '$3,999',
+    }.items():
         text = text.replace(old, new)
 
-    # Corporate is a paid tier at the active Stripe price.
+    # Normalize checkout amounts in the existing landing JS.
+    for old, new in {
+        '9900)': '299900)',
+        '190000)': '299900)',
+        '299900)': '299900)',
+        '39900)': '699900)',
+        '690000)': '699900)',
+        '699900)': '699900)',
+        '24900)': '1099900)',
+        '2490000)': '1099900)',
+        '1099900)': '1099900)',
+        '3900)': '399900)',
+        '390000)': '399900)',
+        '399900)': '399900)',
+    }.items():
+        text = text.replace(old, new)
+
+    # Keep explicit plan cards aligned even if a prior patch changed wording.
     text = re.sub(
-        r'(<h3>Corporate</h3>\s*<div class="price">)(?:A medida|\$24,900|\$10,999)(?:\s*<small>[^<]*</small>)?',
-        r'\1$24,900 <small>MXN / reporte</small>',
-        text,
-        count=1,
+        r'(<h3>Express</h3>\s*<div class="price">)\$[\d,]+',
+        r'\1$2,999', text, count=1
     )
-    text = text.replace(
-        '<button class="btn btn-ghost" onclick="contactSales()">Solicitar info</button>',
-        '<button class="btn btn-ghost" onclick="buyReport(\'corporate\',2490000)">Comprar Corporate</button>',
-        1,
+    text = re.sub(
+        r'(<h3>Pro</h3>\s*<div class="price">)\$[\d,]+',
+        r'\1$6,999', text, count=1
+    )
+    text = re.sub(
+        r'(<h3>Corporate</h3>\s*<div class="price">)\$[\d,]+|(<h3>Corporate</h3>\s*<div class="price">)A medida',
+        lambda m: (m.group(1) or m.group(2)) + '$10,999', text, count=1
+    )
+    text = re.sub(
+        r'(<h3>Vigilancia</h3>\s*<div class="price">)\$[\d,]+',
+        r'\1$3,999', text, count=1
     )
 
-    # Ensure a recurring monitoring tier exists in the source used at runtime.
+    text = re.sub(r'buyReport\([\'\"]express[\'\"],\s*\d+\)', "buyReport('express',299900)", text)
+    text = re.sub(r'buyReport\([\'\"]pro[\'\"],\s*\d+\)', "buyReport('pro',699900)", text)
+    text = re.sub(r'buyReport\([\'\"]corporate[\'\"],\s*\d+\)', "buyReport('corporate',1099900)", text)
+    text = re.sub(r'buyReport\([\'\"]monitoring[\'\"],\s*\d+\)', "buyReport('monitoring',399900)", text)
+
     if 'startMonitoring()' not in text:
-        marker = '      <div class="tier">\n        <div class="tag">PRÓXIMAMENTE</div>'
-        if marker in text:
-            monitoring = '''      <div class="tier">\n        <div class="tag">RECURRENTE</div>\n        <h3>Vigilancia</h3>\n        <div class="price">$3,900 <small>MXN / mes</small></div>\n        <ul>\n          <li>Reescaneo mensual automático</li>\n          <li>Alerta ante cambios de configuración</li>\n          <li>Nuevos subdominios y CVEs detectados</li>\n          <li>Informe comparativo mes a mes</li>\n          <li>Prioridad en soporte</li>\n        </ul>\n        <button class="btn btn-ghost" onclick="startMonitoring()">Activar monitoreo</button>\n      </div>\n'''
-            text = text.replace(marker, monitoring + marker, 1)
-
-    if 'function startMonitoring()' not in text:
-        handler = '''\nfunction startMonitoring(){\n  if(!lastDomain){ alert('Primero escanea un dominio.'); return; }\n  if(!lastEmail || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(lastEmail)){\n    const e=(prompt('Escribe un correo válido para el monitoreo:')||'').trim();\n    if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(e)){ alert('Correo inválido.'); return; }\n    lastEmail=e;\n  }\n  buyReport('monitoring',390000);\n}\n'''
-        text = text.replace('</script>', handler + '</script>', 1)
-
-    text = text.replace('DESCARGAR REPORTE COMPLETO — $99 MXN', 'DESCARGAR REPORTE COMPLETO — $1,900 MXN')
-    text = text.replace('DESCARGAR REPORTE COMPLETO — $2,999 MXN', 'DESCARGAR REPORTE COMPLETO — $1,900 MXN')
-    text = text.replace("buyReport()", "buyReport('express',190000)", 1)
+        text = text.replace(
+            '<button class="btn btn-ghost" onclick="startMonitoring()">Activar monitoreo</button>',
+            '<button class="btn btn-ghost" onclick="startMonitoring()">Activar monitoreo</button>'
+        )
 
     if text != original:
         path.write_text(text, encoding='utf-8')
@@ -76,30 +87,29 @@ def patch_landing(path: Path) -> bool:
 
 
 def patch_backend(path: Path) -> bool:
+    path = Path(path)
     if not path.exists():
         return False
     text = path.read_text(encoding='utf-8-sig', errors='ignore')
     original = text
 
     old = "        price_amount = data.get('price', 100)\n        plan = data.get('plan', 'express')"
-    new = "        plan = str(data.get('plan', 'express')).lower()\n        plan_prices = {'express': 190000, 'pro': 690000, 'corporate': 2490000, 'monitoring': 390000}\n        if plan not in plan_prices:\n            return jsonify({'error': 'Plan no válido'}), 400\n        price_amount = plan_prices[plan]"
-    text = text.replace(old, new, 1)
+    new = (
+        "        plan = str(data.get('plan', 'express')).lower()\n"
+        "        plan_prices = {'express': 299900, 'pro': 699900, 'corporate': 1099900, 'monitoring': 399900}\n"
+        "        if plan not in plan_prices:\n"
+        "            return jsonify({'error': 'Plan no válido'}), 400\n"
+        "        price_amount = plan_prices[plan]"
+    )
+    if old in text:
+        text = text.replace(old, new, 1)
 
-    # Recurring price_data for monitoring.
     text = text.replace(
         "                'unit_amount': price_amount,\n                },",
-        "                'unit_amount': price_amount,\n                    **({'recurring': {'interval': 'month'}} if plan == 'monitoring' else {}),\n                },",
+        "                'unit_amount': price_amount,\n                **({'recurring': {'interval': 'month'}} if plan == 'monitoring' else {}),\n                },",
         1,
     )
     text = text.replace("            mode='payment',", "            mode=('subscription' if plan == 'monitoring' else 'payment'),", 1)
-
-    marker = "        plan = session.get('metadata', {}).get('plan', 'express')\n        session_id = session.get('id')"
-    if marker in text and "Monitoring subscription checkout completed" not in text:
-        text = text.replace(
-            marker,
-            marker + "\n        if plan == 'monitoring':\n            logger.info(f'✅ Monitoring subscription checkout completed: {session_id}')\n            return jsonify({'status': 'success', 'plan': plan}), 200",
-            1,
-        )
 
     if text != original:
         path.write_text(text, encoding='utf-8')
