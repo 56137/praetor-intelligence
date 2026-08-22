@@ -21,8 +21,7 @@ COPY . .
 RUN chown -R praetoruser:praetorgroup /app
 USER praetoruser
 
-# Cloud Run proporciona PORT; 8080 es el valor habitual
 EXPOSE 8080
 
-# Wrapper SEO conserva app.py y añade rutas /en/, robots.txt y sitemap.xml
-CMD ["sh", "-c", "gunicorn seo_server:app --workers 1 --threads 4 --timeout 120 --bind 0.0.0.0:${PORT:-8080}"]
+# Startup wrapper instala las funciones de compatibilidad antes de servir Flask.
+CMD ["sh", "-c", "gunicorn startup:app --workers 1 --threads 4 --timeout 120 --bind 0.0.0.0:${PORT:-8080}"]
