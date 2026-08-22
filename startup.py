@@ -1,23 +1,24 @@
-"""Production startup wrapper for PRAETOR.
-
-The current app.py contains a partially completed PostgreSQL migration and
-references helper functions that are not present in the repository.  This
-module supplies safe file-backed compatibility helpers so the service can
-boot while the persistent database migration is completed separately.
-"""
+"""Production startup wrapper for PRAETOR."""
 
 import json
-import os
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent
+LEADS_FILE = BASE_DIR / "leads.json"
+
+# Apply pricing changes before importing Flask so the runtime landing pages and
+# checkout logic use the authoritative Stripe prices.
+from pricing_patch import patch_landing, patch_backend
+patch_landing(BASE_DIR / "landing.html")
+patch_landing(BASE_DIR / "en" / "index.html")
+patch_backend(BASE_DIR / "app.py")
 
 from seo_server import app
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-LEADS_FILE = os.path.join(BASE_DIR, "leads.json")
 
 
 def _load_leads():
     try:
-        with open(LEADS_FILE, "r", encoding="utf-8") as f:
+        with LEADS_FILE.open("r", encoding="utf-8") as f:
             data = json.load(f)
         return data if isinstance(data, list) else []
     except (FileNotFoundError, json.JSONDecodeError, OSError):
@@ -25,21 +26,15 @@ def _load_leads():
 
 
 def _save_leads(leads):
-    with open(LEADS_FILE, "w", encoding="utf-8") as f:
+    with LEADS_FILE.open("w", encoding="utf-8") as f:
         json.dump(leads, f, ensure_ascii=False, indent=2)
 
 
 def db_get_all_leads():
-    """Compatibility storage until PostgreSQL helpers are implemented."""
     return _load_leads()
 
 
 def _use_db():
-    """Report whether a real DB backend is active.
-
-    The current repository does not contain the DB helper implementation, so
-    DATABASE_URL alone must not make the app claim PostgreSQL is active.
-    """
     return False
 
 
@@ -70,9 +65,7 @@ def get_pdf_for_report_id(report_id):
     return f"REPORT_{report_id}.pdf"
 
 
-# Inject the missing helpers into the already-created Flask module.
 import app as _app_module
-
 _app_module.db_get_all_leads = db_get_all_leads
 _app_module._use_db = _use_db
 _app_module.find_lead_by_email = find_lead_by_email
