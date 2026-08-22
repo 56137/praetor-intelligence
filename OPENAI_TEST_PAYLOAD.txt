@@ -1,0 +1,1 @@
+{"report_text":"PRAETOR test: TLS is enabled, SPF is present, DMARC is missing. Analyze this sample only."}
