@@ -1,0 +1,1 @@
+After cloning this repository in Cloud Shell, deploy the existing Cloud Run service from the source directory with the OpenAI SDK installed and the OpenAI WSGI entrypoint. Do not put OPENAI_API_KEY in source or command history; Cloud Run already injects it from Secret Manager.
