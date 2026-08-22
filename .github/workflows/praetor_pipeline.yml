@@ -21,24 +21,18 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+          cache: 'pip'
 
       - name: Instalar Dependencias de Python y Playwright
         run: |
           python -m pip install --upgrade pip
-          pip install playwright dnspython pandas
-          python -m playwright install --with-deps chromium
+          python -m pip install --no-cache-dir playwright dnspython pandas
+          python -m playwright install chromium
 
       - name: Ejecutar Verificación DNS en Lote
         run: |
-          if [ -f "scripts/check_dns_batch.py" ]; then
-            python scripts/check_dns_batch.py campaigns/PIPELINE_ENSENADA.csv campaigns/PIPELINE_ENSENADA_checked.csv
-          else
-            echo "scripts/check_dns_batch.py no encontrado, omitiendo paso."
-            python - <<'PY'
-            import pandas as pd
-            pd.DataFrame([], columns=['dominio','DMARC','MX','SPF','checked_at']).to_csv('campaigns/PIPELINE_ENSENADA_checked.csv', index=False)
-            PY
-          fi
+          mkdir -p campaigns
+          python scripts/check_dns_batch.py campaigns/PIPELINE_ENSENADA.csv campaigns/PIPELINE_ENSENADA_checked.csv
 
       - name: Procesar Capturas de Pantalla Automatizadas
         run: |
