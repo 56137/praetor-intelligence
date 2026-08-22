@@ -1,0 +1,36 @@
+name: PRAETOR Production Smoke Test
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Wait for Render deployment
+        shell: bash
+        run: |
+          for i in {1..30}; do
+            body=$(curl -fsS https://praetor.lat/runtime-check 2>/dev/null || true)
+            echo "$body"
+            if echo "$body" | grep -q '"runtime_version":"2026-08-22-scan-v3"'; then
+              exit 0
+            fi
+            sleep 20
+          done
+          echo "PRAETOR runtime version did not reach production in time"
+          exit 1
+
+      - name: Smoke test scanner endpoint
+        shell: bash
+        run: |
+          response=$(curl -fsS -X POST https://praetor.lat/scan \
+            -H 'Content-Type: application/json' \
+            -d '{"domain":"example.com"}')
+          echo "$response"
+          echo "$response" | grep -q '"domain":"example.com"'
+          echo "$response" | grep -q '"risk_score"'
+          echo "$response" | grep -q '"risk_level"'
