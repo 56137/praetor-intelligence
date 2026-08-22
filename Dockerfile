@@ -23,5 +23,5 @@ USER praetoruser
 
 EXPOSE 8080
 
-# Sincroniza precios autoritativos antes de servir Flask.
-CMD ["sh", "-c", "python pricing_patch.py && gunicorn startup:app --workers 1 --threads 4 --timeout 120 --bind 0.0.0.0:${PORT:-8080}"]
+# Producción: seo_server registra SEO, scanner y rutas de idioma.
+CMD ["sh", "-c", "gunicorn seo_server:app --workers 1 --threads 4 --timeout 120 --bind 0.0.0.0:${PORT:-8080}"]
