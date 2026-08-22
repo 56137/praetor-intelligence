@@ -2,6 +2,9 @@ name: Praetor Intelligence Core Pipeline
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
   schedule:
     - cron: '0 0 * * *'
 
@@ -17,7 +20,7 @@ jobs:
       - name: Configurar Entorno Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: '3.11'
 
       - name: Instalar Dependencias de Python y Playwright
         run: |
@@ -32,9 +35,9 @@ jobs:
           else
             echo "scripts/check_dns_batch.py no encontrado, omitiendo paso."
             python - <<'PY'
-import pandas as pd
-pd.DataFrame([], columns=['dominio','DMARC','MX','SPF','checked_at']).to_csv('campaigns/PIPELINE_ENSENADA_checked.csv', index=False)
-PY
+            import pandas as pd
+            pd.DataFrame([], columns=['dominio','DMARC','MX','SPF','checked_at']).to_csv('campaigns/PIPELINE_ENSENADA_checked.csv', index=False)
+            PY
           fi
 
       - name: Procesar Capturas de Pantalla Automatizadas
