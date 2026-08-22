@@ -1,0 +1,1 @@
+OpenAI integration files are present in the repository. Production entrypoint has not been changed by this marker.
