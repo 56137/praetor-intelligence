@@ -3,6 +3,20 @@ import re
 
 ROOT = Path(__file__).resolve().parent
 
+# Google Tag Manager container used by PRAETOR marketing/analytics.
+GTM_ID = 'GTM-T8ZJBWL8'
+GTM_HEAD = f'''<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){{w[l]=w[l]||[];w[l].push({{'gtm.start':
+new Date().getTime(),event:'gtm.js'}});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+}})(window,document,'script','dataLayer','{GTM_ID}');</script>
+<!-- End Google Tag Manager -->'''
+GTM_BODY = f'''<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id={GTM_ID}"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->'''
+
 # Authoritative public pricing. Amounts are MXN cents.
 PRICES = {
     'express': 299900,      # MXN 2,999 one-time
@@ -18,6 +32,13 @@ def patch_landing(path: Path) -> bool:
         return False
     text = path.read_text(encoding='utf-8', errors='ignore')
     original = text
+
+    # Inject GTM once only. Head script is immediately after <head>; noscript
+    # fallback is immediately after <body>, matching Google's placement guidance.
+    if f'googletagmanager.com/gtm.js?id={GTM_ID}' not in text:
+        text = re.sub(r'<head>\s*', '<head>\n' + GTM_HEAD + '\n', text, count=1, flags=re.IGNORECASE)
+    if f'googletagmanager.com/ns.html?id={GTM_ID}' not in text:
+        text = re.sub(r'<body>\s*', '<body>\n' + GTM_BODY + '\n', text, count=1, flags=re.IGNORECASE)
 
     # Normalize visible legacy prices without touching already-correct values.
     replacements = {
