@@ -1,0 +1,19 @@
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "PRAETOR Intelligence",
+  "alternateName": "PRAETOR Cybersecurity",
+  "url": "https://www.praetor.lat/",
+  "applicationCategory": "SecurityApplication",
+  "applicationSubCategory": "External Attack Surface Management",
+  "operatingSystem": "Web",
+  "description": "Plataforma web de ciberseguridad para auditorías externas y pasivas de superficie digital pública. Analiza TLS/SSL, DNS, SPF, DKIM, DMARC, cabeceras de seguridad, tecnologías y subdominios expuestos sin instalar agentes.",
+  "featureList": ["Auditoría de dominio", "Evaluación TLS/SSL", "Análisis DNS", "SPF", "DKIM", "DMARC", "Cabeceras de seguridad", "Descubrimiento de subdominios", "Evaluación de tecnologías expuestas"],
+  "offers": {
+    "@type": "Offer",
+    "price": "2999",
+    "priceCurrency": "MXN",
+    "availability": "https://schema.org/InStock",
+    "url": "https://www.praetor.lat/"
+  }
+}
