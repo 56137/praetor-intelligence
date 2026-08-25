@@ -6,4 +6,10 @@
   <url>
     <loc>https://www.praetor.lat/en/</loc>
   </url>
+  <url>
+    <loc>https://www.praetor.lat/robots.txt</loc>
+  </url>
+  <url>
+    <loc>https://www.praetor.lat/ai-entity.jsonld</loc>
+  </url>
 </urlset>
