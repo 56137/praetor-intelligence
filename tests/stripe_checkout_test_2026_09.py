@@ -34,21 +34,24 @@ def main():
     report_id = uuid.uuid4().hex[:8]
     base_url = "http://localhost:5000"
 
-    session = stripe.checkout.Session.create(
-        line_items=[{"price": cfg["price_id"], "quantity": 1}],
-        mode=cfg["mode"],
-        customer_creation="always" if cfg["mode"] == "payment" else None,
-        customer_email=email,
-        success_url=f"{base_url}/success/{report_id}?domain={domain}&plan={plan}",
-        cancel_url=f"{base_url}",
-        metadata={
+    checkout_args = {
+        "line_items": [{"price": cfg["price_id"], "quantity": 1}],
+        "mode": cfg["mode"],
+        "customer_email": email,
+        "success_url": f"{base_url}/success/{report_id}?domain={domain}&plan={plan}",
+        "cancel_url": f"{base_url}",
+        "metadata": {
             "report_id": report_id,
             "domain": domain,
             "email": email,
             "plan": plan,
             "environment": "test",
         },
-    )
+    }
+    if cfg["mode"] == "payment":
+        checkout_args["customer_creation"] = "always"
+
+    session = stripe.checkout.Session.create(**checkout_args)
 
     print("\nCHECKOUT CREADO")
     print("PLAN:", plan)
