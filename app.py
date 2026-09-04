@@ -195,7 +195,7 @@ def create_checkout_session():
         if not re.match(r'^[^\s@]+@[^\s@]+\.[^\s@]+$', email):
             email = ''
         plan = str(data.get('plan', 'express')).lower()
-        plan_prices = {'express': 190000, 'pro': 690000, 'corporate': 2490000, 'monitoring': 390000}
+        plan_prices = {'express': 299900, 'pro': 690000, 'corporate': 2490000, 'monitoring': 390000}
         if plan not in plan_prices:
             return jsonify({'error': 'Plan no válido'}), 400
         price_amount = plan_prices[plan]
