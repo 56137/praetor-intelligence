@@ -1,4 +1,4 @@
-﻿# ==========================================
+# ==========================================
 # app.py - PRAETOR Intelligence
 # Servidor Flask con Stripe, PDF y descarga
 # Storage: PostgreSQL (leads + PDF bytes)
@@ -194,8 +194,11 @@ def create_checkout_session():
         email = (data.get('email') or '').strip()
         if not re.match(r'^[^\s@]+@[^\s@]+\.[^\s@]+$', email):
             email = ''
-        price_amount = data.get('price', 100)
-        plan = data.get('plan', 'express')
+        plan = str(data.get('plan', 'express')).lower()
+        plan_prices = {'express': 190000, 'pro': 690000, 'corporate': 2490000, 'monitoring': 390000}
+        if plan not in plan_prices:
+            return jsonify({'error': 'Plan no válido'}), 400
+        price_amount = plan_prices[plan]
 
         report_id = str(uuid.uuid4())[:8]
         
@@ -246,10 +249,11 @@ def create_checkout_session():
                         'description': f'Security analysis report for {domain}'
                     },
                     'unit_amount': price_amount,
+                    **({'recurring': {'interval': 'month'}} if plan == 'monitoring' else {}),
                 },
                 'quantity': 1,
             }],
-            mode='payment',
+            mode=('subscription' if plan == 'monitoring' else 'payment'),
             customer_creation='always',
             success_url=f'{BASE_URL}/success/{report_id}?domain={domain}&plan={plan}',
             cancel_url=f'{BASE_URL}',
