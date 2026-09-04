@@ -23,11 +23,12 @@ jobs:
           from pathlib import Path
           import re
 
+          # Single source of truth for the commercial plans.
           PRICES = {
-              'express': 299900,
-              'pro': 699900,
-              'corporate': 1099900,
-              'monitoring': 399900,
+              'express': 190000,
+              'pro': 690000,
+              'corporate': 2490000,
+              'monitoring': 390000,
           }
 
           def patch_landing(path: Path):
@@ -36,40 +37,40 @@ jobs:
               text = path.read_text(encoding='utf-8')
               original = text
 
-              # Spanish/current variants seen in production and legacy source.
-              text = text.replace('$99 <small>MXN / reporte</small>', '$2,999 <small>MXN / reporte</small>')
-              text = text.replace('$1,900 <small>MXN / reporte</small>', '$2,999 <small>MXN / reporte</small>')
-              text = text.replace('$399 <small>MXN / reporte</small>', '$6,999 <small>MXN / reporte</small>')
-              text = text.replace('$6,900 <small>MXN / reporte</small>', '$6,999 <small>MXN / reporte</small>')
-              text = text.replace('$24,900 <small>MXN / desde</small>', '$10,999 <small>MXN / reporte</small>')
-              text = text.replace('$24,900 <small>MXN / reporte</small>', '$10,999 <small>MXN / reporte</small>')
-              text = text.replace('$3,900 <small>MXN / mes</small>', '$3,999 <small>MXN / mes</small>')
+              # Keep the public landing page aligned with the authoritative pricing.
+              replacements = {
+                  '$99 <small>MXN / reporte</small>': '$1,900 <small>MXN / reporte</small>',
+                  '$2,999 <small>MXN / reporte</small>': '$1,900 <small>MXN / reporte</small>',
+                  '$1,900 <small>MXN / reporte</small>': '$1,900 <small>MXN / reporte</small>',
+                  '$399 <small>MXN / reporte</small>': '$6,900 <small>MXN / reporte</small>',
+                  '$6,999 <small>MXN / reporte</small>': '$6,900 <small>MXN / reporte</small>',
+                  '$6,900 <small>MXN / reporte</small>': '$6,900 <small>MXN / reporte</small>',
+                  '$24,900 <small>MXN / desde</small>': '$24,900 <small>MXN / reporte</small>',
+                  '$10,999 <small>MXN / reporte</small>': '$24,900 <small>MXN / reporte</small>',
+                  '$24,900 <small>MXN / reporte</small>': '$24,900 <small>MXN / reporte</small>',
+                  '$3,999 <small>MXN / mes</small>': '$3,900 <small>MXN / mes</small>',
+                  '$3,900 <small>MXN / mes</small>': '$3,900 <small>MXN / mes</small>',
+                  'DESCARGAR REPORTE COMPLETO — $99 MXN': 'DESCARGAR REPORTE COMPLETO — $1,900 MXN',
+                  'DESCARGAR REPORTE COMPLETO — $2,999 MXN': 'DESCARGAR REPORTE COMPLETO — $1,900 MXN',
+              }
+              for old, new in replacements.items():
+                  text = text.replace(old, new)
 
-              # Production variants without exact spacing.
-              text = re.sub(r'(Express[\s\S]{0,120}?<div class="price">)\$1,900', r'\1$2,999', text, count=1)
-              text = re.sub(r'(Express[\s\S]{0,120}?<div class="price">)\$99\b', r'\1$2,999', text, count=1)
-              text = re.sub(r'(Pro[\s\S]{0,120}?<div class="price">)\$6,900', r'\1$6,999', text, count=1)
-              text = re.sub(r'(Pro[\s\S]{0,120}?<div class="price">)\$399\b', r'\1$6,999', text, count=1)
-              text = re.sub(r'(Corporate[\s\S]{0,120}?<div class="price">)\$24,900', r'\1$10,999', text, count=1)
-              text = re.sub(r'(Corporate[\s\S]{0,120}?<div class="price">)A medida', r'\1$10,999', text, count=1)
-              text = re.sub(r'(Vigilancia|Monitoring)[\s\S]{0,120}?<div class="price">\s*)\$3,900', r'\g<0>', text, count=0)
-              text = text.replace('$3,900', '$3,999')
+              # Normalize client-side checkout amounts.
+              text = text.replace("buyReport('express',9900)", "buyReport('express',190000)")
+              text = text.replace("buyReport('express',299900)", "buyReport('express',190000)")
+              text = text.replace("buyReport('pro',39900)", "buyReport('pro',690000)")
+              text = text.replace("buyReport('pro',699900)", "buyReport('pro',690000)")
+              text = text.replace("buyReport('corporate',1099900)", "buyReport('corporate',2490000)")
+              text = text.replace("buyReport('corporate',2490000)", "buyReport('corporate',2490000)")
 
-              # Legacy scan-result CTA.
-              text = text.replace('DESCARGAR REPORTE COMPLETO — $99 MXN', 'DESCARGAR REPORTE COMPLETO — $2,999 MXN')
-              text = text.replace('DESCARGAR REPORTE COMPLETO — $1,900 MXN', 'DESCARGAR REPORTE COMPLETO — $2,999 MXN')
-
-              # Legacy client-side amounts: lock UI to the authoritative values.
-              text = text.replace("buyReport('express',9900)", "buyReport('express',299900)")
-              text = text.replace("buyReport('pro',39900)", "buyReport('pro',699900)")
-
-              # If the source has the legacy 3-tier pricing block, add the monthly monitoring plan.
-              if 'plan=\"monitoring\"' not in text and 'startMonitoring' not in text:
+              # Add monitoring to older landing variants when needed.
+              if 'startMonitoring' not in text:
                   marker = '''      <div class="tier">\n        <div class="tag">PRÓXIMAMENTE</div>'''
                   if marker in text:
-                      monitoring = '''      <div class="tier">\n        <div class="tag">RECURRENTE</div>\n        <h3>Vigilancia</h3>\n        <div class="price">$3,999 <small>MXN / mes</small></div>\n        <ul>\n          <li>Reescaneo mensual automático</li>\n          <li>Alerta ante cambios de configuración</li>\n          <li>Nuevos subdominios y CVEs detectados</li>\n          <li>Informe comparativo mes a mes</li>\n          <li>Prioridad en soporte</li>\n        </ul>\n        <button class="btn btn-ghost" onclick="startMonitoring()">Activar monitoreo</button>\n      </div>\n'''
+                      monitoring = '''      <div class="tier">\n        <div class="tag">RECURRENTE</div>\n        <h3>Vigilancia</h3>\n        <div class="price">$3,900 <small>MXN / mes</small></div>\n        <ul>\n          <li>Reescaneo mensual automático</li>\n          <li>Alerta ante cambios de configuración</li>\n          <li>Nuevos subdominios y CVEs detectados</li>\n          <li>Informe comparativo mes a mes</li>\n          <li>Prioridad en soporte</li>\n        </ul>\n        <button class="btn btn-ghost" onclick="startMonitoring()">Activar monitoreo</button>\n      </div>\n'''
                       text = text.replace(marker, monitoring + marker, 1)
-                      text = text.replace('</script>\n</body>', '''function startMonitoring(){\n  if(!lastDomain){ alert('Primero escanea un dominio.'); return; }\n  if(!lastEmail || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(lastEmail)){\n    const e=(prompt('Escribe un correo válido para el monitoreo:')||'').trim();\n    if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(e)){ alert('Correo inválido.'); return; }\n    lastEmail=e;\n  }\n  buyReport('monitoring',399900);\n}\n</script>\n</body>''', 1)
+                      text = text.replace('</script>\n</body>', '''function startMonitoring(){\n  if(!lastDomain){ alert('Primero escanea un dominio.'); return; }\n  if(!lastEmail || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(lastEmail)){\n    const e=(prompt('Escribe un correo válido para el monitoreo:')||'').trim();\n    if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(e)){ alert('Correo inválido.'); return; }\n    lastEmail=e;\n  }\n  buyReport('monitoring',390000);\n}\n</script>\n</body>''', 1)
 
               if text != original:
                   path.write_text(text, encoding='utf-8')
@@ -85,9 +86,10 @@ jobs:
               text = app.read_text(encoding='utf-8-sig')
               original = text
 
+              # Never trust a client-supplied amount. Price is selected server-side by plan.
               text = text.replace(
                   "price_amount = data.get('price', 100)\n        plan = data.get('plan', 'express')",
-                  "plan = str(data.get('plan', 'express')).lower()\n        plan_prices = {'express': 299900, 'pro': 699900, 'corporate': 1099900, 'monitoring': 399900}\n        if plan not in plan_prices:\n            return jsonify({'error': 'Plan no válido'}), 400\n        price_amount = plan_prices[plan]"
+                  "plan = str(data.get('plan', 'express')).lower()\n        plan_prices = {'express': 190000, 'pro': 690000, 'corporate': 2490000, 'monitoring': 390000}\n        if plan not in plan_prices:\n            return jsonify({'error': 'Plan no válido'}), 400\n        price_amount = plan_prices[plan]"
               )
               text = text.replace(
                   "'unit_amount': price_amount,\n                },",
@@ -98,12 +100,10 @@ jobs:
                   "mode=('subscription' if plan == 'monitoring' else 'payment'),",
                   1
               )
+
               # Do not generate a one-off PDF on subscription creation.
-              needle = "        if event['type'] == 'checkout.session.completed':\n            session = event['data']['object']"
-              if needle in text and "if plan == 'monitoring':" not in text:
-                  insert_after = "        plan = session.get('metadata', {}).get('plan', 'express')\n        session_id = session.get('id')"
-                  replacement = insert_after + "\n        if plan == 'monitoring':\n            logger.info(f'✅ Monitoring subscription checkout completed: {session_id}')\n            return jsonify({'status': 'success', 'plan': plan}), 200"
-                  text = text.replace(insert_after, replacement, 1)
+              needle = "        if event['type'] == 'checkout.session.completed':\n        "
+              # Preserve the existing webhook flow; monitoring can be handled separately.
 
               if text != original:
                   app.write_text(text, encoding='utf-8')
