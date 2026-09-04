@@ -25,7 +25,7 @@ jobs:
 
           # Single source of truth for the commercial plans.
           PRICES = {
-              'express': 190000,
+              'express': 299900,
               'pro': 690000,
               'corporate': 2490000,
               'monitoring': 390000,
@@ -39,9 +39,9 @@ jobs:
 
               # Keep the public landing page aligned with the authoritative pricing.
               replacements = {
-                  '$99 <small>MXN / reporte</small>': '$1,900 <small>MXN / reporte</small>',
-                  '$2,999 <small>MXN / reporte</small>': '$1,900 <small>MXN / reporte</small>',
-                  '$1,900 <small>MXN / reporte</small>': '$1,900 <small>MXN / reporte</small>',
+                  '$99 <small>MXN / reporte</small>': '$2,999 <small>MXN / reporte</small>',
+                  '$2,999 <small>MXN / reporte</small>': '$2,999 <small>MXN / reporte</small>',
+                  '$1,900 <small>MXN / reporte</small>': '$2,999 <small>MXN / reporte</small>',
                   '$399 <small>MXN / reporte</small>': '$6,900 <small>MXN / reporte</small>',
                   '$6,999 <small>MXN / reporte</small>': '$6,900 <small>MXN / reporte</small>',
                   '$6,900 <small>MXN / reporte</small>': '$6,900 <small>MXN / reporte</small>',
@@ -50,15 +50,16 @@ jobs:
                   '$24,900 <small>MXN / reporte</small>': '$24,900 <small>MXN / reporte</small>',
                   '$3,999 <small>MXN / mes</small>': '$3,900 <small>MXN / mes</small>',
                   '$3,900 <small>MXN / mes</small>': '$3,900 <small>MXN / mes</small>',
-                  'DESCARGAR REPORTE COMPLETO — $99 MXN': 'DESCARGAR REPORTE COMPLETO — $1,900 MXN',
-                  'DESCARGAR REPORTE COMPLETO — $2,999 MXN': 'DESCARGAR REPORTE COMPLETO — $1,900 MXN',
+                  'DESCARGAR REPORTE COMPLETO — $99 MXN': 'DESCARGAR REPORTE COMPLETO — $2,999 MXN',
+                  'DESCARGAR REPORTE COMPLETO — $1,900 MXN': 'DESCARGAR REPORTE COMPLETO — $2,999 MXN',
               }
               for old, new in replacements.items():
                   text = text.replace(old, new)
 
               # Normalize client-side checkout amounts.
-              text = text.replace("buyReport('express',9900)", "buyReport('express',190000)")
-              text = text.replace("buyReport('express',299900)", "buyReport('express',190000)")
+              text = text.replace("buyReport('express',9900)", "buyReport('express',299900)")
+              text = text.replace("buyReport('express',299900)", "buyReport('express',299900)")
+              text = text.replace("buyReport('express',190000)", "buyReport('express',299900)")
               text = text.replace("buyReport('pro',39900)", "buyReport('pro',690000)")
               text = text.replace("buyReport('pro',699900)", "buyReport('pro',690000)")
               text = text.replace("buyReport('corporate',1099900)", "buyReport('corporate',2490000)")
@@ -89,7 +90,11 @@ jobs:
               # Never trust a client-supplied amount. Price is selected server-side by plan.
               text = text.replace(
                   "price_amount = data.get('price', 100)\n        plan = data.get('plan', 'express')",
-                  "plan = str(data.get('plan', 'express')).lower()\n        plan_prices = {'express': 190000, 'pro': 690000, 'corporate': 2490000, 'monitoring': 390000}\n        if plan not in plan_prices:\n            return jsonify({'error': 'Plan no válido'}), 400\n        price_amount = plan_prices[plan]"
+                  "plan = str(data.get('plan', 'express')).lower()\n        plan_prices = {'express': 299900, 'pro': 690000, 'corporate': 2490000, 'monitoring': 390000}\n        if plan not in plan_prices:\n            return jsonify({'error': 'Plan no válido'}), 400\n        price_amount = plan_prices[plan]"
+              )
+              text = text.replace(
+                  "plan_prices = {'express': 190000, 'pro': 690000, 'corporate': 2490000, 'monitoring': 390000}",
+                  "plan_prices = {'express': 299900, 'pro': 690000, 'corporate': 2490000, 'monitoring': 390000}"
               )
               text = text.replace(
                   "'unit_amount': price_amount,\n                },",
@@ -100,10 +105,6 @@ jobs:
                   "mode=('subscription' if plan == 'monitoring' else 'payment'),",
                   1
               )
-
-              # Do not generate a one-off PDF on subscription creation.
-              needle = "        if event['type'] == 'checkout.session.completed':\n        "
-              # Preserve the existing webhook flow; monitoring can be handled separately.
 
               if text != original:
                   app.write_text(text, encoding='utf-8')
