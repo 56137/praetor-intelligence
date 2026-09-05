@@ -1,0 +1,14 @@
+{
+  "name": "praetor-cloudflare-edge",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "wrangler dev",
+    "check": "wrangler check",
+    "deploy": "wrangler deploy",
+    "types": "wrangler types"
+  },
+  "devDependencies": {
+    "wrangler": "latest"
+  }
+}
