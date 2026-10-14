@@ -40,16 +40,12 @@ jobs:
               # Keep the public landing page aligned with the authoritative pricing.
               replacements = {
                   '$99 <small>MXN / reporte</small>': '$2,999 <small>MXN / reporte</small>',
-                  '$2,999 <small>MXN / reporte</small>': '$2,999 <small>MXN / reporte</small>',
                   '$1,900 <small>MXN / reporte</small>': '$2,999 <small>MXN / reporte</small>',
                   '$399 <small>MXN / reporte</small>': '$6,999 <small>MXN / reporte</small>',
-                  '$6,999 <small>MXN / reporte</small>': '$6,999 <small>MXN / reporte</small>',
                   '$6,900 <small>MXN / reporte</small>': '$6,999 <small>MXN / reporte</small>',
                   '$24,900 <small>MXN / desde</small>': '$10,999 <small>MXN / reporte</small>',
-                  '$10,999 <small>MXN / reporte</small>': '$10,999 <small>MXN / reporte</small>',
                   '$24,900 <small>MXN / reporte</small>': '$10,999 <small>MXN / reporte</small>',
                   '$3,900 <small>MXN / mes</small>': '$3,999 <small>MXN / mes</small>',
-                  '$3,999 <small>MXN / mes</small>': '$3,999 <small>MXN / mes</small>',
                   'DESCARGAR REPORTE COMPLETO — $99 MXN': 'DESCARGAR REPORTE COMPLETO — $2,999 MXN',
                   'DESCARGAR REPORTE COMPLETO — $1,900 MXN': 'DESCARGAR REPORTE COMPLETO — $2,999 MXN',
               }
