@@ -42,13 +42,13 @@ jobs:
                   '$99 <small>MXN / reporte</small>': '$2,999 <small>MXN / reporte</small>',
                   '$2,999 <small>MXN / reporte</small>': '$2,999 <small>MXN / reporte</small>',
                   '$1,900 <small>MXN / reporte</small>': '$2,999 <small>MXN / reporte</small>',
-                  '$399 <small>MXN / reporte</small>': '$6,900 <small>MXN / reporte</small>',
+                  '$399 <small>MXN / reporte</small>': '$6,999 <small>MXN / reporte</small>',
                   '$6,999 <small>MXN / reporte</small>': '$6,999 <small>MXN / reporte</small>',
                   '$6,900 <small>MXN / reporte</small>': '$6,999 <small>MXN / reporte</small>',
                   '$24,900 <small>MXN / desde</small>': '$10,999 <small>MXN / reporte</small>',
                   '$10,999 <small>MXN / reporte</small>': '$10,999 <small>MXN / reporte</small>',
                   '$24,900 <small>MXN / reporte</small>': '$10,999 <small>MXN / reporte</small>',
-                  '$3,999 <small>MXN / mes</small>': '$3,999 <small>MXN / mes</small>',
+                  '$3,900 <small>MXN / mes</small>': '$3,999 <small>MXN / mes</small>',
                   '$3,999 <small>MXN / mes</small>': '$3,999 <small>MXN / mes</small>',
                   'DESCARGAR REPORTE COMPLETO — $99 MXN': 'DESCARGAR REPORTE COMPLETO — $2,999 MXN',
                   'DESCARGAR REPORTE COMPLETO — $1,900 MXN': 'DESCARGAR REPORTE COMPLETO — $2,999 MXN',
@@ -63,7 +63,7 @@ jobs:
               text = text.replace("buyReport('pro',39900)", "buyReport('pro',699900)")
               text = text.replace("buyReport('pro',690000)", "buyReport('pro',699900)")
               text = text.replace("buyReport('corporate',2490000)", "buyReport('corporate',1099900)")
-              text = text.replace("buyReport('corporate',2490000)", "buyReport('corporate',1099900)")
+              text = text.replace("buyReport('corporate',1099900)", "buyReport('corporate',1099900)")
 
               # Add monitoring to older landing variants when needed.
               if 'startMonitoring' not in text:
