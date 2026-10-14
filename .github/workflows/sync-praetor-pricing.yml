@@ -26,9 +26,9 @@ jobs:
           # Single source of truth for the commercial plans.
           PRICES = {
               'express': 299900,
-              'pro': 690000,
-              'corporate': 2490000,
-              'monitoring': 390000,
+              'pro': 699900,
+              'corporate': 1099900,
+              'monitoring': 399900,
           }
 
           def patch_landing(path: Path):
@@ -43,13 +43,13 @@ jobs:
                   '$2,999 <small>MXN / reporte</small>': '$2,999 <small>MXN / reporte</small>',
                   '$1,900 <small>MXN / reporte</small>': '$2,999 <small>MXN / reporte</small>',
                   '$399 <small>MXN / reporte</small>': '$6,900 <small>MXN / reporte</small>',
-                  '$6,999 <small>MXN / reporte</small>': '$6,900 <small>MXN / reporte</small>',
-                  '$6,900 <small>MXN / reporte</small>': '$6,900 <small>MXN / reporte</small>',
+                  '$6,999 <small>MXN / reporte</small>': '$6,999 <small>MXN / reporte</small>',
+                  '$6,900 <small>MXN / reporte</small>': '$6,999 <small>MXN / reporte</small>',
                   '$24,900 <small>MXN / desde</small>': '$24,900 <small>MXN / reporte</small>',
-                  '$10,999 <small>MXN / reporte</small>': '$24,900 <small>MXN / reporte</small>',
-                  '$24,900 <small>MXN / reporte</small>': '$24,900 <small>MXN / reporte</small>',
-                  '$3,999 <small>MXN / mes</small>': '$3,900 <small>MXN / mes</small>',
-                  '$3,900 <small>MXN / mes</small>': '$3,900 <small>MXN / mes</small>',
+                  '$10,999 <small>MXN / reporte</small>': '$10,999 <small>MXN / reporte</small>',
+                  '$24,900 <small>MXN / reporte</small>': '$10,999 <small>MXN / reporte</small>',
+                  '$3,999 <small>MXN / mes</small>': '$3,999 <small>MXN / mes</small>',
+                  '$3,900 <small>MXN / mes</small>': '$3,999 <small>MXN / mes</small>',
                   'DESCARGAR REPORTE COMPLETO — $99 MXN': 'DESCARGAR REPORTE COMPLETO — $2,999 MXN',
                   'DESCARGAR REPORTE COMPLETO — $1,900 MXN': 'DESCARGAR REPORTE COMPLETO — $2,999 MXN',
               }
@@ -61,8 +61,8 @@ jobs:
               text = text.replace("buyReport('express',299900)", "buyReport('express',299900)")
               text = text.replace("buyReport('express',190000)", "buyReport('express',299900)")
               text = text.replace("buyReport('pro',39900)", "buyReport('pro',690000)")
-              text = text.replace("buyReport('pro',699900)", "buyReport('pro',690000)")
-              text = text.replace("buyReport('corporate',1099900)", "buyReport('corporate',2490000)")
+              text = text.replace("buyReport('pro',690000)", "buyReport('pro',699900)")
+              text = text.replace("buyReport('corporate',2490000)", "buyReport('corporate',1099900)")
               text = text.replace("buyReport('corporate',2490000)", "buyReport('corporate',2490000)")
 
               # Add monitoring to older landing variants when needed.
