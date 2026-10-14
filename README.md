@@ -1,12 +1,12 @@
 # PRAETOR Intelligence
 
-## Active pricing
+## Authoritative pricing
 
 | Plan | Price | Billing |
 |---|---:|---|
-| Express | MXN $1,900 | One-time |
-| Pro | MXN $6,900 | One-time |
-| Corporate | MXN $24,900 | One-time |
-| Vigilancia / Monitoring | MXN $3,900 | Monthly |
+| Express | MXN $2,999 | One-time |
+| Pro | MXN $6,999 | One-time |
+| Corporate | MXN $10,999 | One-time |
+| Vigilancia / Monitoring | MXN $3,999 | Monthly subscription |
 
-These values are the authoritative public prices for the PRAETOR landing and checkout flow.
+Checkout amounts are defined server-side in `app.py`; client-submitted prices are not authoritative.
