@@ -1,18 +1,16 @@
 # ==========================================
 # app.py - PRAETOR Intelligence
 # Servidor Flask con Stripe, PDF y descarga
-# Storage: PostgreSQL (leads + PDF bytes)
+# Storage: PostgreSQL / Local JSON Fallback
 # ==========================================
 
 import os
 import re
 import sys
-import io
 import json
 import uuid
 import stripe
 import logging
-import threading
 
 # Windows consoles default to cp1252 and crash on emoji in print().
 # Force UTF-8 so local `python app.py` runs the same as Render.
@@ -20,6 +18,7 @@ try:
     sys.stdout.reconfigure(encoding='utf-8')
 except Exception:
     pass
+
 from datetime import datetime
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
@@ -28,7 +27,7 @@ app = Flask(__name__)
 CORS(app)
 
 # ==========================================
-# CONFIGURACIÃ“N
+# CONFIGURACIÓN
 # ==========================================
 
 BASE_URL = os.getenv('BASE_URL', 'http://localhost:5000')
@@ -43,18 +42,19 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PDF_DIR = os.path.join(BASE_DIR, 'pdf_reports')
 LOG_DIR = os.path.join(BASE_DIR, 'logs')
 TEMPLATE_FILE = os.path.join(BASE_DIR, 'TEMPLATES.html')
+LANDING_FILE = os.path.join(BASE_DIR, 'landing.html')
+ADMIN_TOKEN = os.getenv('ADMIN_TOKEN', '')
 
 for folder in [PDF_DIR, LOG_DIR]:
     os.makedirs(folder, exist_ok=True)
 
 # ==========================================
-# CONFIGURACIÃ“N DE LOGGING
+# CONFIGURACIÓN DE LOGGING
 # ==========================================
 
 try:
     from logger_config import payment_logger, email_logger, download_logger, webhook_logger, scan_logger
 except ImportError:
-    import logging
     payment_logger = logging.getLogger('payment')
     email_logger = logging.getLogger('email')
     download_logger = logging.getLogger('download')
@@ -62,7 +62,6 @@ except ImportError:
     scan_logger = logging.getLogger('scan')
     logging.basicConfig(level=logging.INFO)
 
-# Logger general
 logging.basicConfig(
     filename=os.path.join(LOG_DIR, 'app.log'),
     level=logging.INFO,
@@ -71,7 +70,52 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # ==========================================
-# FUNCIONES
+# FUNCIONES AUXILIARES DE LEADS Y DB
+# ==========================================
+
+def _use_db():
+    """Determina si se usa PostgreSQL o almacenamiento local en JSON."""
+    return bool(DATABASE_URL)
+
+def db_get_all_leads():
+    """Obtiene todos los leads almacenados (soporte local para leads.json)."""
+    leads_file = os.path.join(BASE_DIR, 'leads.json')
+    if os.path.exists(leads_file):
+        try:
+            with open(leads_file, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception:
+            return []
+    return []
+
+def find_lead_by_email(email, leads):
+    """Busca un lead por correo electrónico dentro de la lista."""
+    if not email:
+        return None, None
+    for idx, lead in enumerate(leads):
+        if lead.get('email', '').strip().lower() == email.strip().lower():
+            return idx, lead
+    return None, None
+
+def find_lead_by_report_id(report_id, leads):
+    """Busca un lead por su ID de reporte único."""
+    if not report_id:
+        return None, None
+    for idx, lead in enumerate(leads):
+        if lead.get('report_id') == report_id:
+            return idx, lead
+    return None, None
+
+def get_pdf_for_report_id(report_id):
+    """Recupera el nombre del archivo PDF asociado a un report_id."""
+    leads = db_get_all_leads()
+    for lead in leads:
+        if lead.get('report_id') == report_id:
+            return lead.get('pdf_file') or f"REPORT_{report_id}.pdf"
+    return f"REPORT_{report_id}.pdf"
+
+# ==========================================
+# FUNCIONES DE NEGOCIO
 # ==========================================
 
 def generate_pdf_with_id(domain, report_id=None, depth="express"):
@@ -93,11 +137,10 @@ def generate_pdf_with_id(domain, report_id=None, depth="express"):
     except Exception as e:
         logger.error(f"PDF generation failed: {e}")
         scan_logger.error(f"PDF generation failed: {e}")
-        # Minimal fallback so the download route still has a file
         try:
             from reportlab.pdfgen import canvas as _canvas
             c = _canvas.Canvas(pdf_path)
-            c.drawString(72, 720, f"PRAETOR Intelligence â€” {domain}")
+            c.drawString(72, 720, f"PRAETOR Intelligence — {domain}")
             c.drawString(72, 700, f"Report ID: {report_id}")
             c.drawString(72, 680, f"Generated: {datetime.now().isoformat()}")
             c.drawString(72, 640, f"Scan error: {str(e)[:200]}")
@@ -112,10 +155,8 @@ def generate_pdf_with_id(domain, report_id=None, depth="express"):
         'pdf_filename': pdf_filename
     }
 
-
 def send_report_email(email, pdf_path, domain, report_id):
     """Envía el reporte por email con logs detallados"""
-    
     email_logger.info(f"📧 EMAIL ENVIADO")
     email_logger.info(f"   - Destinatario: {email}")
     email_logger.info(f"   - Archivo adjunto: {pdf_path}")
@@ -129,16 +170,12 @@ def send_report_email(email, pdf_path, domain, report_id):
         email_logger.info(f"✅ EMAIL COMPLETADO - {email}")
         return True
     except Exception as e:
-        email_logger.error(f"âŒ Error enviando email: {str(e)}")
+        email_logger.error(f"❌ Error enviando email: {str(e)}")
         return False
 
 # ==========================================
 # RUTAS DE API
 # ==========================================
-
-LANDING_FILE = os.path.join(BASE_DIR, 'landing.html')
-ADMIN_TOKEN = os.getenv('ADMIN_TOKEN', '')
-
 
 @app.route('/')
 def home():
@@ -172,7 +209,6 @@ def status():
         'storage': 'postgres' if _use_db() else 'file'
     })
 
-
 @app.route('/leads')
 def list_leads():
     if ADMIN_TOKEN:
@@ -183,13 +219,11 @@ def list_leads():
     leads = db_get_all_leads()
     return jsonify(leads)
 
-
 @app.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():
     """Crear sesión de Stripe para pago"""
-    
     try:
-        data = request.json
+        data = request.json or {}
         domain = data.get('domain', 'example.com')
         email = (data.get('email') or '').strip()
         if not re.match(r'^[^\s@]+@[^\s@]+\.[^\s@]+$', email):
@@ -205,12 +239,11 @@ def create_checkout_session():
         # Guardar lead temporalmente
         leads_file = os.path.join(BASE_DIR, 'leads.json')
         try:
-            with open(leads_file, 'r') as f:
+            with open(leads_file, 'r', encoding='utf-8') as f:
                 leads = json.load(f)
-        except:
+        except Exception:
             leads = []
         
-        # Verificar si ya existe
         existing = False
         for lead in leads:
             if lead.get('email') == email and lead.get('domain') == domain:
@@ -229,16 +262,12 @@ def create_checkout_session():
                 'created_at': datetime.now().isoformat()
             })
         
-        with open(leads_file, 'w') as f:
-            json.dump(leads, f, indent=2)
+        with open(leads_file, 'w', encoding='utf-8') as f:
+            json.dump(leads, f, indent=2, ensure_ascii=False)
         
         logger.info(f"💰 Lead guardado: {email} - {domain} - {report_id}")
         scan_logger.info(f"📡 SCAN INICIADO - Dominio: {domain}, Email: {email}")
-        scan_logger.info(f"   - Dominio recibido: {domain}")
-        scan_logger.info(f"   - Email recibido: {email}")
-        scan_logger.info(f"   - Report ID: {report_id}")
         
-        # Crear sesión de Stripe
         session = stripe.checkout.Session.create(
             payment_method_types=['card'],
             line_items=[{
@@ -266,7 +295,6 @@ def create_checkout_session():
         )
         
         logger.info(f"💰 Sesión de Stripe creada: {session.id} para {domain} - {email}")
-        scan_logger.info(f"💰 Sesión Stripe creada: {session.id}")
         
         return jsonify({
             'session_id': session.id,
@@ -276,9 +304,7 @@ def create_checkout_session():
         
     except Exception as e:
         logger.error(f"❌ Error creando sesión de Stripe: {str(e)}")
-        scan_logger.error(f"❌ Error: {str(e)}")
         return jsonify({'error': str(e)}), 400
-
 
 @app.route('/webhook/stripe', methods=['POST'])
 def stripe_webhook():
@@ -289,11 +315,9 @@ def stripe_webhook():
     try:
         event = stripe.Webhook.construct_event(payload, sig_header, STRIPE_WEBHOOK_SECRET)
     except ValueError as e:
-        logger.error(f"❌ Error en webhook (payload inválido): {str(e)}")
         webhook_logger.error(f"❌ Error en webhook (payload inválido): {str(e)}")
         return jsonify({'error': 'Invalid payload'}), 400
     except stripe.error.SignatureVerificationError as e:
-        logger.error(f"❌ Error en webhook (firma inválida): {str(e)}")
         webhook_logger.error(f"❌ Error en webhook (firma inválida): {str(e)}")
         return jsonify({'error': 'Invalid signature'}), 400
 
@@ -305,47 +329,37 @@ def stripe_webhook():
         plan = session.get('metadata', {}).get('plan', 'express')
         session_id = session.get('id')
         
-        # ==========================================
-        # LOGGING DETALLADO
-        # ==========================================
-        webhook_logger.info(f"💰 WEBHOOK RECIBIDO")
-        webhook_logger.info(f"   - customer_email: {customer_email}")
-        webhook_logger.info(f"   - report_id: {report_id}")
-        webhook_logger.info(f"   - domain: {domain}")
-        webhook_logger.info(f"   - session_id: {session_id}")
+        webhook_logger.info(f"💰 WEBHOOK RECIBIDO - email: {customer_email}, report_id: {report_id}")
         
-        logger.info(f"📧 EMAIL STRIPE: {customer_email}")
-        logger.info(f"📋 REPORT ID: {report_id}")
-        logger.info(f"🌐 DOMAIN: {domain}")
-        
-        # Cargar leads
         leads_file = os.path.join(BASE_DIR, 'leads.json')
         try:
-            with open(leads_file, 'r') as f:
+            with open(leads_file, 'r', encoding='utf-8') as f:
                 leads = json.load(f)
-        except:
+        except Exception:
             leads = []
         
-        # Buscar lead por email O por report_id
         idx, lead = find_lead_by_email(customer_email, leads)
         if idx is None:
             idx, lead = find_lead_by_report_id(report_id, leads)
         
-        # ==========================================
-        # LOGGING DE MATCHING
-        # ==========================================
         if lead:
-            effective_domain = domain or lead.get('domain', 'unknown')
-            effective_plan   = lead.get('plan', plan)
-        else:
-            # Si no hay match, crear nuevo lead
-            webhook_logger.warning(f"⚠️ LEAD NO ENCONTRADO - {customer_email}")
-            logger.warning(f"⚠️ No se encontró lead para {customer_email}, creando nuevo...")
+            lead['status'] = 'paid'
+            lead['paid_date'] = datetime.now().isoformat()
+            lead['stripe_session'] = session_id
             
-            # Generar PDF
+            # Generar PDF real si no existe
+            pdf_result = generate_pdf_with_id(domain or lead.get('domain', 'unknown'), report_id, depth=plan)
+            lead['pdf_file'] = pdf_result['pdf_filename']
+            
+            with open(leads_file, 'w', encoding='utf-8') as f:
+                json.dump(leads, f, indent=2, ensure_ascii=False)
+                
+            pdf_path = os.path.join(PDF_DIR, lead['pdf_file'])
+            send_report_email(customer_email, pdf_path, domain, report_id)
+        else:
+            webhook_logger.warning(f"⚠️ LEAD NO ENCONTRADO - {customer_email}")
             pdf_result = generate_pdf_with_id(domain or 'unknown', report_id, depth=plan)
             pdf_file = pdf_result['pdf_filename']
-            webhook_logger.info(f"   - PDF generado: {pdf_file}")
             
             new_lead = {
                 'email': customer_email,
@@ -358,61 +372,41 @@ def stripe_webhook():
             }
             leads.append(new_lead)
             
-            with open(leads_file, 'w') as f:
-                json.dump(leads, f, indent=2)
+            with open(leads_file, 'w', encoding='utf-8') as f:
+                json.dump(leads, f, indent=2, ensure_ascii=False)
             
-            webhook_logger.info(f"✅ Nuevo lead creado: {customer_email} - {domain}")
-            logger.info(f"✅ Nuevo lead creado: {customer_email} - {domain}")
-            
-            # Enviar email con el PDF
             pdf_path = os.path.join(PDF_DIR, pdf_file)
             send_report_email(customer_email, pdf_path, domain, report_id)
-            
-            return jsonify({
-                'status': 'success',
-                'email': customer_email,
-                'pdf_file': pdf_file,
-                'domain': domain or 'unknown'
-            }), 200
     
     return jsonify({'status': 'ok'}), 200
-
 
 @app.route('/download/<report_id>')
 def download_report(report_id):
     """Descargar PDF por ID"""
-    
-    # ==========================================
-    # LOGGING DE DESCARGA
-    # ==========================================
     download_logger.info(f"📥 DESCARGA SOLICITADA - report_id: {report_id}")
     
     pdf_filename = f"REPORT_{report_id}.pdf"
     pdf_path = os.path.join(PDF_DIR, pdf_filename)
+    
     if not os.path.exists(pdf_path):
-        download_logger.info(f"   - No encontrado en pdf_reports, buscando en leads.json...")
         leads_file = os.path.join(BASE_DIR, 'leads.json')
         try:
-            with open(leads_file, 'r') as f:
+            with open(leads_file, 'r', encoding='utf-8') as f:
                 leads = json.load(f)
-            
             for lead in leads:
                 if lead.get('report_id') == report_id:
                     pdf_file = lead.get('pdf_file')
                     if pdf_file:
-                        pdf_path = os.path.join(PDF_DIR, pdf_file)
-                        if os.path.exists(pdf_path):
+                        temp_path = os.path.join(PDF_DIR, pdf_file)
+                        if os.path.exists(temp_path):
+                            pdf_path = temp_path
                             pdf_filename = pdf_file
-                            download_logger.info(f"   - Encontrado en leads.json: {pdf_file}")
                             break
-        except:
+        except Exception:
             pass
     
     if os.path.exists(pdf_path):
-        download_logger.info(f"   - ARCHIVO EXISTE - {pdf_filename}")
-        download_logger.info(f"   - Tamaño: {os.path.getsize(pdf_path)} bytes")
         download_logger.info(f"✅ DESCARGA COMPLETADA - {pdf_filename}")
-        
         return send_file(
             pdf_path,
             as_attachment=True,
@@ -420,24 +414,14 @@ def download_report(report_id):
             mimetype='application/pdf'
         )
     
-    download_logger.warning(f"   - ARCHIVO NO ENCONTRADO - {pdf_filename}")
     logger.warning(f"❌ PDF no encontrado: {report_id}")
     return jsonify({'error': 'Report not found'}), 404
 
 @app.route('/success/<report_id>')
 def success_page(report_id):
     """Página de éxito con descarga automática"""
-    
-    # Obtener el PDF correcto
     pdf_file = get_pdf_for_report_id(report_id)
     
-    # ==========================================
-    # LOGGING
-    # ==========================================
-    logger.info(f"📄 PDF SELECCIONADO: {pdf_file}")
-    download_logger.info(f"📄 PDF para success: {pdf_file}")
-    
-    # Si TEMPLATES.html existe, usarlo
     if os.path.exists(TEMPLATE_FILE):
         with open(TEMPLATE_FILE, 'r', encoding='utf-8') as f:
             html_content = f.read()
@@ -452,20 +436,19 @@ def success_page(report_id):
         <meta charset="UTF-8">
         <title>PRAETOR - Descarga tu Reporte</title>
         <style>
-            body {{ font-family: Arial, sans-serif; background: #0a0a0a; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }}
-            .box {{ text-align: center; background: #1a1a1a; padding: 40px; border-radius: 12px; border: 1px solid #00d4ff; max-width: 500px; }}
-            h1 {{ color: #00d4ff; }}
-            .btn {{ background: #00d4ff; color: #000; border: none; padding: 14px 35px; font-size: 18px; font-weight: bold; border-radius: 8px; cursor: pointer; text-decoration: none; display: inline-block; }}
-            .btn:hover {{ background: #00e5ff; transform: scale(1.05); }}
-            .info {{ color: #666; font-size: 14px; margin-top: 15px; }}
+            body {{ font-family: Arial, sans-serif; background: #0f172a; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }}
+            .box {{ text-align: center; background: #1e293b; padding: 40px; border-radius: 12px; border: 1px solid #0284c7; max-width: 500px; }}
+            h1 {{ color: #0284c7; }}
+            .btn {{ background: #0284c7; color: #fff; border: none; padding: 14px 35px; font-size: 18px; font-weight: bold; border-radius: 8px; cursor: pointer; text-decoration: none; display: inline-block; }}
+            .btn:hover {{ background: #0369a1; }}
+            .info {{ color: #94a3b8; font-size: 14px; margin-top: 15px; }}
         </style>
     </head>
     <body>
         <div class="box">
             <h1>✅ ¡PAGO CONFIRMADO!</h1>
-            <p style="color:#888;">Tu reporte está listo para descargar</p>
+            <p style="color:#94a3b8;">Tu reporte está listo para descargar</p>
             <a href="/download/{report_id}" class="btn">📥 DESCARGAR REPORTE</a>
-            <p class="pdf-name">📄 {pdf_file or 'REPORT_' + report_id + '.pdf'}</p>
             <p class="info">También recibirás una copia por correo electrónico</p>
         </div>
         <script>
@@ -491,7 +474,7 @@ def cron_monitor():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-    leads   = db_get_all_leads()
+    leads = db_get_all_leads()
     results = []
     for lead in leads:
         if lead.get('status') != 'paid':
@@ -504,7 +487,7 @@ def cron_monitor():
             continue
         try:
             result = run_monitor(domain, depth=plan)
-            diff   = result.get('diff') or {}
+            diff = result.get('diff') or {}
             results.append({
                 'domain': domain,
                 'is_first_scan': result['is_first_scan'],
@@ -517,7 +500,6 @@ def cron_monitor():
             results.append({'domain': domain, 'error': str(e)})
 
     return jsonify({'status': 'done', 'scanned': len(results), 'results': results})
-
 
 @app.errorhandler(404)
 def not_found(e):
@@ -534,7 +516,6 @@ def server_error(e):
 
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 5000))
-
     print(f"\n{'='*50}")
     print(f"🚀 PRAETOR Intelligence")
     print(f"📍 http://localhost:{port}")
@@ -544,5 +525,4 @@ if __name__ == '__main__':
     print(f"{'='*50}\n")
     
     logger.info(f"🚀 PRAETOR Intelligence iniciado en http://localhost:{port}")
-    
     app.run(host='0.0.0.0', port=port, debug=False)
