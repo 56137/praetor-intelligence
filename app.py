@@ -269,7 +269,6 @@ def create_checkout_session():
         scan_logger.info(f"📡 SCAN INICIADO - Dominio: {domain}, Email: {email}")
         
         session = stripe.checkout.Session.create(
-            payment_method_types=['card'],
             line_items=[{
                 'price_data': {
                     'currency': os.getenv('STRIPE_CURRENCY', 'mxn'),
