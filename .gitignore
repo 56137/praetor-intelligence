@@ -1,16 +1,32 @@
-# Secrets — NEVER commit these
+# Credentials and private configuration — never commit these
 .env
 .env.*
+!.env.example
 *.key
+*.pem
+*.p12
+*.pfx
+secrets/
+credentials*.json
+service-account*.json
+*service_account*.json
 
 # Python
 __pycache__/
 *.pyc
 
-# Customer / prospect data (PII)
-leads.json
-prospectos_ensenada.json
-prospectos_seguimiento.csv
+# Customer, prospect and operational PII — keep local only
+leads*.json
+leads*.csv
+clientes*.json
+clientes*.csv
+prospectos*.json
+prospectos*.csv
+logistica_seguimiento.json
+PLANTILLAS_PROSPECCIÓN.txt
+
+# Private campaign source data and local exports
+campaigns/*.csv
 
 # Generated / local
 *.pdf

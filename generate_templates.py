@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
-"""Generate cold outreach templates for 20 prospects"""
+"""Generate outreach templates from a private, local prospect file."""
 
+import argparse
 import json
 from datetime import datetime
 
-# Load prospects
-with open('prospectos_ensenada.json', 'r', encoding='utf-8') as f:
+parser = argparse.ArgumentParser(description='Generate PRAETOR outreach templates.')
+parser.add_argument('--input', default='prospectos_ensenada.json', help='Private prospect JSON path.')
+args = parser.parse_args()
+with open(args.input, 'r', encoding='utf-8') as f:
     data = json.load(f)
 
 prospects = data['prospectos']

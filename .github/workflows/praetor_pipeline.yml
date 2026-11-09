@@ -32,7 +32,11 @@ jobs:
       - name: Ejecutar Verificación DNS en Lote
         run: |
           mkdir -p campaigns
-          python scripts/check_dns_batch.py campaigns/PIPELINE_ENSENADA.csv campaigns/PIPELINE_ENSENADA_checked.csv
+          if [ -f "campaigns/PIPELINE_ENSENADA.csv" ]; then
+            python scripts/check_dns_batch.py campaigns/PIPELINE_ENSENADA.csv campaigns/PIPELINE_ENSENADA_checked.csv
+          else
+            echo "Private campaign CSV not present in repository; skipping batch DNS check."
+          fi
 
       - name: Procesar Capturas de Pantalla Automatizadas
         run: |
