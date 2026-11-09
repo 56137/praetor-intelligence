@@ -25,6 +25,9 @@ prospectos*.csv
 logistica_seguimiento.json
 PLANTILLAS_PROSPECCIÓN.txt
 
+# Private campaign source data and local exports
+campaigns/*.csv
+
 # Generated / local
 *.pdf
 *.zip
