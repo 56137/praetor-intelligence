@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate cold outreach templates for 20 prospects"""
+"""Generate outreach templates from a private, local prospect file."""
 
 import json
 from datetime import datetime
