@@ -4,15 +4,13 @@
 import argparse
 import json
 import os
-import shutil
-import subprocess
 import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 
 
-def _is_ignored_by_git(path: Path, repo_root: Path) -> bool:
-    """Fail closed for repository-local output unless Git ignores the path."""
+def _is_safe_output_path(path: Path, repo_root: Path) -> bool:
+    """Allow repo-local output only at the exact Git-ignored default path."""
     resolved = path.resolve()
     root = repo_root.resolve()
     try:
@@ -20,18 +18,15 @@ def _is_ignored_by_git(path: Path, repo_root: Path) -> bool:
     except ValueError:
         return True  # Outside the repository.
 
-    git = shutil.which("git")
-    if not git or not (root / ".git").exists():
+    ignore_file = root / ".gitignore"
+    if not ignore_file.is_file():
         return False
 
-    result = subprocess.run(
-        [git, "check-ignore", "--quiet", "--", relative.as_posix()],
-        cwd=root,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-        check=False,
+    ignore_rules = ignore_file.read_text(encoding="utf-8")
+    return (
+        relative.as_posix() == "prospectos_ensenada.json"
+        and "prospectos*.json" in ignore_rules.splitlines()
     )
-    return result.returncode == 0
 
 
 def _write_json_exclusive(path: Path, payload: dict) -> None:
@@ -53,7 +48,7 @@ def _write_json_exclusive(path: Path, payload: dict) -> None:
             stream.flush()
             os.fsync(stream.fileno())
 
-        # Publish atomically without overwriting a file created concurrently.
+        # Publish only the completed file; os.link fails if the destination exists.
         os.link(temp_path, path)
         if os.name != "nt":
             os.chmod(path, 0o600)
@@ -85,11 +80,10 @@ def main() -> int:
     output_path = Path(args.output)
     repo_root = Path(__file__).resolve().parent
 
-    if not _is_ignored_by_git(output_path, repo_root):
+    if not _is_safe_output_path(output_path, repo_root):
         parser.error(
-            f"{output_path} is inside the repository and is not Git-ignored. "
-            "Choose a private path outside the repository or add a suitable "
-            ".gitignore rule first."
+            f"{output_path} is inside the repository and is not the protected "
+            "Git-ignored default file. Choose a private path outside the repo."
         )
 
     payload = {
