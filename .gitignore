@@ -2,21 +2,44 @@
 .env
 .env.*
 *.key
+*.pem
+*.p12
+*.pfx
 
 # Python
 __pycache__/
-*.pyc
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
 
 # Customer / prospect data (PII)
 leads.json
-prospectos_ensenada.json
-prospectos_seguimiento.csv
+prospectos_*.json
+prospectos_*.csv
+campaigns/*.csv
+logistica_seguimiento.json
 
-# Generated / local
+# Generated reports and local artifacts
 *.pdf
 *.zip
 *.bak
 logs/
 openai_report.json
+google.json
+reporte.json
+analisis_praetor.json
+campaña_final_praetor.json
+REPORT_*
+estructura.txt
+__noop*.txt
+*_marker.txt
+CONTRATOS_GENERADOS/
+GUÍA_PROSPECCIÓN.txt
+PLANTILLAS_PROSPECCIÓN.txt
+
+# Local extracted/customer material
 VERDUGO FILES/
 VERDUGO_FILES_EXTRAIDOS/
