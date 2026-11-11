@@ -121,7 +121,7 @@ def get_pdf_for_report_id(report_id):
 def generate_pdf_with_id(domain, report_id=None, depth="express"):
     """Scan domain and generate a real security report PDF."""
     if not report_id:
-        report_id = str(uuid.uuid4())[:8]
+        report_id = uuid.uuid4().hex
 
     pdf_filename = f"REPORT_{report_id}.pdf"
     pdf_path = os.path.join(PDF_DIR, pdf_filename)
@@ -197,16 +197,10 @@ def home():
 
 @app.route('/status')
 def status():
-    leads = db_get_all_leads()
-    paid_count = len([l for l in leads if l.get('status') == 'paid'])
-    pdf_count = len([f for f in os.listdir(PDF_DIR) if f.endswith('.pdf')]) if os.path.exists(PDF_DIR) else 0
+    # Public health endpoint: expose operational state, never customer or revenue counts.
     return jsonify({
         'status': 'online',
-        'timestamp': datetime.now().isoformat(),
-        'pdf_count': pdf_count,
-        'lead_count': len(leads),
-        'paid_count': paid_count,
-        'storage': 'postgres' if _use_db() else 'file'
+        'timestamp': datetime.now().isoformat()
     })
 
 @app.route('/leads', methods=['GET'])
@@ -236,7 +230,7 @@ def create_checkout_session():
             return jsonify({'error': 'Plan no válido'}), 400
         price_amount = plan_prices[plan]
 
-        report_id = str(uuid.uuid4())[:8]
+        report_id = uuid.uuid4().hex
         
         # Guardar lead temporalmente
         leads_file = os.path.join(BASE_DIR, 'leads.json')
@@ -342,9 +336,15 @@ def stripe_webhook():
         except Exception:
             leads = []
         
-        idx, lead = find_lead_by_email(customer_email, leads)
-        if idx is None:
-            idx, lead = find_lead_by_report_id(report_id, leads)
+        if session.get('payment_status') not in ('paid', 'no_payment_required'):
+            webhook_logger.warning("Ignoring completed checkout with unpaid status")
+            return jsonify({'error': 'Payment not completed'}), 400
+        if not report_id or not session_id:
+            return jsonify({'error': 'Missing checkout metadata'}), 400
+
+        idx, lead = find_lead_by_report_id(report_id, leads)
+        if lead and lead.get('stripe_session') == session_id:
+            return jsonify({'status': 'already_processed'}), 200
         
         if lead:
             lead['status'] = 'paid'
@@ -386,45 +386,39 @@ def stripe_webhook():
 
 @app.route('/download/<report_id>')
 def download_report(report_id):
-    """Descargar PDF por ID"""
-    download_logger.info(f"📥 DESCARGA SOLICITADA - report_id: {report_id}")
-    
-    pdf_filename = f"REPORT_{report_id}.pdf"
+    """Download a report only after a verified payment has been recorded."""
+    if not re.fullmatch(r'[a-fA-F0-9-]{8,36}', report_id or ''):
+        return jsonify({'error': 'Report not found'}), 404
+
+    leads = db_get_all_leads()
+    lead = next((item for item in leads if item.get('report_id') == report_id), None)
+    if not lead or lead.get('status') != 'paid':
+        return jsonify({'error': 'Report not found'}), 404
+
+    pdf_filename = os.path.basename(lead.get('pdf_file') or f'REPORT_{report_id}.pdf')
     pdf_path = os.path.join(PDF_DIR, pdf_filename)
-    
-    if not os.path.exists(pdf_path):
-        leads_file = os.path.join(BASE_DIR, 'leads.json')
-        try:
-            with open(leads_file, 'r', encoding='utf-8') as f:
-                leads = json.load(f)
-            for lead in leads:
-                if lead.get('report_id') == report_id:
-                    pdf_file = lead.get('pdf_file')
-                    if pdf_file:
-                        temp_path = os.path.join(PDF_DIR, pdf_file)
-                        if os.path.exists(temp_path):
-                            pdf_path = temp_path
-                            pdf_filename = pdf_file
-                            break
-        except Exception:
-            pass
-    
-    if os.path.exists(pdf_path):
-        download_logger.info(f"✅ DESCARGA COMPLETADA - {pdf_filename}")
-        return send_file(
-            pdf_path,
-            as_attachment=True,
-            download_name=pdf_filename,
-            mimetype='application/pdf'
-        )
-    
-    logger.warning(f"❌ PDF no encontrado: {report_id}")
-    return jsonify({'error': 'Report not found'}), 404
+    if not os.path.isfile(pdf_path):
+        logger.warning("Paid report PDF missing for report_id=%s", report_id)
+        return jsonify({'error': 'Report not found'}), 404
+
+    download_logger.info("Paid report download completed for report_id=%s", report_id)
+    return send_file(
+        pdf_path,
+        as_attachment=True,
+        download_name=pdf_filename,
+        mimetype='application/pdf'
+    )
 
 @app.route('/success/<report_id>')
 def success_page(report_id):
-    """Página de éxito con descarga automática"""
-    pdf_file = get_pdf_for_report_id(report_id)
+    """Show the success page only for a report with a recorded paid status."""
+    if not re.fullmatch(r'[a-fA-F0-9-]{8,36}', report_id or ''):
+        return jsonify({'error': 'Report not found'}), 404
+    leads = db_get_all_leads()
+    lead = next((item for item in leads if item.get('report_id') == report_id), None)
+    if not lead or lead.get('status') != 'paid':
+        return jsonify({'error': 'Report not found'}), 404
+    pdf_file = os.path.basename(lead.get('pdf_file') or f'REPORT_{report_id}.pdf')
     
     if os.path.exists(TEMPLATE_FILE):
         with open(TEMPLATE_FILE, 'r', encoding='utf-8') as f:
@@ -464,7 +458,7 @@ def success_page(report_id):
     </html>
     """
 
-@app.route('/cron/monitor', methods=['POST', 'GET'])
+@app.route('/cron/monitor', methods=['POST'])
 def cron_monitor():
     """Called by Render Cron Job. Protected by CRON_SECRET."""
     secret = os.getenv('CRON_SECRET', '').strip()
