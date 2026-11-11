@@ -24,7 +24,7 @@ from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=[origin.strip() for origin in os.getenv('CORS_ORIGINS', 'http://localhost:5000,http://127.0.0.1:5000,https://praetor.lat,https://www.praetor.lat').split(',') if origin.strip()])
 
 # ==========================================
 # CONFIGURACIÓN
@@ -33,8 +33,8 @@ CORS(app)
 BASE_URL = os.getenv('BASE_URL', 'http://localhost:5000')
 GMAIL_APP_PASSWORD = os.getenv('GMAIL_APP_PASSWORD', '')
 GMAIL_USER = os.getenv('GMAIL_USER', '')
-STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', 'sk_test_placeholder')
-STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET', 'whsec_placeholder')
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', '').strip()
+STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET', '').strip()
 DATABASE_URL = os.getenv('DATABASE_URL', '')
 stripe.api_key = STRIPE_SECRET_KEY
 
@@ -209,19 +209,21 @@ def status():
         'storage': 'postgres' if _use_db() else 'file'
     })
 
-@app.route('/leads')
+@app.route('/leads', methods=['GET'])
 def list_leads():
-    if ADMIN_TOKEN:
-        auth = request.headers.get('Authorization', '')
-        token = request.args.get('token', '')
-        if auth != f'Bearer {ADMIN_TOKEN}' and token != ADMIN_TOKEN:
-            return jsonify({'error': 'Unauthorized'}), 401
+    if not ADMIN_TOKEN:
+        return jsonify({'error': 'Admin access is not configured'}), 503
+    auth = request.headers.get('Authorization', '')
+    if auth != f'Bearer {ADMIN_TOKEN}':
+        return jsonify({'error': 'Unauthorized'}), 401
     leads = db_get_all_leads()
     return jsonify(leads)
 
 @app.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():
     """Crear sesión de Stripe para pago"""
+    if not STRIPE_SECRET_KEY:
+        return jsonify({'error': 'Payments are not configured'}), 503
     try:
         data = request.json or {}
         domain = data.get('domain', 'example.com')
@@ -309,6 +311,8 @@ def create_checkout_session():
 @app.route('/webhook/stripe', methods=['POST'])
 def stripe_webhook():
     """Webhook de Stripe para confirmar pagos"""
+    if not STRIPE_WEBHOOK_SECRET:
+        return jsonify({'error': 'Webhook is not configured'}), 503
     payload = request.get_data(as_text=True)
     sig_header = request.headers.get('Stripe-Signature')
 
@@ -463,11 +467,12 @@ def success_page(report_id):
 @app.route('/cron/monitor', methods=['POST', 'GET'])
 def cron_monitor():
     """Called by Render Cron Job. Protected by CRON_SECRET."""
-    secret = os.getenv('CRON_SECRET', '')
-    if secret:
-        incoming = request.headers.get('X-Cron-Secret') or request.args.get('secret', '')
-        if incoming != secret:
-            return jsonify({'error': 'Unauthorized'}), 403
+    secret = os.getenv('CRON_SECRET', '').strip()
+    if not secret:
+        return jsonify({'error': 'Cron access is not configured'}), 503
+    incoming = request.headers.get('X-Cron-Secret', '')
+    if incoming != secret:
+        return jsonify({'error': 'Unauthorized'}), 403
 
     try:
         from monitor import run_monitor
