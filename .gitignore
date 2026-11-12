@@ -20,3 +20,32 @@ logs/
 openai_report.json
 VERDUGO FILES/
 VERDUGO_FILES_EXTRAIDOS/
+
+# Additional secret and local credential formats
+*.pem
+*.p12
+*.pfx
+
+# Python caches and environments
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.venv/
+venv/
+
+# Prospect, customer and campaign data
+prospectos_*.json
+prospectos_*.csv
+campaigns/*PIPELINE*.csv
+logistica_seguimiento.json
+analisis_praetor.json
+campaña_final_praetor.json
+
+# Generated scan outputs and local inventory
+google.json
+reporte.json
+openai_report.json
+estructura.txt
+__noop*.txt
+_openai_integration_test_marker.txt
+OPENAI_TEST_PAYLOAD.txt
